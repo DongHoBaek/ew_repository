@@ -28,10 +28,11 @@ class LoginWidget extends StatelessWidget {
 
     // Create a credential from the access token
     final FacebookAuthCredential facebookAuthCredential =
-    FacebookAuthProvider.credential(result.token);
+        FacebookAuthProvider.credential(result.token);
 
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+    return await FirebaseAuth.instance
+        .signInWithCredential(facebookAuthCredential);
   }
 
   @override
@@ -39,20 +40,60 @@ class LoginWidget extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton(icon: Image(
-              image: AssetImage('assets/google_logo.png'),
-            ), onPressed: (){
-              signInWithGoogle();
-            }),
+            Container(
+              padding: EdgeInsets.only(top: 100, bottom: 100),
+              child: Text('Toward\nthe\ntruth',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Oranienbaum',
+                    fontSize: 70,
+                    fontWeight: FontWeight.normal,
+                  )),
+            ),
+            TextButton(
+                onPressed: () {
+                  signInWithGoogle();
+                },
+                child: _buildButtonRow(
+                    Colors.white, 'assets/google_logo.png', 'Google login'),
+                style: TextButton.styleFrom(backgroundColor: Colors.black)
+            ),
+            SizedBox(height: 10,),
             TextButton(
                 onPressed: () {
                   signInWithFacebook();
                 },
-                child: Text('facebook login'))
+                child: _buildButtonRow(Colors.white, 'assets/facebook_logo.png', 'Facebook login'),
+                style: TextButton.styleFrom(backgroundColor: Colors.blue)
+            )
           ],
         ),
+      ),
+    );
+  }
+
+  Container _buildButtonRow(Color color, String image, String label) {
+    return Container(
+      width: 300,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 10,),
+          Image(image: AssetImage(image), width: 40, fit: BoxFit.fill,
+            color: color
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 60),
+            child: Text(label,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal,
+                  color: color,
+                )),
+          )
+        ],
       ),
     );
   }
