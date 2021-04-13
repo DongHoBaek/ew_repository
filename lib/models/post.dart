@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddPost {
   final String title;
-  final String post;
+  final String content;
 
-  AddPost(this.title, this.post);
+  AddPost(this.title, this.content);
 
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
 
@@ -12,7 +12,7 @@ class AddPost {
     // Call the user's CollectionReference to add a new post
     return posts
         .add({
-          'post': post,
+          'content': content,
           'title': title,
         })
         .then((value) => print("Post Added"))
