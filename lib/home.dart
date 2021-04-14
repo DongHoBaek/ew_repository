@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ttt_project_003/drawer.dart';
 import 'package:ttt_project_003/posting_page.dart';
+import 'package:ttt_project_003/view_post_page.dart';
 import 'login.dart';
 
 class Home extends StatelessWidget {
@@ -60,8 +61,11 @@ class Home extends StatelessWidget {
                             color: Colors.grey[400],
                           ),
                           child: new ListTile(
-                            onTap: (){
-
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ViewPostPage(docToView: document)));
                             },
                             title: new Text(document.data()['title']),
                             subtitle: new Text(document.data()['content']),
