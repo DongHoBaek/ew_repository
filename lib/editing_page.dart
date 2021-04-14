@@ -111,7 +111,8 @@ class _EditingPageState extends State<EditingPage> {
                   onPressed: () {
                     widget.docToEdit.reference
                         .delete()
-                        .whenComplete(() => Navigator.pop(context));
+                        .whenComplete(() => Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Home())));
                   },
                   icon: Icon(Icons.delete_outline),
                 ),
