@@ -109,10 +109,9 @@ class _EditingPageState extends State<EditingPage> {
                     border: Border.all(color: Colors.black38)),
                 child: IconButton(
                   onPressed: () {
-                    widget.docToEdit.reference
-                        .delete()
-                        .whenComplete(() => Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Home())));
+                    widget.docToEdit.reference.delete().whenComplete(() =>
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Home())));
                   },
                   icon: Icon(Icons.delete_outline),
                 ),
