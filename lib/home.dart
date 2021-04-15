@@ -22,18 +22,15 @@ class Home extends StatelessWidget {
             return Scaffold(
                 drawer: MyDrawer(snapshot),
                 appBar: MyAppBar('Toward the Truth', [
-                  TextButton(
+                  IconButton(
+                      icon: Icon(Icons.add),
                       onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     PostingPage()));
-                      },
-                      child: Text(
-                        '게시물 작성',
-                        style: TextStyle(color: Colors.black),
-                      )),
+                      }),
                 ]),
                 body: StreamBuilder<QuerySnapshot>(
                   stream: ref.snapshots(),
