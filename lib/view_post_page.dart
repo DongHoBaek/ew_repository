@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:ttt_project_003/app_bar.dart';
-
-import 'editing_page.dart';
 
 class ViewPostPage extends StatefulWidget {
   DocumentSnapshot docToView;
@@ -14,67 +11,99 @@ class ViewPostPage extends StatefulWidget {
 }
 
 class _ViewPostPageState extends State<ViewPostPage> {
+  bool isEdit = false;
+
+  TextEditingController contentController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
+
+  @override
+  void initState() {
+    titleController =
+        TextEditingController(text: widget.docToView.data()['title']);
+    contentController =
+        TextEditingController(text: widget.docToView.data()['content']);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: MyAppBar('View Page', [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditingPage(
-                            docToEdit: widget.docToView,
-                          )));
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              widget.docToView.reference
-                  .delete()
-                  .whenComplete(() => Navigator.pop(context));
-            },
-          ),
-          SizedBox(
-            width: 20,
-          )
-        ]),
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(10),
-            width: MediaQuery.of(context).size.width*0.9,
-            height: MediaQuery.of(context).size.height*0.85,
-            decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black38
-                ),
-                borderRadius: BorderRadius.circular(10),
+        appBar: AppBar(
+            iconTheme: IconThemeData(color: Colors.black),
+            backgroundColor: Colors.white,
+            elevation: 0.0,
+            title: isEdit ? TextFormField(
+              controller: titleController,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'content',
+              ),
+            ) : Text(
+              titleController.text,
+              style: TextStyle(color: Colors.black),
             ),
-            child: ListView(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: Text(
-                    widget.docToView.data()['title'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20),
+            actions: [
+              isEdit
+                  ? IconButton(
+                      icon: Icon(Icons.check),
+                      onPressed: () {
+                        setState(() {
+                          widget.docToView.reference.update({
+                            'title': titleController.text,
+                            'content': contentController.text
+                          }).whenComplete(() => Navigator.pop(context));
+                        });
+                      })
+                  : IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        setState(() {
+                          isEdit = true;
+                        });
+                      },
+                    ),
+              IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    widget.docToView.reference
+                        .delete()
+                        .whenComplete(() => Navigator.pop(context));
+                  }),
+              SizedBox(
+                width: 20,
+              )
+            ]),
+        body: isEdit
+            ? Center(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  child: TextFormField(
+                    controller: contentController,
+                    expands: true,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'content',
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  width: 330,
-                  child: Text(
-                    widget.docToView.data()['content'],
-                    textAlign: TextAlign.left,
+              )
+            : Center(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  child: ListView(
+                    children: [
+                      Text(
+                        widget.docToView.data()['content'],
+                        textAlign: TextAlign.left,
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-          ),
-        ));
+                ),
+              ));
   }
 }

@@ -1,84 +1,94 @@
 import 'package:flutter/material.dart';
 import 'models/post.dart';
 
-class PostingPage extends StatelessWidget {
+class PostingPage extends StatefulWidget {
+  @override
+  _PostingPageState createState() => _PostingPageState();
+}
+
+class _PostingPageState extends State<PostingPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Flexible(
+    return Form(
+      key: formKey,
+      child: Scaffold(
+        body: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  Flexible(
+                    child: TextFormField(
+                      controller: titleController,
+                      validator: (value){
+                        if(value.isEmpty) {
+                          return '제목을 입력하세요!';
+                        }else{
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'title',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Divider(
+                indent: MediaQuery.of(context).size.width*0.05,
+                endIndent: MediaQuery.of(context).size.width*0.05,
+                color: Colors.black,
+              ),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width*0.85,
                   child: TextFormField(
-                    controller: titleController,
+                    controller: contentController,
+                    expands: true,
+                    maxLines: null,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'title',
+                      hintText: 'content',
                     ),
                   ),
                 ),
-              ],
-            ),
-            Divider(
-              indent: 17,
-              endIndent: 17,
-              color: Colors.black,
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: 340,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.black38),
-                ),
-                child: TextFormField(
-                  controller: contentController,
-                  expands: true,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'content',
-                  ),
-                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              width: 80,
-              height: 40,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: Colors.black38)),
-              child: IconButton(
+              Divider(
+                indent: MediaQuery.of(context).size.width*0.05,
+                endIndent: MediaQuery.of(context).size.width*0.05,
+                color: Colors.black,
+              ),
+              IconButton(
                 onPressed: () {
-                  AddPost post = AddPost(titleController.text, contentController.text);
+                  if(formKey.currentState.validate()){
+                    AddPost post = AddPost(titleController.text, contentController.text);
 
-                  post.addPost();
+                    post.addPost();
 
-                  Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
                 },
-                icon: Icon(Icons.save_outlined),
+                icon: Icon(Icons.check),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
