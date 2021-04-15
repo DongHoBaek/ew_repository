@@ -8,8 +8,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
-    return MaterialApp(debugShowCheckedModeBanner: false,
-
-        home: App());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: App());
   }
 }
