@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'app.dart';
 
 void main() => runApp(MyApp());
@@ -8,6 +7,9 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(debugShowCheckedModeBanner: false, home: App());
+    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    return MaterialApp(debugShowCheckedModeBanner: false,
+
+        home: App());
   }
 }

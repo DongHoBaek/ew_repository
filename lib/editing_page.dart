@@ -98,24 +98,6 @@ class _EditingPageState extends State<EditingPage> {
                   icon: Icon(Icons.save_outlined),
                 ),
               ),
-              SizedBox(
-                width: 30,
-              ),
-              Container(
-                width: 80,
-                height: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.black38)),
-                child: IconButton(
-                  onPressed: () {
-                    widget.docToEdit.reference.delete().whenComplete(() =>
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Home())));
-                  },
-                  icon: Icon(Icons.delete_outline),
-                ),
-              ),
             ]),
           ],
         ),

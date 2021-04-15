@@ -18,12 +18,15 @@ class MyDrawer extends StatelessWidget {
         child: ListView(
           children: [
             ListTile(
-              tileColor: Colors.grey[350],
               title: Text('${userSnapshot.data.displayName}'),
               subtitle: Text('안녕하세요'),
               leading: CircleAvatar(
                 backgroundColor: Colors.redAccent,
               ),
+            ),
+            Divider(
+              color: Colors.black54,
+              height: 1,
             ),
             ListTile(
               leading: Icon(Icons.logout),
