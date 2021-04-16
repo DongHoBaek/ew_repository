@@ -29,7 +29,7 @@ class Home extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    PostingPage(userSnapshot.data.uid)));
+                                    PostingPage(userSnapshot.data.uid, userSnapshot.data.displayName)));
                       }),
                   SizedBox(
                     width: 10,
@@ -68,7 +68,7 @@ class Home extends StatelessWidget {
                                         builder: (context) =>
                                             ViewPostPage(userSnapshot.data.uid, docToView: document)));
                               },
-                              title: new Text(document.data()['title']),
+                              title: new Text('${document.data()['unm']}\n${document.data()['title']}'),
                               subtitle: new Text(document.data()['content']),
                             ),
                           );
