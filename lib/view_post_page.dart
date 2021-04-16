@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 
 class ViewPostPage extends StatefulWidget {
   DocumentSnapshot docToView;
+  final String uid;
 
-  ViewPostPage({this.docToView});
+  ViewPostPage(this.uid, {this.docToView});
 
   @override
   _ViewPostPageState createState() => _ViewPostPageState();
 }
 
 class _ViewPostPageState extends State<ViewPostPage> {
+  bool enableEdit = false;
   bool isEdit = false;
   bool isValidator = false;
   double appBarHeight = AppBar().preferredSize.height;
@@ -26,6 +28,9 @@ class _ViewPostPageState extends State<ViewPostPage> {
     contentController =
         TextEditingController(text: widget.docToView.data()['content']);
     super.initState();
+    if (widget.uid.compareTo(widget.docToView.data()['uid']) == 0) {
+      enableEdit = true;
+    }
   }
 
   @override
@@ -66,39 +71,43 @@ class _ViewPostPageState extends State<ViewPostPage> {
                       titleController.text,
                       style: TextStyle(color: Colors.black),
                     ),
-              actions: [
-                isEdit
-                    ? IconButton(
-                        icon: Icon(Icons.check),
-                        onPressed: () {
-                          setState(() {
-                            if (formKey.currentState.validate()) {
-                              widget.docToView.reference.update({
-                                'title': titleController.text,
-                                'content': contentController.text
-                              }).whenComplete(() => Navigator.pop(context));
-                            }
-                          });
-                        })
-                    : IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          setState(() {
-                            isEdit = true;
-                          });
-                        },
-                      ),
-                IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      widget.docToView.reference
-                          .delete()
-                          .whenComplete(() => Navigator.pop(context));
-                    }),
-                SizedBox(
-                  width: 10,
-                )
-              ]),
+
+              actions: enableEdit
+                  ? [
+                      isEdit
+                          ? IconButton(
+                              icon: Icon(Icons.check),
+                              onPressed: () {
+                                setState(() {
+                                  if (formKey.currentState.validate()) {
+                                    widget.docToView.reference.update({
+                                      'title': titleController.text,
+                                      'content': contentController.text
+                                    }).whenComplete(
+                                        () => Navigator.pop(context));
+                                  }
+                                });
+                              })
+                          : IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                setState(() {
+                                  isEdit = true;
+                                });
+                              },
+                            ),
+                      IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            widget.docToView.reference
+                                .delete()
+                                .whenComplete(() => Navigator.pop(context));
+                          }),
+                      SizedBox(
+                        width: 20,
+                      )
+                    ]
+                  : null),
           body: isEdit
               ? Center(
                   child: Container(
@@ -130,7 +139,6 @@ class _ViewPostPageState extends State<ViewPostPage> {
                       ],
                     ),
                   ),
-                )),
-    );
+                ));
   }
 }

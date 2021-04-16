@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'models/post.dart';
 
 class PostingPage extends StatefulWidget {
+  final String uid;
+
+  PostingPage(this.uid);
+
   @override
   _PostingPageState createState() => _PostingPageState();
 }
@@ -53,7 +57,7 @@ class _PostingPageState extends State<PostingPage> {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     if(formKey.currentState.validate()){
-                      AddPost post = AddPost(titleController.text, contentController.text);
+                      AddPost post = AddPost(titleController.text, contentController.text, widget.uid);
 
                       post.addPost();
 
