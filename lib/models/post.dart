@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class AddPost {
   final String title;
   final String content;
+  final String uid;
 
-  AddPost(this.title, this.content);
+  AddPost(this.title, this.content, this.uid);
 
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
 
@@ -14,6 +15,7 @@ class AddPost {
         .add({
           'content': content,
           'title': title,
+          'uid': uid
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));

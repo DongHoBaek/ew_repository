@@ -15,12 +15,12 @@ class Home extends StatelessWidget {
     return Scaffold(
       body: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (!snapshot.hasData) {
+        builder: (BuildContext context, AsyncSnapshot<User> userSnapshot) {
+          if (!userSnapshot.hasData) {
             return LoginWidget();
           } else {
             return Scaffold(
-                drawer: MyDrawer(snapshot),
+                drawer: MyDrawer(userSnapshot),
                 appBar: MyAppBar('Toward the Truth', [
                   IconButton(
                       icon: Icon(Icons.add),
@@ -29,7 +29,7 @@ class Home extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
-                                    PostingPage()));
+                                    PostingPage(userSnapshot.data.uid)));
                       }),
                 ]),
                 body: StreamBuilder<QuerySnapshot>(
@@ -63,7 +63,7 @@ class Home extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ViewPostPage(docToView: document)));
+                                            ViewPostPage(userSnapshot.data.uid, docToView: document)));
                               },
                               title: new Text(document.data()['title']),
                               subtitle: new Text(document.data()['content']),

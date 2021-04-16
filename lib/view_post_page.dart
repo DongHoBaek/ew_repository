@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class ViewPostPage extends StatefulWidget {
   DocumentSnapshot docToView;
+  final String uid;
 
-  ViewPostPage({this.docToView});
+  ViewPostPage(this.uid, {this.docToView});
 
   @override
   _ViewPostPageState createState() => _ViewPostPageState();
@@ -26,6 +27,9 @@ class _ViewPostPageState extends State<ViewPostPage> {
     contentController =
         TextEditingController(text: widget.docToView.data()['content']);
     super.initState();
+    if(widget.uid.compareTo(widget.docToView.data()['uid']) == 0){
+      isEdit = true;
+    }
   }
 
   @override
