@@ -35,7 +35,7 @@ class _PostingPageState extends State<PostingPage> {
                 }else if(title.isNotEmpty){
                   setState(() {
                     isValidator = false;
-                  });
+                  }); 
                 }
                 return null;
               },
@@ -61,7 +61,7 @@ class _PostingPageState extends State<PostingPage> {
                     }
                   }),
               SizedBox(
-                width: 20,
+                width: 10,
               )
             ]),
         body: Column(

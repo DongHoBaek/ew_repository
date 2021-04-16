@@ -31,6 +31,9 @@ class Home extends StatelessWidget {
                                 builder: (BuildContext context) =>
                                     PostingPage()));
                       }),
+                  SizedBox(
+                    width: 10,
+                  )
                 ]),
                 body: StreamBuilder<QuerySnapshot>(
                   stream: ref.snapshots(),

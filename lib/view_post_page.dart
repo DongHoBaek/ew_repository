@@ -96,7 +96,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
                           .whenComplete(() => Navigator.pop(context));
                     }),
                 SizedBox(
-                  width: 20,
+                  width: 10,
                 )
               ]),
           body: isEdit
