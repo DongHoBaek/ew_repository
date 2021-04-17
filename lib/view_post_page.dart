@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ViewPostPage extends StatefulWidget {
@@ -74,68 +75,86 @@ class _ViewPostPageState extends State<ViewPostPage> {
                         titleController.text,
                         style: TextStyle(color: Colors.black),
                       ),
-                actions: enableEdit
-                    ? [
-                        IconButton(
-                          icon: isFavorite
-                              ? Icon(Icons.favorite, color: Colors.red)
-                              : Icon(Icons.favorite_outline,
-                                  color: Colors.black),
+                actions: [
+                  IconButton(
+                    icon: isFavorite
+                        ? Icon(Icons.favorite, color: Colors.red)
+                        : Icon(Icons.favorite_outline, color: Colors.black),
+                    onPressed: () {
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      });
+                    },
+                  ),
+                  isEdit
+                      ? IconButton(
+                          icon: Icon(Icons.check),
                           onPressed: () {
                             setState(() {
-                              isFavorite = !isFavorite;
+                              if (formKey.currentState.validate()) {
+                                widget.docToView.reference.update({
+                                  'title': titleController.text,
+                                  'content': contentController.text
+                                }).whenComplete(() => Navigator.pop(context));
+                              }
                             });
+                          })
+                      : PopupMenuButton(
+                          icon: Icon(Icons.more_vert),
+                          itemBuilder: (context) {
+                            return enableEdit
+                                ? [
+                                    PopupMenuItem(
+                                        child: TextButton(
+                                      child: Text(
+                                        '편집',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          isEdit = true;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    )),
+                                    PopupMenuItem(
+                                        child: TextButton(
+                                      child: Text(
+                                        '삭제',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {
+                                        widget.docToView.reference
+                                            .delete()
+                                            .whenComplete(
+                                                () => Navigator.pop(context));
+                                        Navigator.pop(context);
+                                      },
+                                    )),
+                                    PopupMenuItem(
+                                        child: TextButton(
+                                      child: Text(
+                                        '신고',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {},
+                                    )),
+                                  ]
+                                : [
+                                    PopupMenuItem(
+                                        child: TextButton(
+                                      child: Text('신고',
+                                          style:
+                                              TextStyle(color: Colors.black)),
+                                      onPressed: () {},
+                                    )),
+                                  ];
                           },
                         ),
-                        isEdit
-                            ? IconButton(
-                                icon: Icon(Icons.check),
-                                onPressed: () {
-                                  setState(() {
-                                    if (formKey.currentState.validate()) {
-                                      widget.docToView.reference.update({
-                                        'title': titleController.text,
-                                        'content': contentController.text
-                                      }).whenComplete(
-                                          () => Navigator.pop(context));
-                                    }
-                                  });
-                                })
-                            : IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  setState(() {
-                                    isEdit = true;
-                                  });
-                                },
-                              ),
-                        IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              widget.docToView.reference
-                                  .delete()
-                                  .whenComplete(() => Navigator.pop(context));
-                            }),
-                        SizedBox(
-                          width: 20,
-                        )
-                      ]
-                    : [
-                        IconButton(
-                          icon: isFavorite
-                              ? Icon(Icons.favorite, color: Colors.red)
-                              : Icon(Icons.favorite_outline,
-                                  color: Colors.black),
-                          onPressed: () {
-                            setState(() {
-                              isFavorite = !isFavorite;
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          width: 20,
-                        )
-                      ]),
+                  SizedBox(
+                    width: 20,
+                  ),
+                ]),
             body: StreamBuilder<QuerySnapshot>(
               stream: ref.snapshots(),
               builder: (BuildContext context,
@@ -165,32 +184,48 @@ class _ViewPostPageState extends State<ViewPostPage> {
                           ),
                         ),
                       )
-                    : Center(
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          height: MediaQuery.of(context).size.height * 0.85,
-                          child: ListView(
-                            children: [
-                              Container(
-                                child: Text(
-                                  widget.docToView.data()['content'],
-                                  textAlign: TextAlign.left,
-                                ),
-                                height: MediaQuery.of(context).size.height*0.7,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  border: Border.all()
-                                ),
-                                child: TextFormField(
-                                  controller: commentController,
-                                ),
-                              ),
-                            ],
+                    : Column(
+                        children: [
+                          Container(
+                            child: Text(
+                              widget.docToView.data()['content'],
+                              textAlign: TextAlign.left,
+                            ),
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.grey[200]),
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: MediaQuery.of(context).size.height * 0.5,
                           ),
-                        ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.09,
+                            child: Row(
+                              children: [
+                                SizedBox(width: 10,),
+                                TextButton(onPressed: (){}, child: Text('댓글작성', style: TextStyle(
+                                  color: Colors.black
+                                ),))
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: 5,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                    margin: EdgeInsets.only(right: 10, left: 10, bottom: 10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    width: MediaQuery.of(context).size.width * 0.35,
+                                  );
+                                }),
+                          )
+                        ],
                       );
               },
             )));
