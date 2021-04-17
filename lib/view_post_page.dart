@@ -76,16 +76,6 @@ class _ViewPostPageState extends State<ViewPostPage> {
                         style: TextStyle(color: Colors.black),
                       ),
                 actions: [
-                  IconButton(
-                    icon: isFavorite
-                        ? Icon(Icons.favorite, color: Colors.red)
-                        : Icon(Icons.favorite_outline, color: Colors.black),
-                    onPressed: () {
-                      setState(() {
-                        isFavorite = !isFavorite;
-                      });
-                    },
-                  ),
                   isEdit
                       ? IconButton(
                           icon: Icon(Icons.check),
@@ -162,11 +152,6 @@ class _ViewPostPageState extends State<ViewPostPage> {
                 if (snapshot.hasError) {
                   return Center(child: Text('Something went wrong'));
                 }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
                 return isEdit
                     ? Center(
                         child: Container(
@@ -199,31 +184,46 @@ class _ViewPostPageState extends State<ViewPostPage> {
                             height: MediaQuery.of(context).size.height * 0.5,
                           ),
                           Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
                             height: MediaQuery.of(context).size.height * 0.09,
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(width: 10,),
-                                TextButton(onPressed: (){}, child: Text('댓글작성', style: TextStyle(
-                                  color: Colors.black
-                                ),))
+                                SizedBox(width: MediaQuery.of(context).size.width *0.01,),
+                                IconButton(
+                                  icon: isFavorite
+                                      ? Icon(Icons.favorite, color: Colors.red)
+                                      : Icon(Icons.favorite_outline, color: Colors.black),
+                                  onPressed: () {
+                                    setState(() {
+                                      isFavorite = !isFavorite;
+                                    });
+                                  },
+                                ),
+                                IconButton(icon: Icon(Icons.comment_outlined), onPressed: (){}),
+                                SizedBox(width: MediaQuery.of(context).size.width * 0.51,),
+                                IconButton(icon: Icon(Icons.bookmark_border_outlined), onPressed: (){})
                               ],
                             ),
                           ),
                           Flexible(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 5,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: EdgeInsets.only(right: 10, left: 10, bottom: 10),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    width: MediaQuery.of(context).size.width * 0.35,
-                                  );
-                                }),
+                            child: Container(
+                              padding: EdgeInsets.only(left: 10),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: 5,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: EdgeInsets.only(right: 10, left: 10, bottom: 10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      width: MediaQuery.of(context).size.width * 0.35,
+                                    );
+                                  }),
+                            ),
                           )
                         ],
                       );
