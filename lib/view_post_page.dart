@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'models/appStateManagement.dart';
 
 class ViewPostPage extends StatefulWidget {
   DocumentSnapshot docToView;
@@ -39,6 +41,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id);
     return Form(
         key: formKey,
         child: Scaffold(

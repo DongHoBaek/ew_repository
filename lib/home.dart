@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/app_bar.dart';
 import 'package:ttt_project_003/drawer.dart';
 import 'package:ttt_project_003/posting_page.dart';
 import 'package:ttt_project_003/view_post_page.dart';
+
+import 'models/appStateManagement.dart';
 import 'login.dart';
 
 class Home extends StatelessWidget {
@@ -19,6 +22,7 @@ class Home extends StatelessWidget {
           if (!userSnapshot.hasData) {
             return LoginWidget();
           } else {
+            Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null);
             return Scaffold(
                 drawer: MyDrawer(userSnapshot),
                 appBar: MyAppBar('Toward the Truth', [
