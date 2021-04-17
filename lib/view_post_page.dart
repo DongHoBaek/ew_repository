@@ -12,14 +12,17 @@ class ViewPostPage extends StatefulWidget {
 }
 
 class _ViewPostPageState extends State<ViewPostPage> {
+  bool isFavorite = false;
   bool enableEdit = false;
   bool isEdit = false;
   bool isValidator = false;
   double appBarHeight = AppBar().preferredSize.height;
   final formKey = GlobalKey<FormState>();
+  final ref = FirebaseFirestore.instance.collection('comment');
 
   TextEditingController contentController = TextEditingController();
   TextEditingController titleController = TextEditingController();
+  TextEditingController commentController = TextEditingController();
 
   @override
   void initState() {
@@ -73,6 +76,17 @@ class _ViewPostPageState extends State<ViewPostPage> {
                       ),
                 actions: enableEdit
                     ? [
+                        IconButton(
+                          icon: isFavorite
+                              ? Icon(Icons.favorite, color: Colors.red)
+                              : Icon(Icons.favorite_outline,
+                                  color: Colors.black),
+                          onPressed: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                          },
+                        ),
                         isEdit
                             ? IconButton(
                                 icon: Icon(Icons.check),
@@ -106,38 +120,79 @@ class _ViewPostPageState extends State<ViewPostPage> {
                           width: 20,
                         )
                       ]
-                    : null),
-            body: isEdit
-                ? Center(
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: MediaQuery.of(context).size.height * 0.85,
-                      child: TextFormField(
-                        controller: contentController,
-                        expands: true,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: '본문을 입력하세요',
+                    : [
+                        IconButton(
+                          icon: isFavorite
+                              ? Icon(Icons.favorite, color: Colors.red)
+                              : Icon(Icons.favorite_outline,
+                                  color: Colors.black),
+                          onPressed: () {
+                            setState(() {
+                              isFavorite = !isFavorite;
+                            });
+                          },
                         ),
-                      ),
-                    ),
-                  )
-                : Center(
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      height: MediaQuery.of(context).size.height * 0.85,
-                      child: ListView(
-                        children: [
-                          Text(
-                            widget.docToView.data()['content'],
-                            textAlign: TextAlign.left,
-                          )
-                        ],
-                      ),
-                    ),
-                  )));
+                        SizedBox(
+                          width: 20,
+                        )
+                      ]),
+            body: StreamBuilder<QuerySnapshot>(
+              stream: ref.snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Something went wrong'));
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                return isEdit
+                    ? Center(
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: MediaQuery.of(context).size.height * 0.85,
+                          child: TextFormField(
+                            controller: contentController,
+                            expands: true,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: '본문을 입력하세요',
+                            ),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: MediaQuery.of(context).size.height * 0.85,
+                          child: ListView(
+                            children: [
+                              Container(
+                                child: Text(
+                                  widget.docToView.data()['content'],
+                                  textAlign: TextAlign.left,
+                                ),
+                                height: MediaQuery.of(context).size.height*0.7,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  border: Border.all()
+                                ),
+                                child: TextFormField(
+                                  controller: commentController,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+              },
+            )));
   }
 }
