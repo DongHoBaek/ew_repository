@@ -259,10 +259,18 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                                   .width *
                                               0.35,
                                           child: new ListTile(
+                                            onTap: (){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewPostPage(widget.uid, widget.displayName, docToView: document)))
+                                                  .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null));
+                                            },
                                             title: new Text(
-                                                '${document.data()['unm']}\n${document.data()['title']}'),
+                                                '${document.data()['unm']}\n${document.data()['title']}', overflow: TextOverflow.ellipsis),
                                             subtitle: Text(
-                                              '${document.data()['content']}'
+                                              document.data()['content'], overflow: TextOverflow.ellipsis
                                             ),
                                           ),
                                         ),

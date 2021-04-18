@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/app_bar.dart';
+import 'package:ttt_project_003/view_post_page.dart';
+
+import 'models/appStateManagement.dart';
 
 class MyPage extends StatelessWidget {
   final ref = FirebaseFirestore.instance.collection('posts');
@@ -37,10 +41,17 @@ class MyPage extends StatelessWidget {
                           color: Colors.grey[200],
                         ),
                         child: new ListTile(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ViewPostPage(uid, document.data()['unm'], docToView: document)))
+                                .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null));
+                          },
                           title: new Text(
-                              '${document.data()['unm']}\n${document.data()['title']}'),
-                          subtitle: new Text(document.data()['content']),
+                              '${document.data()['unm']}\n${document.data()['title']}', overflow: TextOverflow.ellipsis),
+                          subtitle: new Text(document.data()['content'], overflow: TextOverflow.ellipsis),
                         ),
                       );
                     }else{
