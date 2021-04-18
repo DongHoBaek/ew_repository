@@ -11,7 +11,6 @@ class AddPost {
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
 
   Future<void> addPost() {
-    DocumentReference docRef = posts.doc();
     // Call the user's CollectionReference to add a new post
     return posts
         .add({'content': content, 'title': title, 'uid': uid, 'unm': unm})

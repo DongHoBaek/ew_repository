@@ -74,7 +74,6 @@ class _PostingPageState extends State<PostingPage> {
             Expanded(
               child: Container(
                 padding: EdgeInsets.all(20),
-                width: MediaQuery.of(context).size.width*0.85,
                 child: TextFormField(
                   controller: contentController,
                   expands: true,
