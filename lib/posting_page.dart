@@ -29,11 +29,10 @@ class _PostingPageState extends State<PostingPage> {
   Widget build(BuildContext context) {
     final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
     String rootPostDID;
-    if(currentDocId != null){
-      ref.doc(currentDocId).get().then(
-              (DocumentSnapshot document) {
-                rootPostDID = document.data()["rootPostDID"];
-          });
+    if (currentDocId != null) {
+      ref.doc(currentDocId).get().then((DocumentSnapshot document) {
+        rootPostDID = document.data()["rootPostDID"];
+      });
     }
     return Form(
       key: formKey,
@@ -44,16 +43,16 @@ class _PostingPageState extends State<PostingPage> {
             backgroundColor: Colors.white,
             elevation: 0.0,
             title: TextFormField(
-              validator: (title){
-                if(title.isEmpty){
+              validator: (title) {
+                if (title.isEmpty) {
                   setState(() {
                     isValidator = true;
                   });
                   return '올바른 제목을 입력하세요';
-                }else if(title.isNotEmpty){
+                } else if (title.isNotEmpty) {
                   setState(() {
                     isValidator = false;
-                  }); 
+                  });
                 }
                 return null;
               },
@@ -68,10 +67,17 @@ class _PostingPageState extends State<PostingPage> {
             ),
             actions: [
               IconButton(
+                  splashRadius: 0.1,
                   icon: Icon(Icons.check),
                   onPressed: () {
-                    if(formKey.currentState.validate()){
-                      AddPost post = AddPost(titleController.text, contentController.text, widget.uid, widget.unm, rootPostDID, currentDocId);
+                    if (formKey.currentState.validate()) {
+                      AddPost post = AddPost(
+                          titleController.text,
+                          contentController.text,
+                          widget.uid,
+                          widget.unm,
+                          rootPostDID,
+                          currentDocId);
 
                       post.addPost();
 
@@ -79,11 +85,11 @@ class _PostingPageState extends State<PostingPage> {
                     }
                   }),
               SizedBox(
-                width: 10,
+                width: 20,
               )
             ]),
-        body: Column(
-          children: [
+        body: Container(
+          child: Column(children: [
             Expanded(
               child: Container(
                 padding: EdgeInsets.all(20),
@@ -98,7 +104,7 @@ class _PostingPageState extends State<PostingPage> {
                 ),
               ),
             ),
-          ],
+          ]),
         ),
       ),
     );

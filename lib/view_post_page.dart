@@ -42,8 +42,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<CurrentDocId>(context, listen: false)
-        .setCurrentDocId(widget.docToView.id);
+    Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id);
 
     final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
 
@@ -86,6 +85,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
                 actions: [
                   isEdit
                       ? IconButton(
+                      splashRadius: 0.1,
                           icon: Icon(Icons.check),
                           onPressed: () {
                             setState(() {
@@ -190,7 +190,6 @@ class _ViewPostPageState extends State<ViewPostPage> {
                         height: MediaQuery.of(context).size.height * 0.5,
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width,
                         child: Row(
                           children: [
                             SizedBox(
@@ -216,8 +215,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              PostingPage(widget.uid, widget.displayName)))
-                                      .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id));
+                                              PostingPage(widget.uid, widget.displayName)));
                                 }),
                             Spacer(),
                             IconButton(
@@ -238,54 +236,49 @@ class _ViewPostPageState extends State<ViewPostPage> {
                               return Center(
                                   child: Text('Something went wrong'));
                             }
-
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-
                             return Expanded(
-                                child: Container(
-                              child: ListView(
-                                  scrollDirection: Axis.horizontal,
-                                  children: snapshot.data.docs
-                                      .map((DocumentSnapshot document) {
-                                    if (currentDocId ==
-                                        document.data()['parentPostDID']) {
-                                      return Expanded(
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              left: 15, bottom: 10),
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[700],
-                                              borderRadius:
-                                                  BorderRadius.circular(20)),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.35,
-                                          child: new ListTile(
-                                            onTap: (){
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ViewPostPage(widget.uid, widget.displayName, docToView: document)))
-                                                  .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null));
-                                            },
-                                            title: new Text(
-                                                '${document.data()['unm']}\n${document.data()['title']}', overflow: TextOverflow.ellipsis),
-                                            subtitle: Text(
-                                              document.data()['content'], overflow: TextOverflow.ellipsis
-                                            ),
+                              child: Container(
+                                child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: snapshot.data.docs
+                                    .map((DocumentSnapshot document) {
+                                  if (currentDocId ==
+                                      document.data()['parentPostDID']) {
+                                    return Expanded(
+                                      child: Container(
+                                        margin: EdgeInsets.only(
+                                            left: MediaQuery.of(context).size.width * 0.05, bottom: 10),
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[700],
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                            0.35,
+                                        child: new ListTile(
+                                          onTap: (){
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ViewPostPage(widget.uid, widget.displayName, docToView: document)))
+                                                .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null));
+                                          },
+                                          title: new Text(
+                                              '${document.data()['unm']}\n${document.data()['title']}', overflow: TextOverflow.ellipsis),
+                                          subtitle: Text(
+                                            document.data()['content'], overflow: TextOverflow.ellipsis
                                           ),
                                         ),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }).toList()),
-                            ));
+                                      ),
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                }).toList()),
+                              ),
+                            );
                           })
                     ],
                   )));
