@@ -43,7 +43,10 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id);
+    Provider.of<CurrentDocId>(context, listen: false)
+        .setCurrentDocId(widget.docToView.id);
+
+    final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
     return Form(
         key: formKey,
         child: Scaffold(
@@ -194,52 +197,88 @@ class _ViewPostPageState extends State<ViewPostPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                SizedBox(width: MediaQuery.of(context).size.width *0.01,),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.01,
+                                ),
                                 IconButton(
                                   icon: isFavorite
                                       ? Icon(Icons.favorite, color: Colors.red)
-                                      : Icon(Icons.favorite_outline, color: Colors.black),
+                                      : Icon(Icons.favorite_outline,
+                                          color: Colors.black),
                                   onPressed: () {
                                     setState(() {
                                       isFavorite = !isFavorite;
                                     });
                                   },
                                 ),
-                                IconButton(icon: Icon(Icons.comment_outlined), onPressed: (){
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              PostingPage(widget.uid, widget.displayName)));
-                                }),
-                                SizedBox(width: MediaQuery.of(context).size.width * 0.51,),
-                                IconButton(icon: Icon(Icons.bookmark_border_outlined), onPressed: (){})
+                                IconButton(
+                                    icon: Icon(Icons.comment_outlined),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  PostingPage(widget.uid,
+                                                      widget.displayName)));
+                                    }),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.51,
+                                ),
+                                IconButton(
+                                    icon: Icon(Icons.bookmark_border_outlined),
+                                    onPressed: () {})
                               ],
                             ),
                           ),
-                          Flexible(
-                            child: Container(
-                              padding: EdgeInsets.only(left: 10),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: 5,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      margin: EdgeInsets.only(right: 10, left: 10, bottom: 10),
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      width: MediaQuery.of(context).size.width * 0.35,
-                                      child: new ListTile(
-
-                                      )
-                                      ,
-                                    );
-                                  }),
-                            ),
-                          )
+                          // Container(
+                          //   padding: EdgeInsets.only(left: 10),
+                          //   child: new ListView(
+                          //     scrollDirection: Axis.horizontal,
+                          //     children: snapshot.data.docs
+                          //         .map((DocumentSnapshot document) {
+                          //       if (widget.docToView.id ==
+                          //           document.data()['parentPostDID']) {
+                          //         return
+                          //           Container(
+                          //                     margin: EdgeInsets.only(
+                          //                         right: 10, left: 10, bottom: 10),
+                          //                     decoration: BoxDecoration(
+                          //                         color: Colors.grey,
+                          //                         borderRadius:
+                          //                             BorderRadius.circular(20)),
+                          //                     width: MediaQuery.of(context).size.width *
+                          //                         0.35,
+                          //                     child: new ListTile(
+                          //                       onTap: () {
+                          //                         Navigator.push(
+                          //                             context,
+                          //                             MaterialPageRoute(
+                          //                                 builder: (context) =>
+                          //                                     ViewPostPage(widget.uid,
+                          //                                         widget.displayName,
+                          //                                         docToView:
+                          //                                         document)));
+                          //                       },
+                          //                       title: new Text(
+                          //                           '${document.data()['unm']}\n${document.data()['title']}'),
+                          //                       subtitle: new Text(
+                          //                           document.data()['content']),
+                          //                     ),
+                          //                   );
+                          //       }else{
+                          //         return ListView();
+                          //       }
+                          //     }).toList(),
+                          //   ),
+                            // ListView.builder(
+                            //     scrollDirection: Axis.horizontal,
+                            //     itemCount: 5,
+                            //     itemBuilder: (context, index) {
+                            //       return
+                            //     }),
+                          
                         ],
                       );
               },
