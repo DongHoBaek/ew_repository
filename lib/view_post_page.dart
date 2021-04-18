@@ -42,9 +42,6 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<CurrentDocId>(context, listen: false)
-        .setCurrentDocId(widget.docToView.id);
-
     final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
 
     return Form(
@@ -270,6 +267,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                             subtitle: Text(
                                               '${document.data()['content']}'
                                             ),
+                                            
                                           ),
                                         ),
                                       );
