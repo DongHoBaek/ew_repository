@@ -46,7 +46,6 @@ class _ViewPostPageState extends State<ViewPostPage> {
     Provider.of<CurrentDocId>(context, listen: false)
         .setCurrentDocId(widget.docToView.id);
 
-    final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
     return Form(
         key: formKey,
         child: Scaffold(
@@ -212,23 +211,16 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                     });
                                   },
                                 ),
-                                IconButton(
-                                    icon: Icon(Icons.comment_outlined),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  PostingPage(widget.uid,
-                                                      widget.displayName)));
-                                    }),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.51,
-                                ),
-                                IconButton(
-                                    icon: Icon(Icons.bookmark_border_outlined),
-                                    onPressed: () {})
+                                IconButton(icon: Icon(Icons.comment_outlined), onPressed: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              PostingPage(widget.uid, widget.displayName)))
+                                      .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id));
+                                }),
+                                SizedBox(width: MediaQuery.of(context).size.width * 0.51,),
+                                IconButton(icon: Icon(Icons.bookmark_border_outlined), onPressed: (){})
                               ],
                             ),
                           ),
