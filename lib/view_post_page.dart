@@ -210,7 +210,8 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (BuildContext context) =>
-                                              PostingPage(widget.uid, widget.displayName)));
+                                              PostingPage(widget.uid, widget.displayName)))
+                                      .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id));
                                 }),
                                 SizedBox(width: MediaQuery.of(context).size.width * 0.51,),
                                 IconButton(icon: Icon(Icons.bookmark_border_outlined), onPressed: (){})
