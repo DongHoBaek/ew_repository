@@ -2,13 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/posting_page.dart';
 import 'models/appStateManagement.dart';
 
 class ViewPostPage extends StatefulWidget {
   DocumentSnapshot docToView;
   final String uid;
+  final String displayName;
 
-  ViewPostPage(this.uid, {this.docToView});
+  ViewPostPage(this.uid, this.displayName, {this.docToView});
 
   @override
   _ViewPostPageState createState() => _ViewPostPageState();
@@ -21,7 +23,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
   bool isValidator = false;
   double appBarHeight = AppBar().preferredSize.height;
   final formKey = GlobalKey<FormState>();
-  final ref = FirebaseFirestore.instance.collection('comment');
+  final ref = FirebaseFirestore.instance.collection('post');
 
   TextEditingController contentController = TextEditingController();
   TextEditingController titleController = TextEditingController();
@@ -203,7 +205,13 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                     });
                                   },
                                 ),
-                                IconButton(icon: Icon(Icons.comment_outlined), onPressed: (){}),
+                                IconButton(icon: Icon(Icons.comment_outlined), onPressed: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              PostingPage(widget.uid, widget.displayName)));
+                                }),
                                 SizedBox(width: MediaQuery.of(context).size.width * 0.51,),
                                 IconButton(icon: Icon(Icons.bookmark_border_outlined), onPressed: (){})
                               ],
@@ -224,6 +232,10 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       width: MediaQuery.of(context).size.width * 0.35,
+                                      child: new ListTile(
+
+                                      )
+                                      ,
                                     );
                                   }),
                             ),

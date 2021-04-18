@@ -32,7 +32,7 @@ class _PostingPageState extends State<PostingPage> {
     if(currentDocId != null){
       ref.doc(currentDocId).get().then(
               (DocumentSnapshot document) {
-                rootPostDID = document.data()["rootPostDocId"];
+                rootPostDID = document.data()["rootPostDID"];
           });
     }
     return Form(

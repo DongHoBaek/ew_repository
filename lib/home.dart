@@ -70,7 +70,7 @@ class Home extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ViewPostPage(userSnapshot.data.uid, docToView: document)));
+                                            ViewPostPage(userSnapshot.data.uid, userSnapshot.data.displayName, docToView: document)));
                               },
                               title: new Text('${document.data()['unm']}\n${document.data()['title']}'),
                               subtitle: new Text(document.data()['content']),

@@ -17,7 +17,7 @@ class AddPost {
     rootPostDID = rootPostDID == null ? ref.id : rootPostDID;
     // Call the user's CollectionReference to add a new post
     return ref
-        .set({'content': content, 'title': title, 'uid': uid, 'unm': unm, 'rootPostDID':rootPostDID, 'parentPostDID':parentPostDID, 'childPostDID':null})
+        .set({'content': content, 'title': title, 'uid': uid, 'unm': unm, 'rootPostDID':rootPostDID, 'parentPostDID':parentPostDID})
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add post: $error"));
   }
