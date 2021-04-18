@@ -42,7 +42,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
+    final String thisPostDocId = Provider.of<CurrentDocId>(context).currentDocId;
 
     return Form(
         key: formKey,
@@ -247,7 +247,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                   scrollDirection: Axis.horizontal,
                                   children: snapshot.data.docs
                                       .map((DocumentSnapshot document) {
-                                    if (currentDocId ==
+                                    if (thisPostDocId ==
                                         document.data()['parentPostDID']) {
                                       return Expanded(
                                         child: Container(
@@ -267,7 +267,16 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                             subtitle: Text(
                                               '${document.data()['content']}'
                                             ),
-                                            
+                                            onTap: () {
+                                              Provider.of<CurrentDocId>(context, listen: false)
+                                                  .setCurrentDocId(document.id);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          ViewPostPage(widget.uid, widget.displayName, docToView: document)))
+                                                  .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(thisPostDocId));
+                                            },
                                           ),
                                         ),
                                       );
