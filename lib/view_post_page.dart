@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/posting_page.dart';
 
 import 'models/appStateManagement.dart';
 
@@ -210,8 +211,13 @@ class _ViewPostPageState extends State<ViewPostPage> {
                             IconButton(
                                 splashRadius: 0.1,
                                 icon: Icon(Icons.comment_outlined),
-                                onPressed: () {
-
+                                onPressed: (){
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              PostingPage(widget.uid, widget.displayName)))
+                                      .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(widget.docToView.id));
                                 }),
                             Spacer(),
                             IconButton(
