@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'models/appStateManagement.dart';
 import 'models/post.dart';
 
 class PostingPage extends StatefulWidget {
@@ -12,6 +15,8 @@ class PostingPage extends StatefulWidget {
 }
 
 class _PostingPageState extends State<PostingPage> {
+  final ref = FirebaseFirestore.instance.collection('posts');
+
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
@@ -22,6 +27,14 @@ class _PostingPageState extends State<PostingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
+    String rootPostDID;
+    if(currentDocId != null){
+      ref.doc(currentDocId).get().then(
+              (DocumentSnapshot document) {
+                rootPostDID = document.data()["rootPostDID"];
+          });
+    }
     return Form(
       key: formKey,
       child: Scaffold(
@@ -58,7 +71,7 @@ class _PostingPageState extends State<PostingPage> {
                   icon: Icon(Icons.check),
                   onPressed: () {
                     if(formKey.currentState.validate()){
-                      AddPost post = AddPost(titleController.text, contentController.text, widget.uid, widget.unm);
+                      AddPost post = AddPost(titleController.text, contentController.text, widget.uid, widget.unm, rootPostDID, currentDocId);
 
                       post.addPost();
 

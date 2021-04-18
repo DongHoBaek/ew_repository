@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ViewPostPage extends StatefulWidget {
   DocumentSnapshot docToView;
   final String uid;
+  final String displayName;
 
-  ViewPostPage(this.uid, {this.docToView});
+  ViewPostPage(this.uid, this.displayName, {this.docToView});
 
   @override
   _ViewPostPageState createState() => _ViewPostPageState();
@@ -39,6 +39,11 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Provider.of<CurrentDocId>(context, listen: false)
+    //     .setCurrentDocId(widget.docToView.id);
+    //
+    // final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
+
     return Form(
         key: formKey,
         child: Scaffold(
@@ -282,5 +287,3 @@ class _ViewPostPageState extends State<ViewPostPage> {
                 )
               ],
             )));
-  }
-}
