@@ -75,8 +75,8 @@ class Home extends StatelessWidget {
                                             ViewPostPage(userSnapshot.data.uid, userSnapshot.data.displayName, docToView: document)))
                                     .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null));
                               },
-                              title: new Text('${document.data()['unm']}\n${document.data()['title']}'),
-                              subtitle: new Text(document.data()['content']),
+                              title: new Text('${document.data()['unm']}\n${document.data()['title']}', overflow: TextOverflow.ellipsis),
+                              subtitle: new Text(document.data()['content'], overflow: TextOverflow.ellipsis),
                             ),
                           );
                         }).toList(),

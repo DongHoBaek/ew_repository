@@ -172,9 +172,13 @@ class _ViewPostPageState extends State<ViewPostPage> {
                 : Column(
                     children: [
                       Container(
-                        child: Text(
-                          widget.docToView.data()['content'],
-                          textAlign: TextAlign.left,
+                        child: Expanded(
+                          child: SingleChildScrollView(
+                            child: Text(
+                              widget.docToView.data()['content'],
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
                         ),
                         margin: EdgeInsets.only(
                             left: MediaQuery.of(context).size.width * 0.05,
@@ -258,9 +262,9 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                                 0.35,
                                             child: new ListTile(
                                               title: new Text(
-                                                  '${document.data()['unm']}\n${document.data()['title']}'),
+                                                  '${document.data()['unm']}\n${document.data()['title']}', overflow: TextOverflow.ellipsis),
                                               subtitle: Text(
-                                                  '${document.data()['content']}'),
+                                                  '${document.data()['content']}', overflow: TextOverflow.ellipsis),
                                               onTap: () {
                                                 Provider.of<CurrentDocId>(
                                                         context,
