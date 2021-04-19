@@ -72,6 +72,8 @@ class Home extends StatelessWidget {
                             ),
                             child: new ListTile(
                               onTap: () {
+                                Provider.of<CurrentDocId>(context, listen: false)
+                                    .setCurrentDocId(document.id);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
