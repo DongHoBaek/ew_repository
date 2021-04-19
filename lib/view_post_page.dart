@@ -42,7 +42,7 @@ class _ViewPostPageState extends State<ViewPostPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String currentDocId = Provider.of<CurrentDocId>(context).currentDocId;
+    final String thisPostDocId = Provider.of<CurrentDocId>(context).currentDocId;
 
     return Form(
         key: formKey,
@@ -241,49 +241,39 @@ class _ViewPostPageState extends State<ViewPostPage> {
                                     scrollDirection: Axis.horizontal,
                                     children: snapshot.data.docs
                                         .map((DocumentSnapshot document) {
-                                      if (currentDocId ==
+                                      if (thisPostDocId ==
                                           document.data()['parentPostDID']) {
                                         return Expanded(
-                                            child: Container(
-                                                margin: EdgeInsets.only(
-                                                    left: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.05,
-                                                    bottom: 10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.grey[700],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.35,
-                                                child: new ListTile(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) => ViewPostPage(
-                                                                  widget.uid,
-                                                                  widget
-                                                                      .displayName,
-                                                                  docToView:
-                                                                      document))).then((value) =>
-                                                          Provider.of<CurrentDocId>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setCurrentDocId(
-                                                                  null));
-                                                    },
-                                                    title: new Text(
-                                                        '${document.data()['unm']}\n${document.data()['title']}',
-                                                        overflow: TextOverflow
-                                                            .ellipsis),
-                                                    subtitle: Text(document.data()['content'],
-                                                        overflow: TextOverflow
-                                                            .ellipsis))));
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                                left: 15, bottom: 10),
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey[700],
+                                                borderRadius:
+                                                BorderRadius.circular(20)),
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.35,
+                                            child: new ListTile(
+                                              title: new Text(
+                                                  '${document.data()['unm']}\n${document.data()['title']}'),
+                                              subtitle: Text(
+                                                  '${document.data()['content']}'
+                                              ),
+                                              onTap: () {
+                                                Provider.of<CurrentDocId>(context, listen: false)
+                                                    .setCurrentDocId(document.id);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ViewPostPage(widget.uid, widget.displayName, docToView: document)))
+                                                    .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(thisPostDocId));
+                                              },
+                                            ),
+                                          ),
+                                        );
                                       } else {
                                         return Container();
                                       }
