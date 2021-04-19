@@ -22,27 +22,21 @@ class Home extends StatelessWidget {
           if (!userSnapshot.hasData) {
             return LoginWidget();
           } else {
-            Provider.of<CurrentDocId>(context, listen: false)
-                .setCurrentDocId(null);
+            Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null);
             return Scaffold(
                 drawer: MyDrawer(userSnapshot),
                 appBar: MyAppBar('Toward the Truth', [
                   IconButton(
-                      splashRadius: 0.1,
                       icon: Icon(Icons.add),
                       onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (BuildContext context) => PostingPage(
-                                    userSnapshot.data.uid,
-                                    userSnapshot
-                                        .data.displayName))).then((value) =>
-                            Provider.of<CurrentDocId>(context, listen: false)
-                                .setCurrentDocId(null));
+                                builder: (BuildContext context) =>
+                                    PostingPage(userSnapshot.data.uid, userSnapshot.data.displayName)));
                       }),
                   SizedBox(
-                    width: 20,
+                    width: 10,
                   )
                 ]),
                 body: StreamBuilder<QuerySnapshot>(
@@ -61,11 +55,11 @@ class Home extends StatelessWidget {
                       color: Colors.white,
                       child: new ListView(
                         children:
-                            snapshot.data.docs.map((DocumentSnapshot document) {
+                        snapshot.data.docs.map((DocumentSnapshot document) {
                           return Container(
                             height: 100,
                             margin:
-                                EdgeInsets.only(top: 10, left: 10, right: 10),
+                            EdgeInsets.only(top: 10, left: 10, right: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.grey[200],
@@ -77,18 +71,12 @@ class Home extends StatelessWidget {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ViewPostPage(
-                                            userSnapshot.data.uid,
-                                            userSnapshot.data.displayName,
-                                            docToView: document)));
+                                        builder: (context) =>
+                                            ViewPostPage(userSnapshot.data.uid, userSnapshot.data.displayName, docToView: document)))
+                                    .then((value)=>Provider.of<CurrentDocId>(context, listen: false).setCurrentDocId(null));
                               },
-                              title: new Text(
-                                  '${document.data()['unm']}\n${document.data()['title']}',
-                                  overflow: TextOverflow.ellipsis),
-                              subtitle: new Text(
-                                document.data()['content'],
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              title: new Text('${document.data()['unm']}\n${document.data()['title']}'),
+                              subtitle: new Text(document.data()['content']),
                             ),
                           );
                         }).toList(),
