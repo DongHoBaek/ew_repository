@@ -1,4 +1,4 @@
-package com.example.ttt_project_003
+package com.redpeach.ttt_project_0419
 
 import io.flutter.embedding.android.FlutterActivity
 

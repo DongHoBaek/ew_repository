@@ -64,7 +64,7 @@ class Home extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.grey[200],
                             ),
-                            child: new ListTile(
+                              child: new ListTile(
                               onTap: () {
                                 Provider.of<CurrentDocId>(context, listen: false)
                                     .setCurrentDocId(document.id);
