@@ -25,7 +25,7 @@ class PostProvider with ChangeNotifier {
   void setCurrentDocId(String currentDocId) {
     _currentDocId = currentDocId;
     print("set document id to $_currentDocId");
-    getPostData()
+    getPostData();
   }
 
   void createPost(String title, String content, String uid, String unm) {

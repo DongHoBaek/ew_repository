@@ -6,7 +6,7 @@ class CurrentDocId with ChangeNotifier {
 
   void setCurrentDocId(String currentDocId) {
     _currentDocId = currentDocId;
-    print("set document id to ${_currentDocId}");
+    print("set document id to ${currentDocId}");
     notifyListeners();
   }
 }
