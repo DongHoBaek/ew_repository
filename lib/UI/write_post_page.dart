@@ -9,89 +9,86 @@ class WritePostPage extends Page {
   }
 }
 
-class WritePost extends StatelessWidget {
+class WritePost extends StatefulWidget {
+  @override
+  _WritePostState createState() => _WritePostState();
+}
+
+class _WritePostState extends State<WritePost> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController contentController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('WritePostPage'),
+    Size size = MediaQuery.of(context).size;
+
+    void checkButtonPressed() {
+      if(_formKey.currentState.validate()) {
+
+      }
+    }
+
+    Widget _buildAppBar(checkButtonPressed) {
+      return AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: TextFormField(
+          controller: titleController,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            errorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+            ),
+            hintText: '제목을 입력하세요',
+          ),
+          validator: (title) {
+            if (title.isEmpty) {
+              return '올바른 제목을 입력하세요';
+            } else if (title.isNotEmpty) {
+              print('Check Button Pressed!!');
+            }
+            return null;
+          },
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: checkButtonPressed,
+          ),
+          SizedBox(
+            width: size.width * 0.05,
+          )
+        ],
+      );
+    }
+
+    Widget _buildBody() {
+      return Container(
+        padding: EdgeInsets.all(size.width * 0.05),
+        child: Column(children: [
+          Expanded(
+            child: TextFormField(
+              controller: contentController,
+              expands: true,
+              maxLines: null,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: '본문을 입력하세요',
+              ),
+            ),
+          ),
+        ]),
+      );
+    }
+
+    return Form(
+      key: _formKey,
+      child: Scaffold(
+        appBar: _buildAppBar(checkButtonPressed),
+        body: _buildBody(),
       ),
     );
   }
 }
-
-
-// Form(
-//   key: formKey,
-//   child: Scaffold(
-//     appBar: AppBar(
-//         iconTheme: IconThemeData(color: Colors.black),
-//         toolbarHeight: isValidator ? 100 : appBarHeight,
-//         backgroundColor: Colors.white,
-//         elevation: 0.0,
-//         title: TextFormField(
-//           validator: (title) {
-//             if (title.isEmpty) {
-//               setState(() {
-//                 isValidator = true;
-//               });
-//               return '올바른 제목을 입력하세요';
-//             } else if (title.isNotEmpty) {
-//               setState(() {
-//                 isValidator = false;
-//               });
-//             }
-//             return null;
-//           },
-//           controller: titleController,
-//           decoration: InputDecoration(
-//             border: InputBorder.none,
-//             errorBorder: UnderlineInputBorder(
-//               borderSide: BorderSide(color: Colors.red),
-//             ),
-//             hintText: '제목을 입력하세요',
-//           ),
-//         ),
-//         actions: [
-//           IconButton(
-//               splashRadius: 0.1,
-//               icon: Icon(Icons.check),
-//               onPressed: () {
-//                 if (formKey.currentState.validate()) {
-//                   AddPost post = AddPost(
-//                       titleController.text,
-//                       contentController.text,
-//                       widget.uid,
-//                       widget.unm,
-//                       rootPostDID,
-//                       currentDocId);
-//
-//                   post.addPost();
-//
-//                   Navigator.pop(context);
-//                 }
-//               }),
-//           SizedBox(
-//             width: 20,
-//           )
-//         ]),
-//     body: Container(
-//       child: Column(children: [
-//         Expanded(
-//           child: Container(
-//             padding: EdgeInsets.all(20),
-//             child: TextFormField(
-//               controller: contentController,
-//               expands: true,
-//               maxLines: null,
-//               decoration: InputDecoration(
-//                 border: InputBorder.none,
-//                 hintText: '본문을 입력하세요',
-//               ),
-//             ),
-//           ),
-//         ),
-//       ]),
-//     ),
-//   ),
-// );
