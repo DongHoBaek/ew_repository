@@ -71,9 +71,9 @@ class PostProvider with ChangeNotifier {
         .catchError((error) => print("Failed to Anonymize post: $error"));
   }
   //2차원 데이터 postList (id, title, content) 반환
-  Future getPostList()async {
+  Future getPostList() async{
     postList = [];
-    List<String> tmpList;
+    List<String> tmpList = [];
     await posts.get().then((snapshot) {
       if (snapshot != null) {
         List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
@@ -82,9 +82,10 @@ class PostProvider with ChangeNotifier {
           tmpList.add(docs[i].data()['title']);
 
           String cont = docs[i].data()['content'];
-          cont = cont.substring(0, 25) + '...';
+          if(cont.length > 25) {
+            cont = cont.substring(0, 25) + '...';
+          }
           tmpList.add(cont);
-
           postList.add(tmpList);
         }
       }

@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 
 class WritePostPage extends Page {
   static final String pageName = 'WritePostPage';
@@ -18,14 +20,19 @@ class _WritePostState extends State<WritePost> {
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  User user = FirebaseAuth.instance.currentUser;
+  PostProvider postProvider = PostProvider();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     void checkButtonPressed() {
-      if(_formKey.currentState.validate()) {
+      if(_formKey.currentState.validate()){
+        postProvider.createPost(titleController.text, contentController.text, user.uid, user.displayName);
+        postProvider.getPostList();
 
+        Navigator.pop(context);
       }
     }
 
@@ -47,7 +54,7 @@ class _WritePostState extends State<WritePost> {
             if (title.isEmpty) {
               return '올바른 제목을 입력하세요';
             } else if (title.isNotEmpty) {
-              print('Check Button Pressed!!');
+
             }
             return null;
           },
