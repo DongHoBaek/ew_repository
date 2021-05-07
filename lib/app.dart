@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/UI/login_page.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
-import 'file:///C:/Users/zzw12/FlutterProjects/ttt_project_0.0.3/lib/models/page_nav_provider.dart';
+import 'package:ttt_project_003/models/page_nav_provider.dart';
 
 import 'UI/home_page.dart';
 import 'UI/write_post_page.dart';

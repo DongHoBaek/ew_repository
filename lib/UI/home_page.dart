@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/UI/write_post_page.dart';
-import 'file:///C:/Users/zzw12/FlutterProjects/ttt_project_0.0.3/lib/models/page_nav_provider.dart';
+import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 
 class HomePage extends Page {
