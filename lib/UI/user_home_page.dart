@@ -1,7 +1,31 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-//
+import 'package:flutter/material.dart';
+
+class UserHomePage extends Page {
+  static final String pageName = 'UserHomePage';
+
+  @override
+  Route createRoute(BuildContext context) {
+    return MaterialPageRoute(
+        settings: this, builder: (context) => UserHome());
+  }
+}
+
+class UserHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          title: Text('MyPage', style: TextStyle(color: Colors.black),)
+      ),
+    );
+  }
+}
+
+
+
 // class MyPage extends StatelessWidget {
 //   final ref = FirebaseFirestore.instance.collection('posts');
 //   final String uid;

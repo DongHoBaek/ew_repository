@@ -78,6 +78,7 @@ class PostProvider with ChangeNotifier {
       if (snapshot != null) {
         List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
         for (int i = 0; i < docs.length; i++) {
+          tmpList = [];
           tmpList.add(docs[i].id);
           tmpList.add(docs[i].data()['title']);
 
@@ -90,7 +91,7 @@ class PostProvider with ChangeNotifier {
         }
       }
     });
-    print(tmpList);
+    print(postList);
     notifyListeners();
   }
 }

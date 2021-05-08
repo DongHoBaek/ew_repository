@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/UI/user_home_page.dart';
 import 'package:ttt_project_003/UI/write_post_page.dart';
-import 'file:///C:/Users/zzw12/FlutterProjects/ttt_project_0.0.3/lib/models/page_nav_provider.dart';
+import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
+
+import 'detail_post_page.dart';
 
 class HomePage extends Page {
   static final String pageName = 'HomePage';
@@ -19,15 +22,9 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    Widget _buildPostButton(){
-      return Container(
-        margin: EdgeInsets.all(10),
-        height: size.height*0.2,
-        decoration: BoxDecoration(color: Colors.blueGrey,),
-      );
-    }
+    Size size = MediaQuery
+        .of(context)
+        .size;
 
     Widget _buildDrawerButton(IconData icon, Function onTap, String title) {
       return ListTile(
@@ -47,14 +44,18 @@ class Home extends StatelessWidget {
                 title: Text(user.displayName),
                 subtitle: Text(user.email),
                 leading: CircleAvatar(
-                  backgroundColor: Colors.redAccent,
+                  backgroundColor: Colors.grey,
                 ),
               ),
               Divider(
                 color: Colors.black54,
                 height: 1,
               ),
-              _buildDrawerButton(Icons.home_outlined, () {}, '마이페이지'),
+              _buildDrawerButton(Icons.home_outlined, () {
+                Navigator.pop(context);
+                Provider.of<PageNavProvider>(context, listen: false).goToOtherPage(
+                    UserHomePage.pageName);
+              }, '마이페이지'),
               _buildDrawerButton(Icons.logout, () {}, '로그아웃'),
             ],
           ),
@@ -62,25 +63,43 @@ class Home extends StatelessWidget {
       );
     }
 
+    Widget _buildPostButton(Function onTap) {
+      return Container(
+        margin: EdgeInsets.all(10),
+        height: size.height * 0.3,
+        decoration: BoxDecoration(color: Colors.grey[200],),
+        child: ListTile(
+            onTap: onTap
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('HomePage'),
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          title: Text('HomePage', style: TextStyle(color: Colors.black),)
       ),
       drawer: _buildDrawer(),
       body: Consumer<PostProvider>(
-        builder: (context, postProvider, child){
+        builder: (context, postProvider, child) {
           return ListView.builder(
-              itemCount: postProvider.postList.length,
+              itemCount: 5,
               itemBuilder: (context, index) {
-                return _buildPostButton();
+                return _buildPostButton(() {
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(DetailPostPage.pageName);
+                });
               });
         },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        backgroundColor: Colors.red,
-        onPressed: (){
-          Provider.of<PageNavProvider>(context, listen: false).goToOtherPage(WritePostPage.pageName);
+        backgroundColor: Colors.grey,
+        onPressed: () {
+          Provider.of<PageNavProvider>(context, listen: false).goToOtherPage(
+              WritePostPage.pageName);
         },
       ),
     );
