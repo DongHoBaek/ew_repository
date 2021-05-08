@@ -5,7 +5,6 @@ import 'package:ttt_project_003/UI/user_home_page.dart';
 import 'package:ttt_project_003/UI/write_post_page.dart';
 import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
-
 import 'detail_post_page.dart';
 
 class HomePage extends Page {

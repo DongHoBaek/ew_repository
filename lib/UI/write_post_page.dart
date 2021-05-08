@@ -30,7 +30,6 @@ class _WritePostState extends State<WritePost> {
     void checkButtonPressed() {
       if(_formKey.currentState.validate()){
         postProvider.createPost(titleController.text, contentController.text, user.uid, user.displayName);
-        postProvider.getPostList();
         Navigator.pop(context);
       }
     }
