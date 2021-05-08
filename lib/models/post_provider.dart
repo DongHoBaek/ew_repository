@@ -12,12 +12,19 @@ class PostProvider with ChangeNotifier {
   List<dynamic> _postList;
 
   String get currentDocId => _currentDocId;
+
   String get rootPostDID => _rootPostDID;
+
   String get parentPostDID => _parentPostDID;
+
   String get title => _title;
+
   String get content => _content;
+
   String get uid => _uid;
+
   String get unm => _unm;
+
   List<dynamic> get postList => _postList;
 
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
@@ -90,7 +97,9 @@ class PostProvider with ChangeNotifier {
   Future getPostList(bool isChildPosts) async {
     _postList = [];
     List<String> tmpList = [];
-    var snapshot = isChildPosts ? await posts.where('parentPostDID', isEqualTo: _currentDocId).get() : await posts.get();
+    var snapshot = isChildPosts
+        ? await posts.where('parentPostDID', isEqualTo: _currentDocId).get()
+        : await posts.get();
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {

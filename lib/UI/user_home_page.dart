@@ -5,8 +5,7 @@ class UserHomePage extends Page {
 
   @override
   Route createRoute(BuildContext context) {
-    return MaterialPageRoute(
-        settings: this, builder: (context) => UserHome());
+    return MaterialPageRoute(settings: this, builder: (context) => UserHome());
   }
 }
 
@@ -18,13 +17,13 @@ class UserHome extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           elevation: 0.0,
-          title: Text('MyPage', style: TextStyle(color: Colors.black),)
-      ),
+          title: Text(
+            'MyPage',
+            style: TextStyle(color: Colors.black),
+          )),
     );
   }
 }
-
-
 
 // class MyPage extends StatelessWidget {
 //   final ref = FirebaseFirestore.instance.collection('posts');

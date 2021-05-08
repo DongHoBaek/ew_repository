@@ -21,9 +21,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    Size size = MediaQuery.of(context).size;
 
     Widget _buildDrawerButton(IconData icon, Function onTap, String title) {
       return ListTile(
@@ -52,8 +50,8 @@ class Home extends StatelessWidget {
               ),
               _buildDrawerButton(Icons.home_outlined, () {
                 Navigator.pop(context);
-                Provider.of<PageNavProvider>(context, listen: false).goToOtherPage(
-                    UserHomePage.pageName);
+                Provider.of<PageNavProvider>(context, listen: false)
+                    .goToOtherPage(UserHomePage.pageName);
               }, '마이페이지'),
               _buildDrawerButton(Icons.logout, () {}, '로그아웃'),
             ],
@@ -66,10 +64,10 @@ class Home extends StatelessWidget {
       return Container(
         margin: EdgeInsets.all(10),
         height: size.height * 0.3,
-        decoration: BoxDecoration(color: Colors.grey[200],),
-        child: ListTile(
-            onTap: onTap
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
         ),
+        child: ListTile(onTap: onTap),
       );
     }
 
@@ -78,8 +76,10 @@ class Home extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           elevation: 0.0,
-          title: Text('HomePage', style: TextStyle(color: Colors.black),)
-      ),
+          title: Text(
+            'HomePage',
+            style: TextStyle(color: Colors.black),
+          )),
       drawer: _buildDrawer(),
       body: Consumer<PostProvider>(
         builder: (context, postProvider, child) {
@@ -97,8 +97,8 @@ class Home extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Colors.grey,
         onPressed: () {
-          Provider.of<PageNavProvider>(context, listen: false).goToOtherPage(
-              WritePostPage.pageName);
+          Provider.of<PageNavProvider>(context, listen: false)
+              .goToOtherPage(WritePostPage.pageName);
         },
       ),
     );

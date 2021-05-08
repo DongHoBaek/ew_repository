@@ -28,8 +28,9 @@ class _WritePostState extends State<WritePost> {
     Size size = MediaQuery.of(context).size;
 
     void checkButtonPressed() {
-      if(_formKey.currentState.validate()){
-        postProvider.createPost(titleController.text, contentController.text, user.uid, user.displayName);
+      if (_formKey.currentState.validate()) {
+        postProvider.createPost(titleController.text, contentController.text,
+            user.uid, user.displayName);
         Navigator.pop(context);
       }
     }
@@ -51,9 +52,7 @@ class _WritePostState extends State<WritePost> {
           validator: (title) {
             if (title.isEmpty) {
               return '올바른 제목을 입력하세요';
-            } else if (title.isNotEmpty) {
-
-            }
+            } else if (title.isNotEmpty) {}
             return null;
           },
         ),

@@ -16,7 +16,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<PageNavProvider>(create: (_) => PageNavProvider()),
+        ChangeNotifierProvider<PageNavProvider>(
+            create: (_) => PageNavProvider()),
         ChangeNotifierProvider<PostProvider>(create: (_) => PostProvider())
       ],
       child: FutureBuilder(
@@ -30,21 +31,27 @@ class App extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.done) {
             return StreamBuilder(
                 stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (BuildContext context, AsyncSnapshot<User> snapshot){
-                  if(!snapshot.hasData){
+                builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                  if (!snapshot.hasData) {
                     return LoginPage();
-                  }else{
-                    return Consumer<PageNavProvider>(builder: (context, pageNavProvider, child){
+                  } else {
+                    return Consumer<PageNavProvider>(
+                        builder: (context, pageNavProvider, child) {
                       return Navigator(
                         pages: [
                           MaterialPage(child: Home()),
-                          if(pageNavProvider.currentPage == WritePostPage.pageName) WritePostPage(),
-                          if(pageNavProvider.currentPage == DetailPostPage.pageName) DetailPostPage(),
-                          if(pageNavProvider.currentPage == UserHomePage.pageName) UserHomePage(),
+                          if (pageNavProvider.currentPage ==
+                              WritePostPage.pageName)
+                            WritePostPage(),
+                          if (pageNavProvider.currentPage ==
+                              DetailPostPage.pageName)
+                            DetailPostPage(),
+                          if (pageNavProvider.currentPage ==
+                              UserHomePage.pageName)
+                            UserHomePage(),
                         ],
-                        onPopPage: (route, result){
-                          if(!route.didPop(result))
-                            return false;
+                        onPopPage: (route, result) {
+                          if (!route.didPop(result)) return false;
                           return true;
                         },
                       );

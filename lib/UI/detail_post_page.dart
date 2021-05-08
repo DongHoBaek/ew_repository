@@ -112,17 +112,17 @@ class _DetailPostState extends State<DetailPost> {
       );
     }
 
-    Widget _buildToolButton(icon, color, onPressed){
+    Widget _buildToolButton(icon, color, onPressed) {
       return IconButton(icon: Icon(icon), color: color, onPressed: onPressed);
     }
 
-    Widget _buildToolBar(){
+    Widget _buildToolBar() {
       return Row(
         children: [
-          _buildToolButton(Icons.favorite_outline, Colors.grey, (){}),
-          _buildToolButton(Icons.comment_outlined, Colors.grey, (){}),
+          _buildToolButton(Icons.favorite_outline, Colors.grey, () {}),
+          _buildToolButton(Icons.comment_outlined, Colors.grey, () {}),
           Spacer(),
-          _buildToolButton(Icons.bookmark_outline, Colors.grey, (){}),
+          _buildToolButton(Icons.bookmark_outline, Colors.grey, () {}),
         ],
       );
     }
@@ -147,15 +147,17 @@ class _DetailPostState extends State<DetailPost> {
             Expanded(
                 flex: 6, child: isEdit ? _buildEditContent() : _buildContent()),
             isEdit ? Container() : Expanded(flex: 1, child: _buildToolBar()),
-            isEdit ? Container() : Expanded(
-              flex: 4,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return _buildCommentBox();
-                  }),
-            )
+            isEdit
+                ? Container()
+                : Expanded(
+                    flex: 4,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 10,
+                        itemBuilder: (context, index) {
+                          return _buildCommentBox();
+                        }),
+                  )
           ],
         ));
   }
