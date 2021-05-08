@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ttt_project_003">
+    package="com.redpeach.ttt_project_0419">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -7,7 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="ttt_project_003">
         <activity
-            android:name=".MainActivity"
+            android:name="com.redpeach.ttt_project_0419.MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"

@@ -3,13 +3,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/UI/login_page.dart';
-import 'package:ttt_project_003/UI/user_home_page.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
-import 'UI/detail_post_page.dart';
+import 'file:///C:/Users/zzw12/FlutterProjects/ttt_project_0.0.3/lib/models/page_nav_provider.dart';
 
 import 'UI/home_page.dart';
 import 'UI/write_post_page.dart';
-import 'models/page_nav_provider.dart';
 
 class App extends StatelessWidget {
   @override
@@ -38,9 +36,7 @@ class App extends StatelessWidget {
                       return Navigator(
                         pages: [
                           MaterialPage(child: Home()),
-                          if(pageNavProvider.currentPage == WritePostPage.pageName) WritePostPage(),
-                          if(pageNavProvider.currentPage == DetailPostPage.pageName) DetailPostPage(),
-                          if(pageNavProvider.currentPage == UserHomePage.pageName) UserHomePage(),
+                          if(pageNavProvider.currentPage == WritePostPage.pageName) WritePostPage()
                         ],
                         onPopPage: (route, result){
                           if(!route.didPop(result))
