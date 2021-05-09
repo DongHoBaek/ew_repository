@@ -16,12 +16,31 @@ class HomePage extends Page {
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   User user = FirebaseAuth.instance.currentUser;
+
+  bool _isViewComment = true;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print('build!');
+
+    Widget _buildToggleButton() {
+      return Switch(
+          activeColor: Colors.blueAccent,
+          value: _isViewComment,
+          onChanged: (bool value) {
+            setState(() {
+              _isViewComment = value;
+            });
+          });
+    }
 
     Widget _buildDrawerButton(IconData icon, Function onTap, String title) {
       return ListTile(
@@ -60,33 +79,39 @@ class Home extends StatelessWidget {
       );
     }
 
-    Widget _buildPostButton(Function onTap) {
+    Widget _buildPostButton(String title, String subTitle, Function onTap) {
       return Container(
         margin: EdgeInsets.all(10),
         height: size.height * 0.3,
         decoration: BoxDecoration(
           color: Colors.grey[200],
         ),
-        child: ListTile(onTap: onTap),
+        child: ListTile(onTap: onTap,
+            title: Text(title),
+        subtitle: Text(subTitle),
+        ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          title: Text(
-            'HomePage',
-            style: TextStyle(color: Colors.black),
-          )),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        title: Text(
+          'HomePage',
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [_buildToggleButton()],
+      ),
       drawer: _buildDrawer(),
       body: Consumer<PostProvider>(
         builder: (context, postProvider, child) {
+          print('consumer');
           return ListView.builder(
-              itemCount: 5,
+              itemCount: postProvider.postList.length,
               itemBuilder: (context, index) {
-                return _buildPostButton(() {
+                return _buildPostButton(postProvider.postList[index][1], postProvider.postList[index][2], () {
                   Provider.of<PageNavProvider>(context, listen: false)
                       .goToOtherPage(DetailPostPage.pageName);
                 });
@@ -95,10 +120,11 @@ class Home extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        backgroundColor: Colors.grey,
+        backgroundColor: Colors.blueAccent,
         onPressed: () {
-          Provider.of<PageNavProvider>(context, listen: false)
-              .goToOtherPage(WritePostPage.pageName);
+          // Provider.of<PageNavProvider>(context, listen: false)
+          //     .goToOtherPage(WritePostPage.pageName);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => WritePost()));
         },
       ),
     );

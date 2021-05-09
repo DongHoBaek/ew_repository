@@ -9,7 +9,7 @@ class PostProvider with ChangeNotifier {
   String _content;
   String _uid;
   String _unm;
-  List<dynamic> _postList;
+  List<dynamic> _postList = [];
 
   String get currentDocId => _currentDocId;
 
@@ -95,7 +95,7 @@ class PostProvider with ChangeNotifier {
   // true = _currentDocId의 자식 게시글 _postList에 저장
   // false = 전체 게시글 _postList에 저장
   Future getPostList(bool isChildPosts) async {
-    _postList = [];
+    List<dynamic> postList = [];
     List<String> tmpList = [];
     var snapshot = isChildPosts
         ? await posts.where('parentPostDID', isEqualTo: _currentDocId).get()
@@ -112,7 +112,8 @@ class PostProvider with ChangeNotifier {
           cont = cont.substring(0, 25) + '...';
         }
         tmpList.add(cont);
-        _postList.add(tmpList);
+        postList.add(tmpList);
+        _postList = postList;
       }
     }
     print(_postList);

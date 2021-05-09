@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 
 class WritePostPage extends Page {
@@ -21,7 +22,6 @@ class _WritePostState extends State<WritePost> {
   TextEditingController contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   User user = FirebaseAuth.instance.currentUser;
-  PostProvider postProvider = PostProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class _WritePostState extends State<WritePost> {
 
     void checkButtonPressed() {
       if (_formKey.currentState.validate()) {
-        postProvider.createPost(titleController.text, contentController.text,
+        Provider.of<PostProvider>(context, listen: false).createPost(titleController.text, contentController.text,
             user.uid, user.displayName);
         Navigator.pop(context);
       }
