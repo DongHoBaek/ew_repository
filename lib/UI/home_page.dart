@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:ttt_project_003/UI/user_home_page.dart';
 import 'package:ttt_project_003/UI/write_post_page.dart';
 import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
+import 'package:ttt_project_003/models/pull_to_refresh.dart';
+
 import 'detail_post_page.dart';
 
 class HomePage extends Page {
@@ -28,8 +31,9 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    PullToRefresh pullToRefresh = PullToRefresh(context);
     Size size = MediaQuery.of(context).size;
-    print('build!');
+    print('HomePage build!');
 
     Widget _buildToggleButton() {
       return Switch(
@@ -86,9 +90,10 @@ class _HomeState extends State<Home> {
         decoration: BoxDecoration(
           color: Colors.grey[200],
         ),
-        child: ListTile(onTap: onTap,
-            title: Text(title),
-        subtitle: Text(subTitle),
+        child: ListTile(
+          onTap: onTap,
+          title: Text(title),
+          subtitle: Text(subTitle),
         ),
       );
     }
@@ -107,15 +112,48 @@ class _HomeState extends State<Home> {
       drawer: _buildDrawer(),
       body: Consumer<PostProvider>(
         builder: (context, postProvider, child) {
-          print('consumer');
-          return ListView.builder(
-              itemCount: postProvider.postList.length,
-              itemBuilder: (context, index) {
-                return _buildPostButton(postProvider.postList[index][1], postProvider.postList[index][2], () {
-                  Provider.of<PageNavProvider>(context, listen: false)
-                      .goToOtherPage(DetailPostPage.pageName);
-                });
-              });
+          print('HomePage postProvider consumer!');
+          if (postProvider.postList.isEmpty) {
+            Provider.of<PostProvider>(context, listen: false)
+                .getPostList(false);
+            return Container();
+          } else {
+            return SmartRefresher(
+                enablePullDown: true,
+                header: WaterDropHeader(),
+                footer: CustomFooter(
+                  builder: (BuildContext context, LoadStatus mode) {
+                    Widget body;
+                    if (mode == LoadStatus.idle) {
+                      body = Text("pull up load");
+                    } else if (mode == LoadStatus.loading) {
+                      body = CircularProgressIndicator();
+                    } else if (mode == LoadStatus.failed) {
+                      body = Text("Load Failed!Click retry!");
+                    } else if (mode == LoadStatus.canLoading) {
+                      body = Text("release to load more");
+                    } else {
+                      body = Text("No more Data");
+                    }
+                    return Container(
+                      height: 55.0,
+                      child: Center(child: body),
+                    );
+                  },
+                ),
+                controller: pullToRefresh.refreshController,
+                onRefresh: pullToRefresh.onRefresh,
+                onLoading: pullToRefresh.onLoading,
+                child: ListView.builder(
+                    itemCount: postProvider.postList.length,
+                    itemBuilder: (context, index) {
+                      return _buildPostButton(postProvider.postList[index][1],
+                          postProvider.postList[index][2], () {
+                        Provider.of<PageNavProvider>(context, listen: false)
+                            .goToOtherPage(DetailPostPage.pageName);
+                      });
+                    }));
+          }
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -124,7 +162,8 @@ class _HomeState extends State<Home> {
         onPressed: () {
           // Provider.of<PageNavProvider>(context, listen: false)
           //     .goToOtherPage(WritePostPage.pageName);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => WritePost()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => WritePost()));
         },
       ),
     );
