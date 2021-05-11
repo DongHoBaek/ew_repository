@@ -1,4 +1,9 @@
+import 'dart:ui';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 
 class DetailPostPage extends Page {
   static final String pageName = 'DetailPostPage';
@@ -17,15 +22,29 @@ class DetailPost extends StatefulWidget {
 
 class _DetailPostState extends State<DetailPost> {
   bool isEdit = false;
+  User user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    TextEditingController titleController = TextEditingController(text: Provider
+        .of<PostProvider>(context)
+        .title);
+    TextEditingController contentController = TextEditingController(
+        text: Provider
+            .of<PostProvider>(context)
+            .content);
+    Size size = MediaQuery
+        .of(context)
+        .size;
 
     Widget _buildSaveButton() {
       return IconButton(
           icon: Icon(Icons.check),
           onPressed: () {
+            Provider.of<PostProvider>(context, listen: false).updatePost(
+                titleController.text, contentController.text);
+            Provider.of<PostProvider>(context, listen: false).getPostList(
+                false);
             setState(() {
               isEdit = false;
             });
@@ -35,39 +54,60 @@ class _DetailPostState extends State<DetailPost> {
     PopupMenuEntry _buildPopupMenuItem(String title, Function onPressed) {
       return PopupMenuItem(
           child: TextButton(
-        child: Text(
-          title,
-          style: TextStyle(color: Colors.black),
-        ),
-        onPressed: onPressed,
-      ));
+            child: Text(
+              title,
+              style: TextStyle(color: Colors.black),
+            ),
+            onPressed: onPressed,
+          ));
     }
 
     Widget _buildPopupMenuButton() {
       return PopupMenuButton(
           icon: Icon(Icons.more_vert),
           itemBuilder: (context) {
-            return [
+            return user.uid == Provider.of<PostProvider>(context, listen: false).uid ? [
               _buildPopupMenuItem('편집', () {
                 setState(() {
                   isEdit = true;
                 });
                 Navigator.pop(context);
               }),
-              _buildPopupMenuItem('삭제', () {}),
+              _buildPopupMenuItem('삭제', () {
+                Navigator.pop(context);
+                Provider.of<PostProvider>(context, listen: false).deletePost();
+                Provider.of<PostProvider>(context, listen: false).getPostList(
+                    false);
+                Navigator.pop(context);
+              }),
+              _buildPopupMenuItem('익명화', () {
+                Navigator.pop(context);
+                Provider.of<PostProvider>(context, listen: false)
+                    .anonymizationPost();
+                Provider.of<PostProvider>(context, listen: false).getPostList(
+                    false);
+              }),
               _buildPopupMenuItem('신고', () {}),
-            ];
+            ] : [_buildPopupMenuItem('신고', () {}),];
           });
     }
 
     Widget _buildEditTitle() {
-      return TextFormField();
+      return TextFormField(
+        controller: titleController,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: '본문을 입력하세요',
+        ),
+      );
     }
 
     Widget _buildTitle() {
       return Text(
-        'title',
-        style: TextStyle(color: Colors.grey),
+        Provider
+            .of<PostProvider>(context)
+            .title,
+        style: TextStyle(color: Colors.black),
       );
     }
 
@@ -87,6 +127,7 @@ class _DetailPostState extends State<DetailPost> {
         child: Column(children: [
           Expanded(
             child: TextFormField(
+              controller: contentController,
               expands: true,
               maxLines: null,
               decoration: InputDecoration(
@@ -103,8 +144,10 @@ class _DetailPostState extends State<DetailPost> {
       return Container(
         width: size.width,
         child: Text(
-          'content',
-          style: TextStyle(color: Colors.grey),
+          Provider
+              .of<PostProvider>(context)
+              .content,
+          style: TextStyle(color: Colors.black),
           textScaleFactor: 1.5,
           textAlign: TextAlign.left,
         ),
@@ -150,14 +193,14 @@ class _DetailPostState extends State<DetailPost> {
             isEdit
                 ? Container()
                 : Expanded(
-                    flex: 4,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 10,
-                        itemBuilder: (context, index) {
-                          return _buildCommentBox();
-                        }),
-                  )
+              flex: 4,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return _buildCommentBox();
+                  }),
+            )
           ],
         ));
   }

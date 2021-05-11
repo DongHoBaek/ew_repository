@@ -83,16 +83,16 @@ class _HomeState extends State<Home> {
       );
     }
 
-    Widget _buildPostButton(String title, String subTitle, Function onTap) {
+    Widget _buildPostButton(String unm, String title, String subTitle, Function onTap) {
       return Container(
         margin: EdgeInsets.all(10),
-        height: size.height * 0.3,
+        height: size.height * 0.15,
         decoration: BoxDecoration(
           color: Colors.grey[200],
         ),
         child: ListTile(
           onTap: onTap,
-          title: Text(title),
+          title: Text('$unm\n$title'),
           subtitle: Text(subTitle),
         ),
       );
@@ -147,10 +147,14 @@ class _HomeState extends State<Home> {
                 child: ListView.builder(
                     itemCount: postProvider.postList.length,
                     itemBuilder: (context, index) {
-                      return _buildPostButton(postProvider.postList[index][1],
-                          postProvider.postList[index][2], () {
-                        Provider.of<PageNavProvider>(context, listen: false)
-                            .goToOtherPage(DetailPostPage.pageName);
+                      return _buildPostButton(postProvider.postList[index][1], postProvider.postList[index][2],
+                          postProvider.postList[index][3], () {
+                        postProvider
+                            .getPostData(postProvider.postList[index][0])
+                            .whenComplete(() => Provider.of<PageNavProvider>(
+                                    context,
+                                    listen: false)
+                                .goToOtherPage(DetailPostPage.pageName));
                       });
                     }));
           }
@@ -160,10 +164,8 @@ class _HomeState extends State<Home> {
         child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
         onPressed: () {
-          // Provider.of<PageNavProvider>(context, listen: false)
-          //     .goToOtherPage(WritePostPage.pageName);
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => WritePost()));
+          Provider.of<PageNavProvider>(context, listen: false)
+              .goToOtherPage(WritePostPage.pageName);
         },
       ),
     );

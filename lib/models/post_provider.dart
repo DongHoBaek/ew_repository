@@ -32,7 +32,6 @@ class PostProvider with ChangeNotifier {
   void setCurrentDocId(String currentDocId) {
     _currentDocId = currentDocId;
     print("set document id to $_currentDocId");
-    getPostData();
   }
 
   void createPost(String title, String content, String uid, String unm) {
@@ -50,11 +49,11 @@ class PostProvider with ChangeNotifier {
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add post: $error"));
-    setCurrentDocId(ref.id);
   }
 
-  void getPostData() {
-    posts.doc(_currentDocId).get().then((DocumentSnapshot documentSnapshot) {
+  Future getPostData(String currentDocId) async {
+    setCurrentDocId(currentDocId);
+    await posts.doc(currentDocId).get().then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         _rootPostDID = documentSnapshot.data()['rootPostDID'];
         _parentPostDID = documentSnapshot.data()['parentPostDID'];
@@ -62,6 +61,7 @@ class PostProvider with ChangeNotifier {
         _content = documentSnapshot.data()['content'];
         _uid = documentSnapshot.data()['uid'];
         _unm = documentSnapshot.data()['unm'];
+        print('get data!');
       } else {
         print('Document does not exist on the database');
       }
@@ -74,18 +74,24 @@ class PostProvider with ChangeNotifier {
     _content = content;
     posts
         .doc(_currentDocId)
-        .set({'content': content, 'title': title})
+        .update({'content': content, 'title': title})
         .then((value) => print("Post Updated"))
         .catchError((error) => print("Failed to update post: $error"));
-    notifyListeners();
   }
 
   void deletePost() {
+    posts
+        .doc(_currentDocId)
+        .delete()
+        .then((value) => print("Post Delete"))
+        .catchError((error) => print("Failed to Anonymize post: $error"));
+  }
+
+  void anonymizationPost() {
     String deleteDID = _currentDocId;
-    setCurrentDocId(null);
     posts
         .doc(deleteDID)
-        .set({'unm': '익명'})
+        .update({'unm': '익명'})
         .then((value) => print("Post Anonymized"))
         .catchError((error) => print("Failed to Anonymize post: $error"));
   }
@@ -105,6 +111,7 @@ class PostProvider with ChangeNotifier {
       for (int i = 0; i < docs.length; i++) {
         tmpList = [];
         tmpList.add(docs[i].id);
+        tmpList.add(docs[i].data()['unm']);
         tmpList.add(docs[i].data()['title']);
 
         String cont = docs[i].data()['content'];
