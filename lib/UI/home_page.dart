@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -108,7 +107,10 @@ class _HomeState extends State<Home> {
                   Expanded(
                     flex: 3,
                     child: Container(
-                      color: Colors.grey,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -188,7 +190,10 @@ class _HomeState extends State<Home> {
                   Expanded(
                     flex: 1,
                     child: Container(
-                      color: Colors.grey,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey,
+                      ),
                     ),
                   )
                 ],
@@ -202,7 +207,7 @@ class _HomeState extends State<Home> {
           scrollDirection: Axis.horizontal,
           itemCount: 5,
           itemBuilder: (context, index) {
-            return _buildSuggestPostButton(size.width * 0.65, '임시', () {});
+            return _buildSuggestPostButton(size.width * 0.75, '임시', () {});
           });
     }
 
@@ -246,7 +251,7 @@ class _HomeState extends State<Home> {
           itemCount: postProvider.postList.length,
           itemBuilder: (context, index) {
             return _buildPostButton(
-                size.height * 0.2,
+                size.height * 0.17,
                 postProvider.postList[index][1],
                 postProvider.postList[index][2], () {
               postProvider
@@ -325,12 +330,16 @@ class _HomeState extends State<Home> {
                 controller: pullToRefresh.refreshController,
                 onRefresh: pullToRefresh.onRefresh,
                 onLoading: pullToRefresh.onLoading,
-                child: SingleChildScrollView(
-                  physics: ScrollPhysics(),
-                  child: Column(children: [
-                    _buildSuggestPostArea(),
-                    _buildPostListArea(postProvider)
-                  ]),
+                child: Container(
+                  color: Colors.white,
+                  child: SingleChildScrollView(
+                    physics: ScrollPhysics(),
+                    child: Column(
+                        children: [
+                      _buildSuggestPostArea(),
+                      _buildPostListArea(postProvider)
+                    ]),
+                  ),
                 ));
           }
         },
