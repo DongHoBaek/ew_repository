@@ -69,6 +69,7 @@ class Home extends StatelessWidget {
       drawer: _buildDrawer(),
       body: Consumer<PostProvider>(
         builder: (context, postProvider, child){
+          postProvider.getPostList(false);
           return ListView.builder(
               itemCount: postProvider.postList.length,
               itemBuilder: (context, index) {
