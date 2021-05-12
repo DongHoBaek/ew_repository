@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 
 class WritePostPage extends Page {
@@ -21,17 +22,16 @@ class _WritePostState extends State<WritePost> {
   TextEditingController contentController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   User user = FirebaseAuth.instance.currentUser;
-  PostProvider postProvider = PostProvider();
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     void checkButtonPressed() {
-      if(_formKey.currentState.validate()){
-        postProvider.createPost(titleController.text, contentController.text, user.uid, user.displayName);
-        postProvider.getPostList();
-
+      if (_formKey.currentState.validate()) {
+        Provider.of<PostProvider>(context, listen: false).createPost(titleController.text, contentController.text,
+            user.uid, user.displayName);
+        Provider.of<PostProvider>(context, listen: false).getPostList(false);
         Navigator.pop(context);
       }
     }
@@ -53,9 +53,7 @@ class _WritePostState extends State<WritePost> {
           validator: (title) {
             if (title.isEmpty) {
               return '올바른 제목을 입력하세요';
-            } else if (title.isNotEmpty) {
-
-            }
+            } else if (title.isNotEmpty) {}
             return null;
           },
         ),

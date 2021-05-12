@@ -5,7 +5,7 @@ class PageNavProvider extends ChangeNotifier {
 
   String get currentPage => _currentPage;
 
-  void goToOtherPage(String pageName){
+  void goToOtherPage(String pageName) {
     _currentPage = pageName;
     notifyListeners();
   }

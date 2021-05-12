@@ -9,7 +9,7 @@ class LoginPage extends StatelessWidget {
 
     // Obtain the auth details from the request
     final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+        await googleUser.authentication;
 
     // Create a new credential
     final GoogleAuthCredential credential = GoogleAuthProvider.credential(
@@ -23,34 +23,39 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
 
-    Widget _buildButtonRow(){
+    Widget _buildButtonRow() {
       return TextButton(
-        onPressed: (){
+        onPressed: () {
           signInWithGoogle();
         },
         child: Container(
-          width: size.width*0.6,
-          height: size.height*0.08,
+          width: size.width * 0.6,
+          height: size.height * 0.08,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.red
-          ),
+              borderRadius: BorderRadius.circular(5), color: Colors.red),
           child: Row(
             children: [
-              SizedBox(width: 20,),
+              SizedBox(
+                width: 20,
+              ),
               CircleAvatar(
-                child:  Image(image: AssetImage('assets/google_logo.png'), color: Colors.white,),
-                radius: size.width*0.05,
+                child: Image(
+                  image: AssetImage('assets/google_logo.png'),
+                  color: Colors.white,
+                ),
+                radius: size.width * 0.05,
                 backgroundColor: Colors.red,
               ),
-              SizedBox(width: 15,),
-              Text('google login', textScaleFactor: 1.5, style: TextStyle(
-                  color: Colors.white
-              ),)
+              SizedBox(
+                width: 15,
+              ),
+              Text(
+                'google login',
+                textScaleFactor: 1.5,
+                style: TextStyle(color: Colors.white),
+              )
             ],
           ),
         ),
