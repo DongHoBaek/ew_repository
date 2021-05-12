@@ -9,6 +9,7 @@ class PostProvider with ChangeNotifier {
   String _content;
   String _uid;
   String _unm;
+  int _likes;
   List<dynamic> _postList = [];
 
   String get currentDocId => _currentDocId;
@@ -24,6 +25,8 @@ class PostProvider with ChangeNotifier {
   String get uid => _uid;
 
   String get unm => _unm;
+
+  int get likes => _likes;
 
   List<dynamic> get postList => _postList;
 
@@ -45,9 +48,10 @@ class PostProvider with ChangeNotifier {
           'uid': uid,
           'unm': unm,
           'rootPostDID': rootPostDID,
-          'parentPostDID': parentPostDID
+          'parentPostDID': parentPostDID,
+          'likes': 0
         })
-        .then((value) => print("User Added"))
+        .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));
   }
 
@@ -61,6 +65,7 @@ class PostProvider with ChangeNotifier {
         _content = documentSnapshot.data()['content'];
         _uid = documentSnapshot.data()['uid'];
         _unm = documentSnapshot.data()['unm'];
+        _likes = documentSnapshot.data()['likes'];
         print('get data!');
       } else {
         print('Document does not exist on the database');
@@ -124,6 +129,24 @@ class PostProvider with ChangeNotifier {
       }
     }
     print(_postList);
+    notifyListeners();
+  }
+
+  void liked(){
+    _likes += 1;
+    posts.doc(_currentDocId).update({'likes':_likes})
+        .then((value) => print("post is liked"))
+        .catchError((error) => print("Failed to like: $error"));
+
+    notifyListeners();
+  }
+
+  void unliked(){
+    _likes -= 1;
+    posts.doc(_currentDocId).update({'likes':_likes})
+        .then((value) => print("post is unliked"))
+        .catchError((error) => print("Failed to unlike: $error"));
+
     notifyListeners();
   }
 }
