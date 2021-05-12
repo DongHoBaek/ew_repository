@@ -89,7 +89,7 @@ class PostProvider with ChangeNotifier {
         .doc(_currentDocId)
         .delete()
         .then((value) => print("Post Delete"))
-        .catchError((error) => print("Failed to Anonymize post: $error"));
+        .catchError((error) => print("Failed to delete post: $error"));
   }
 
   void anonymizationPost() {

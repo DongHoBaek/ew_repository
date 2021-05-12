@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/UI/login_page.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 
 import 'UI/detail_post_page.dart';
 import 'UI/home_page.dart';
@@ -16,9 +17,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<PageNavProvider>(
-            create: (_) => PageNavProvider()),
-        ChangeNotifierProvider<PostProvider>(create: (_) => PostProvider())
+        ChangeNotifierProvider<PageNavProvider>(create: (_) => PageNavProvider()),
+        ChangeNotifierProvider<PostProvider>(create: (_) => PostProvider()),
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider())
       ],
       child: FutureBuilder(
         future: Firebase.initializeApp(),
