@@ -38,6 +38,7 @@ class _WritePostState extends State<WritePost> {
 
     Widget _buildAppBar(checkButtonPressed) {
       return AppBar(
+        automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         elevation: 0.0,

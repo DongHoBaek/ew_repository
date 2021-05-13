@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -105,6 +103,7 @@ class _DetailPostState extends State<DetailPost> {
 
     Widget _buildAppBar() {
       return AppBar(
+          automaticallyImplyLeading: false,
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           elevation: 0.0,
@@ -195,14 +194,12 @@ class _DetailPostState extends State<DetailPost> {
         constraints: BoxConstraints(
           minHeight: size.height*0.35
         ),
-        child: Expanded(
-          child: Text(
-            Provider.of<PostProvider>(context).content,
-            style: TextStyle(color: Colors.black),
-            textScaleFactor: 1.2,
-            textAlign: TextAlign.left,
+        child: Text(
+          Provider.of<PostProvider>(context).content,
+          style: TextStyle(color: Colors.black),
+          textScaleFactor: 1.2,
+          textAlign: TextAlign.left,
 
-          ),
         ),
         padding: EdgeInsets.all(size.width * 0.05),
       );
@@ -210,7 +207,9 @@ class _DetailPostState extends State<DetailPost> {
 
     Widget _buildContentArea() {
       return Column(
-        children: [_buildTitle(), _buildContent()],
+        children: [_buildTitle(),
+          _buildContent()
+        ],
       );
     }
 

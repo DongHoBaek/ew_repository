@@ -32,29 +32,54 @@ class App extends StatelessWidget {
             return StreamBuilder(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-
                   if (!snapshot.hasData) {
                     return LoginPage();
                   } else {
                     return Consumer<PageNavProvider>(
                         builder: (context, pageNavProvider, child) {
-                      return Navigator(
-                        pages: [
-                          MaterialPage(child: Home()),
-                          if (pageNavProvider.currentPage ==
-                              WritePostPage.pageName)
-                            WritePostPage(),
-                          if (pageNavProvider.currentPage ==
-                              DetailPostPage.pageName)
-                            DetailPostPage(),
-                          if (pageNavProvider.currentPage ==
-                              UserHomePage.pageName)
-                            UserHomePage(),
-                        ],
-                        onPopPage: (route, result) {
-                          if (!route.didPop(result)) return false;
-                          return true;
+                      return WillPopScope(
+                        onWillPop: () {
+                          if (pageNavProvider.currentPage == 'HomePage') {
+                            return showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Text('종료하시겠습니까?'),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                            child: Text('아니오')),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, true);
+                                            },
+                                            child: Text('예')),
+                                      ],
+                                    ));
+                          } else {
+                            pageNavProvider.goBack();
+                            return Future.value(false);
+                          }
                         },
+                        child: Navigator(
+                          pages: [
+                            MaterialPage(child: Home()),
+                            if (pageNavProvider.currentPage ==
+                                WritePostPage.pageName)
+                              WritePostPage(),
+                            if (pageNavProvider.currentPage ==
+                                DetailPostPage.pageName)
+                              DetailPostPage(),
+                            if (pageNavProvider.currentPage ==
+                                UserHomePage.pageName)
+                              UserHomePage(),
+                          ],
+                          onPopPage: (route, result) {
+                            if (!route.didPop(result)) return false;
+                            return true;
+                          },
+                        ),
                       );
                     });
                   }
