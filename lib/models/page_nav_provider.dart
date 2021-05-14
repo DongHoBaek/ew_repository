@@ -1,21 +1,23 @@
 import 'package:flutter/foundation.dart';
 
 class PageNavProvider extends ChangeNotifier {
-  String _lastPage = 'HomePage';
   String _currentPage = 'HomePage';
 
-  String get lastPage => _lastPage;
+  List<String> _pageList = ['HomePage'];
+
   String get currentPage => _currentPage;
 
   void goToOtherPage(String pageName) {
-    _lastPage = _currentPage;
     _currentPage = pageName;
+    _pageList.add(_currentPage);
+    print(_pageList);
     notifyListeners();
   }
 
   void goBack(){
-    _currentPage = _lastPage;
-    print(_currentPage);
+    _currentPage = _pageList[_pageList.length - 2];
+    _pageList.removeAt(_pageList.length - 1);
+    print(_pageList);
     notifyListeners();
   }
 }

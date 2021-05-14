@@ -1,5 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/page_nav_provider.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
+
+import 'detail_post_page.dart';
 
 class UserHomePage extends Page {
   static final String pageName = 'UserHomePage';
@@ -114,23 +119,44 @@ class UserHome extends StatelessWidget {
           ));
     }
 
-    Widget _buildPostList() {
+    Widget _buildPostList(postProvider) {
       return ListView.builder(
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: 5,
+          itemCount: postProvider.myPostList.length,
           itemBuilder: (context, index) {
-            return _buildPostButton(size.height * 0.14, '백동호', 'title', () {});
+            return _buildPostButton(size.height * 0.14, user.displayName,
+                postProvider.myPostList[index][1], () {
+              postProvider
+                  .getPostData(postProvider.postList[index][0])
+                  .whenComplete(() =>
+                      Provider.of<PageNavProvider>(context, listen: false)
+                          .goToOtherPage(DetailPostPage.pageName));
+            });
           });
     }
 
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Container(
-          color: Colors.white,
-          child: SingleChildScrollView(
-              physics: ScrollPhysics(),
-              child: Column(children: [_buildUserInfo(), _buildPostList()]))),
+      body: Consumer<PostProvider>(
+        builder: (context, postProvider, child) {
+          print('userPage postProvider consumer!');
+          if (postProvider.postList.isEmpty) {
+            Provider.of<PostProvider>(context, listen: false)
+                .getPostList(false);
+            return Container();
+          } else {
+            return Container(
+                color: Colors.white,
+                child: SingleChildScrollView(
+                    physics: ScrollPhysics(),
+                    child: Column(children: [
+                      _buildUserInfo(),
+                      _buildPostList(postProvider)
+                    ])));
+          }
+        },
+      ),
     );
   }
 }
