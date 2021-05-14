@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostProvider with ChangeNotifier {
+  User user = FirebaseAuth.instance.currentUser;
+
   String _currentDocId;
   String _rootPostDID;
   String _parentPostDID;
@@ -11,6 +14,7 @@ class PostProvider with ChangeNotifier {
   String _unm;
   int _likes;
   List<dynamic> _postList = [];
+  List<dynamic> _myPostList = [];
 
   String get currentDocId => _currentDocId;
 
@@ -29,6 +33,8 @@ class PostProvider with ChangeNotifier {
   int get likes => _likes;
 
   List<dynamic> get postList => _postList;
+
+  List<dynamic> get myPostList => _myPostList;
 
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
 
@@ -57,7 +63,10 @@ class PostProvider with ChangeNotifier {
 
   Future getPostData(String currentDocId) async {
     setCurrentDocId(currentDocId);
-    await posts.doc(currentDocId).get().then((DocumentSnapshot documentSnapshot) {
+    await posts
+        .doc(currentDocId)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
         _rootPostDID = documentSnapshot.data()['rootPostDID'];
         _parentPostDID = documentSnapshot.data()['parentPostDID'];
@@ -108,13 +117,33 @@ class PostProvider with ChangeNotifier {
   Future getPostList(bool isChildPosts) async {
     List<dynamic> postList = [];
     List<String> tmpList = [];
+
+    List<dynamic> myPostList = [];
+    List<String> myTmpList = [];
+
     var snapshot = isChildPosts
         ? await posts.where('parentPostDID', isEqualTo: _currentDocId).get()
         : await posts.get();
+
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {
         tmpList = [];
+        myTmpList = [];
+
+        if (docs[i].data()['uid'] == user.uid) {
+          myTmpList.add(docs[i].id);
+          myTmpList.add(docs[i].data()['title']);
+
+          String myCont = docs[i].data()['content'];
+          if (myCont.length > 25) {
+            myCont = myCont.substring(0, 25) + '...';
+          }
+          myTmpList.add(myCont);
+          myPostList.add(myTmpList);
+          _myPostList = myPostList;
+        }
+
         tmpList.add(docs[i].id);
         tmpList.add(docs[i].data()['unm']);
         tmpList.add(docs[i].data()['title']);
@@ -128,7 +157,10 @@ class PostProvider with ChangeNotifier {
         _postList = postList;
       }
     }
-    print(_postList);
+
+    print('PostList: $_postList');
+    print('MyPostList: $_myPostList');
+
     notifyListeners();
   }
 

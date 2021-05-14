@@ -26,7 +26,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   User user = FirebaseAuth.instance.currentUser;
-
   bool _isViewComment = true;
 
   @override
@@ -90,7 +89,7 @@ class _HomeState extends State<Home> {
           width: width,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Colors.grey[400],
@@ -108,7 +107,7 @@ class _HomeState extends State<Home> {
                     flex: 3,
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(20),
                         color: Colors.grey,
                       ),
                     ),
@@ -139,11 +138,11 @@ class _HomeState extends State<Home> {
         double height, String unm, String title, Function onTap) {
       return Container(
           padding: EdgeInsets.all(10),
-          margin: EdgeInsets.all(10),
+          margin: EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
           height: height,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(20),
             boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Colors.grey[400],
@@ -158,13 +157,13 @@ class _HomeState extends State<Home> {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 2,
+                    flex: 5,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           title,
-                          textScaleFactor: 1.5,
+                          textScaleFactor: 1.2,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Spacer(),
@@ -188,10 +187,10 @@ class _HomeState extends State<Home> {
                     width: 10,
                   ),
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(20),
                         color: Colors.grey,
                       ),
                     ),
@@ -211,7 +210,7 @@ class _HomeState extends State<Home> {
           });
     }
 
-    Widget _buildSuggestPostArea() {
+    Widget _buildSuggestPostListArea() {
       return Column(children: [
         Container(
           margin: EdgeInsets.only(top: 10),
@@ -251,7 +250,7 @@ class _HomeState extends State<Home> {
           itemCount: postProvider.postList.length,
           itemBuilder: (context, index) {
             return _buildPostButton(
-                size.height * 0.17,
+                size.height * 0.14,
                 postProvider.postList[index][1],
                 postProvider.postList[index][2], () {
               postProvider
@@ -266,7 +265,7 @@ class _HomeState extends State<Home> {
     Widget _buildPostListArea(postProvider) {
       return Column(children: [
         Container(
-          height: size.height * 0.05,
+          height: size.height * 0.1,
           child: Row(
             children: [
               SizedBox(
@@ -334,9 +333,8 @@ class _HomeState extends State<Home> {
                   color: Colors.white,
                   child: SingleChildScrollView(
                     physics: ScrollPhysics(),
-                    child: Column(
-                        children: [
-                      _buildSuggestPostArea(),
+                    child: Column(children: [
+                      _buildSuggestPostListArea(),
                       _buildPostListArea(postProvider)
                     ]),
                   ),

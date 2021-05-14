@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,25 +24,20 @@ class _DetailPostState extends State<DetailPost> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController titleController = TextEditingController(text: Provider
-        .of<PostProvider>(context)
-        .title);
-    TextEditingController contentController = TextEditingController(
-        text: Provider
-            .of<PostProvider>(context)
-            .content);
-    Size size = MediaQuery
-        .of(context)
-        .size;
+    TextEditingController titleController =
+        TextEditingController(text: Provider.of<PostProvider>(context).title);
+    TextEditingController contentController =
+        TextEditingController(text: Provider.of<PostProvider>(context).content);
+    Size size = MediaQuery.of(context).size;
 
     Widget _buildSaveButton() {
       return IconButton(
           icon: Icon(Icons.check),
           onPressed: () {
-            Provider.of<PostProvider>(context, listen: false).updatePost(
-                titleController.text, contentController.text);
-            Provider.of<PostProvider>(context, listen: false).getPostList(
-                false);
+            Provider.of<PostProvider>(context, listen: false)
+                .updatePost(titleController.text, contentController.text);
+            Provider.of<PostProvider>(context, listen: false)
+                .getPostList(false);
             setState(() {
               isEdit = false;
             });
@@ -54,41 +47,47 @@ class _DetailPostState extends State<DetailPost> {
     PopupMenuEntry _buildPopupMenuItem(String title, Function onPressed) {
       return PopupMenuItem(
           child: TextButton(
-            child: Text(
-              title,
-              style: TextStyle(color: Colors.black),
-            ),
-            onPressed: onPressed,
-          ));
+        child: Text(
+          title,
+          style: TextStyle(color: Colors.black),
+        ),
+        onPressed: onPressed,
+      ));
     }
 
     Widget _buildPopupMenuButton() {
       return PopupMenuButton(
           icon: Icon(Icons.more_vert),
           itemBuilder: (context) {
-            return user.uid == Provider.of<PostProvider>(context, listen: false).uid ? [
-              _buildPopupMenuItem('편집', () {
-                setState(() {
-                  isEdit = true;
-                });
-                Navigator.pop(context);
-              }),
-              _buildPopupMenuItem('삭제', () {
-                Navigator.pop(context);
-                Provider.of<PostProvider>(context, listen: false).deletePost();
-                Provider.of<PostProvider>(context, listen: false).getPostList(
-                    false);
-                Navigator.pop(context);
-              }),
-              _buildPopupMenuItem('익명화', () {
-                Navigator.pop(context);
-                Provider.of<PostProvider>(context, listen: false)
-                    .anonymizationPost();
-                Provider.of<PostProvider>(context, listen: false).getPostList(
-                    false);
-              }),
-              _buildPopupMenuItem('신고', () {}),
-            ] : [_buildPopupMenuItem('신고', () {}),];
+            return user.uid ==
+                    Provider.of<PostProvider>(context, listen: false).uid
+                ? [
+                    _buildPopupMenuItem('편집', () {
+                      setState(() {
+                        isEdit = true;
+                      });
+                      Navigator.pop(context);
+                    }),
+                    _buildPopupMenuItem('삭제', () {
+                      Navigator.pop(context);
+                      Provider.of<PostProvider>(context, listen: false)
+                          .deletePost();
+                      Provider.of<PostProvider>(context, listen: false)
+                          .getPostList(false);
+                      Navigator.pop(context);
+                    }),
+                    _buildPopupMenuItem('익명화', () {
+                      Navigator.pop(context);
+                      Provider.of<PostProvider>(context, listen: false)
+                          .anonymizationPost();
+                      Provider.of<PostProvider>(context, listen: false)
+                          .getPostList(false);
+                    }),
+                    _buildPopupMenuItem('신고', () {}),
+                  ]
+                : [
+                    _buildPopupMenuItem('신고', () {}),
+                  ];
           });
     }
 
@@ -102,27 +101,76 @@ class _DetailPostState extends State<DetailPost> {
       );
     }
 
-    Widget _buildTitle() {
-      return Text(
-        Provider
-            .of<PostProvider>(context)
-            .title,
-        style: TextStyle(color: Colors.black),
-      );
-    }
-
     Widget _buildAppBar() {
       return AppBar(
+          automaticallyImplyLeading: false,
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           elevation: 0.0,
-          title: isEdit ? _buildEditTitle() : _buildTitle(),
+          title: isEdit ? _buildEditTitle() : Container(),
           actions: [isEdit ? _buildSaveButton() : _buildPopupMenuButton()]);
+    }
+
+    Widget _buildUserBox() {
+      return Container(
+        margin: EdgeInsets.only(top: 10),
+        height: size.height * 0.05,
+        child: Row(
+          children: [
+            SizedBox(
+              width: size.width * 0.05,
+            ),
+            CircleAvatar(
+              backgroundColor: Colors.grey,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              '${Provider.of<PostProvider>(context).unm}',
+              textScaleFactor: 1.2,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            )
+          ],
+        ),
+      );
+    }
+
+    Widget _buildImage() {
+      return Container(
+        margin: EdgeInsets.all(10),
+        height: size.height * 0.25,
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+        ),
+      );
+    }
+
+    Widget _buildTitle() {
+      return Container(
+        height: size.height * 0.05,
+        child: Row(
+          children: [
+            SizedBox(
+              width: size.width * 0.05,
+            ),
+            Text(
+              Provider.of<PostProvider>(context).title,
+              textScaleFactor: 1.5,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Spacer(),
+            IconButton(icon: Icon(Icons.bookmark_outline), onPressed: () {})
+          ],
+        ),
+      );
     }
 
     Widget _buildEditContent() {
       return Container(
         width: size.width,
+        height: size.height,
         padding: EdgeInsets.all(size.width * 0.05),
         child: Column(children: [
           Expanded(
@@ -143,65 +191,138 @@ class _DetailPostState extends State<DetailPost> {
     Widget _buildContent() {
       return Container(
         width: size.width,
+        constraints: BoxConstraints(
+          minHeight: size.height*0.35
+        ),
         child: Text(
-          Provider
-              .of<PostProvider>(context)
-              .content,
+          Provider.of<PostProvider>(context).content,
           style: TextStyle(color: Colors.black),
-          textScaleFactor: 1.5,
+          textScaleFactor: 1.2,
           textAlign: TextAlign.left,
+
         ),
         padding: EdgeInsets.all(size.width * 0.05),
       );
     }
 
-    Widget _buildToolButton(icon, color, onPressed) {
-      return IconButton(icon: Icon(icon), color: color, onPressed: onPressed);
-    }
-
-    Widget _buildToolBar() {
-      return Row(
-        children: [
-          _buildToolButton(Icons.favorite_outline, Colors.grey, () {}),
-          _buildToolButton(Icons.comment_outlined, Colors.grey, () {}),
-          Spacer(),
-          _buildToolButton(Icons.bookmark_outline, Colors.grey, () {}),
+    Widget _buildContentArea() {
+      return Column(
+        children: [_buildTitle(),
+          _buildContent()
         ],
       );
     }
 
-    Widget _buildCommentBox() {
+    Widget _buildCommentBox(width, title, onTap) {
       return Container(
-        width: size.width * 0.35,
-        margin: EdgeInsets.all(10),
-        color: Colors.grey[200],
-        child: ListTile(
-          title: Text('CommentTitle'),
-          subtitle: Text('CommentContent'),
-          onTap: () {},
+          padding: EdgeInsets.all(10),
+          margin: EdgeInsets.all(10),
+          width: width,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.grey[400],
+                offset: Offset(0.0, 2.0),
+                blurRadius: 5.0,
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: onTap,
+            child: Container(
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ));
+    }
+
+    Widget _buildCommentBoxList() {
+      return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: 5,
+          itemBuilder: (context, index) {
+            return _buildCommentBox(size.width * 0.75, '임시', () {});
+          });
+    }
+
+    Widget _buildCommentBoxListArea() {
+      return Column(children: [
+        Container(
+          margin: EdgeInsets.only(top: 10),
+          height: size.height * 0.05,
+          child: Row(
+            children: [
+              SizedBox(
+                width: size.width * 0.05,
+              ),
+              Text(
+                '댓글',
+                textScaleFactor: 1.3,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    '더보기',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ))
+            ],
+          ),
         ),
-      );
+        Container(
+          height: size.height * 0.2,
+          child: _buildCommentBoxList(),
+        ),
+      ]);
     }
 
     return Scaffold(
         appBar: _buildAppBar(),
-        body: Column(
-          children: [
-            Expanded(
-                flex: 6, child: isEdit ? _buildEditContent() : _buildContent()),
-            isEdit ? Container() : Expanded(flex: 1, child: _buildToolBar()),
-            isEdit
-                ? Container()
-                : Expanded(
-              flex: 4,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return _buildCommentBox();
-                  }),
-            )
-          ],
+        body: Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            physics: isEdit ? NeverScrollableScrollPhysics() : ScrollPhysics(),
+            child: Column(
+                children: isEdit
+                    ? [_buildEditContent()]
+                    : [
+                        _buildUserBox(),
+                        _buildImage(),
+                        _buildContentArea(),
+                        _buildCommentBoxListArea()
+                      ]),
+          ),
         ));
   }
 }
