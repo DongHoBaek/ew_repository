@@ -14,7 +14,7 @@ class PullToRefresh{
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
-    Provider.of<PostProvider>(context, listen: false).getPostList(false);
+    Provider.of<PostProvider>(context, listen: false).getHomePostList();
     _refreshController.refreshCompleted();
   }
 

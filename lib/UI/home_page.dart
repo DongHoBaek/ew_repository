@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -7,6 +6,7 @@ import 'package:ttt_project_003/UI/write_post_page.dart';
 import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/pull_to_refresh.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 
 import 'detail_post_page.dart';
 
@@ -25,7 +25,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  User user = FirebaseAuth.instance.currentUser;
   bool _isViewComment = true;
 
   @override
@@ -60,8 +59,8 @@ class _HomeState extends State<Home> {
           child: ListView(
             children: [
               ListTile(
-                title: Text(user.displayName),
-                subtitle: Text(user.email),
+                title: Text(Provider.of<UserProvider>(context, listen: false).name),
+                subtitle: Text(Provider.of<UserProvider>(context, listen: false).email),
                 leading: CircleAvatar(
                   backgroundColor: Colors.grey,
                 ),

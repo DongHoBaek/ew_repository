@@ -36,6 +36,7 @@ class App extends StatelessWidget {
                   if (!snapshot.hasData) {
                     return LoginPage();
                   } else {
+                    Provider.of<UserProvider>(context, listen: false).login();
                     return Consumer<PageNavProvider>(
                         builder: (context, pageNavProvider, child) {
                       return WillPopScope(
