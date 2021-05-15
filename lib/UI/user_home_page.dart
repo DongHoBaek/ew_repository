@@ -128,7 +128,7 @@ class UserHome extends StatelessWidget {
             return _buildPostButton(size.height * 0.14, user.displayName,
                 postProvider.myPostList[index][1], () {
               postProvider
-                  .getPostData(postProvider.postList[index][0])
+                  .getPostData(postProvider.myPostList[index][0])
                   .whenComplete(() =>
                       Provider.of<PageNavProvider>(context, listen: false)
                           .goToOtherPage(DetailPostPage.pageName));
@@ -141,9 +141,9 @@ class UserHome extends StatelessWidget {
       body: Consumer<PostProvider>(
         builder: (context, postProvider, child) {
           print('userPage postProvider consumer!');
-          if (postProvider.postList.isEmpty) {
+          if (postProvider.myPostList.isEmpty) {
             Provider.of<PostProvider>(context, listen: false)
-                .getPostList(false);
+                .getMyPostList(user.uid);
             return Container();
           } else {
             return Container(
