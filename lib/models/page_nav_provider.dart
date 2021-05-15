@@ -6,6 +6,7 @@ class PageNavProvider extends ChangeNotifier {
   List<String> _pageList = ['HomePage'];
 
   String get currentPage => _currentPage;
+  List<String> get pageList => _pageList;
 
   void goToOtherPage(String pageName) {
     _currentPage = pageName;

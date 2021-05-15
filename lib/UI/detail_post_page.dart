@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/UI/write_post_page.dart';
+import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 
 class DetailPostPage extends Page {
@@ -191,15 +193,12 @@ class _DetailPostState extends State<DetailPost> {
     Widget _buildContent() {
       return Container(
         width: size.width,
-        constraints: BoxConstraints(
-          minHeight: size.height*0.35
-        ),
+        constraints: BoxConstraints(minHeight: size.height * 0.35),
         child: Text(
           Provider.of<PostProvider>(context).content,
           style: TextStyle(color: Colors.black),
           textScaleFactor: 1.2,
           textAlign: TextAlign.left,
-
         ),
         padding: EdgeInsets.all(size.width * 0.05),
       );
@@ -207,9 +206,7 @@ class _DetailPostState extends State<DetailPost> {
 
     Widget _buildContentArea() {
       return Column(
-        children: [_buildTitle(),
-          _buildContent()
-        ],
+        children: [_buildTitle(), _buildContent()],
       );
     }
 
@@ -265,16 +262,50 @@ class _DetailPostState extends State<DetailPost> {
           ));
     }
 
-    Widget _buildCommentBoxList() {
+    Widget _buildAddContent() {
+      return InkWell(
+        onTap: () {
+          Provider.of<PageNavProvider>(context, listen: false)
+              .goToOtherPage(WritePostPage.pageName);
+        },
+        child: Container(
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10),
+            height: size.width * 0.2,
+            width: size.width * 0.2,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.grey[400],
+                  offset: Offset(0.0, 2.0),
+                  blurRadius: 5.0,
+                ),
+              ],
+            ),
+            child: Icon(Icons.add)),
+      );
+    }
+
+    Widget _buildCommentBoxList(postProvider) {
       return ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
           scrollDirection: Axis.horizontal,
-          itemCount: 5,
+          itemCount: postProvider.postList.length,
           itemBuilder: (context, index) {
-            return _buildCommentBox(size.width * 0.75, '임시', () {});
+            return _buildCommentBox(size.width * 0.75, postProvider.postList[index][2], () {
+              postProvider
+                  .getPostData(postProvider.postList[index][0])
+                  .whenComplete(() =>
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(DetailPostPage.pageName));
+            });
           });
     }
 
-    Widget _buildCommentBoxListArea() {
+    Widget _buildCommentBoxListArea(postProvider) {
       return Column(children: [
         Container(
           margin: EdgeInsets.only(top: 10),
@@ -296,13 +327,17 @@ class _DetailPostState extends State<DetailPost> {
                     '더보기',
                     style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
-                  ))
+                  )),
             ],
           ),
         ),
         Container(
           height: size.height * 0.2,
-          child: _buildCommentBoxList(),
+          child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: ScrollPhysics(),
+              child:
+                  Row(children: [_buildAddContent(), _buildCommentBoxList(postProvider)])),
         ),
       ]);
     }
@@ -320,7 +355,14 @@ class _DetailPostState extends State<DetailPost> {
                         _buildUserBox(),
                         _buildImage(),
                         _buildContentArea(),
-                        _buildCommentBoxListArea()
+                        Consumer<PostProvider>(
+                            builder: (context, postProvider, child) {
+                          if (postProvider.postList.isEmpty) {
+                            return Container();
+                          } else {
+                            return _buildCommentBoxListArea(postProvider);
+                          }
+                        })
                       ]),
           ),
         ));

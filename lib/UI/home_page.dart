@@ -253,8 +253,9 @@ class _HomeState extends State<Home> {
                 size.height * 0.14,
                 postProvider.postList[index][1],
                 postProvider.postList[index][2], () {
-              postProvider
-                  .getPostData(postProvider.postList[index][0])
+              postProvider.getPostData(postProvider.postList[index][0]);
+              Provider.of<PostProvider>(context, listen: false)
+                  .getPostList(true)
                   .whenComplete(() =>
                       Provider.of<PageNavProvider>(context, listen: false)
                           .goToOtherPage(DetailPostPage.pageName));
@@ -346,6 +347,8 @@ class _HomeState extends State<Home> {
         child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
         onPressed: () {
+          Provider.of<PostProvider>(context, listen: false)
+              .removeCurrentDocId();
           Provider.of<PageNavProvider>(context, listen: false)
               .goToOtherPage(WritePostPage.pageName);
         },

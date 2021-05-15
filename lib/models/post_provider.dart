@@ -40,6 +40,11 @@ class PostProvider with ChangeNotifier {
     print("set document id to $_currentDocId");
   }
 
+  void removeCurrentDocId(){
+    _currentDocId = null;
+    print("set document id to $_currentDocId");
+  }
+
   void createPost(String title, String content, String uid, String unm) {
     DocumentReference ref = posts.doc();
     String rootPostDID = _rootPostDID == null ? ref.id : _rootPostDID;
