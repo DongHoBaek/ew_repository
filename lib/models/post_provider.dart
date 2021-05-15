@@ -13,7 +13,8 @@ class PostProvider with ChangeNotifier {
   String _uid;
   String _unm;
   int _likes;
-  List<dynamic> _postList = [];
+  List<dynamic> _homePostList = [];
+  List<dynamic> _childPostList = [];
   List<dynamic> _myPostList = [];
 
   String get currentDocId => _currentDocId;
@@ -32,7 +33,9 @@ class PostProvider with ChangeNotifier {
 
   int get likes => _likes;
 
-  List<dynamic> get postList => _postList;
+  List<dynamic> get homePostList => _homePostList;
+
+  List<dynamic> get childPostList => _childPostList;
 
   List<dynamic> get myPostList => _myPostList;
 
@@ -110,39 +113,33 @@ class PostProvider with ChangeNotifier {
         .catchError((error) => print("Failed to Anonymize post: $error"));
   }
 
+  Future getHomePostList() async{
+    var snapshot = await posts.get();
+    _homePostList = getPostList(snapshot);
+
+    print('HomePostList: $_homePostList');
+
+    notifyListeners();
+  }
+
+  Future getChildPostList() async{
+    var snapshot = await posts.where('parentPostDID', isEqualTo: _currentDocId).get();
+    _childPostList = getPostList(snapshot);
+
+    print('ChildPostList: $_childPostList');
+
+    notifyListeners();
+  }
+
   //2차원 데이터 _postList (id, title, content) 반환
-  //isChildPosts
-  // true = _currentDocId의 자식 게시글 _postList에 저장
-  // false = 전체 게시글 _postList에 저장
-  Future getPostList(bool isChildPosts) async {
+  List<dynamic> getPostList(var snapshot){
     List<dynamic> postList = [];
     List<String> tmpList = [];
-
-    List<dynamic> myPostList = [];
-    List<String> myTmpList = [];
-
-    var snapshot = isChildPosts
-        ? await posts.where('parentPostDID', isEqualTo: _currentDocId).get()
-        : await posts.get();
 
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {
         tmpList = [];
-        myTmpList = [];
-
-        if (docs[i].data()['uid'] == user.uid) {
-          myTmpList.add(docs[i].id);
-          myTmpList.add(docs[i].data()['title']);
-
-          String myCont = docs[i].data()['content'];
-          if (myCont.length > 25) {
-            myCont = myCont.substring(0, 25) + '...';
-          }
-          myTmpList.add(myCont);
-          myPostList.add(myTmpList);
-          _myPostList = myPostList;
-        }
 
         tmpList.add(docs[i].id);
         tmpList.add(docs[i].data()['unm']);
@@ -153,12 +150,41 @@ class PostProvider with ChangeNotifier {
           cont = cont.substring(0, 25) + '...';
         }
         tmpList.add(cont);
+
         postList.add(tmpList);
-        _postList = postList;
+
+        return postList;
       }
     }
 
-    print('PostList: $_postList');
+    return null;
+  }
+
+  Future getMyPostList(String currentUid) async {
+    List<dynamic> myPostList = [];
+    List<String> myTmpList = [];
+
+    var snapshot = await posts.where("uid", isEqualTo: currentUid).get();
+
+    if (snapshot != null) {
+      List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
+      for (int i = 0; i < docs.length; i++) {
+        myTmpList = [];
+
+        myTmpList.add(docs[i].id);
+        myTmpList.add(docs[i].data()['title']);
+
+        String myCont = docs[i].data()['content'];
+        if (myCont.length > 25) {
+          myCont = myCont.substring(0, 25) + '...';
+        }
+        myTmpList.add(myCont);
+
+        myPostList.add(myTmpList);
+
+      }
+    }
+    _myPostList = myPostList;
     print('MyPostList: $_myPostList');
 
     notifyListeners();

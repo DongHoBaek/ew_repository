@@ -247,14 +247,14 @@ class _HomeState extends State<Home> {
       return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: postProvider.postList.length,
+          itemCount: postProvider.homePostList.length,
           itemBuilder: (context, index) {
             return _buildPostButton(
                 size.height * 0.14,
-                postProvider.postList[index][1],
-                postProvider.postList[index][2], () {
+                postProvider.homePostList[index][1],
+                postProvider.homePostList[index][2], () {
               postProvider
-                  .getPostData(postProvider.postList[index][0])
+                  .getPostData(postProvider.homePostList[index][0])
                   .whenComplete(() =>
                       Provider.of<PageNavProvider>(context, listen: false)
                           .goToOtherPage(DetailPostPage.pageName));
@@ -298,9 +298,9 @@ class _HomeState extends State<Home> {
       body: Consumer<PostProvider>(
         builder: (context, postProvider, child) {
           print('HomePage postProvider consumer!');
-          if (postProvider.postList.isEmpty) {
+          if (postProvider.homePostList.isEmpty) {
             Provider.of<PostProvider>(context, listen: false)
-                .getPostList(false);
+                .getHomePostList();
             return Container();
           } else {
             return SmartRefresher(
