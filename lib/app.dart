@@ -41,7 +41,7 @@ class App extends StatelessWidget {
                         builder: (context, pageNavProvider, child) {
                       return WillPopScope(
                         onWillPop: () {
-                          if (pageNavProvider.currentPage == 'HomePage') {
+                          if (pageNavProvider.currentPage == 'HomePage')  {
                             return showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(

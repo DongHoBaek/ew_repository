@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
@@ -32,7 +33,7 @@ class _WritePostState extends State<WritePost> {
             Provider.of<UserProvider>(context, listen: false).uid,
             Provider.of<UserProvider>(context, listen: false).name);
         Provider.of<PostProvider>(context, listen: false).getPostList(false);
-        Navigator.pop(context);
+        Provider.of<PageNavProvider>(context, listen: false).goBack();
       }
     }
 

@@ -298,8 +298,7 @@ class _HomeState extends State<Home> {
         builder: (context, postProvider, child) {
           print('HomePage postProvider consumer!');
           if (postProvider.homePostList.isEmpty) {
-            Provider.of<PostProvider>(context, listen: false)
-                .getHomePostList();
+            Provider.of<PostProvider>(context, listen: false).getHomePostList();
             return Container();
           } else {
             return SmartRefresher(
@@ -345,6 +344,8 @@ class _HomeState extends State<Home> {
         child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
         onPressed: () {
+          Provider.of<PostProvider>(context, listen: false)
+              .removeCurrentDocId();
           Provider.of<PageNavProvider>(context, listen: false)
               .goToOtherPage(WritePostPage.pageName);
         },
