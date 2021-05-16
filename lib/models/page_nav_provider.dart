@@ -28,6 +28,7 @@ class PageNavProvider extends ChangeNotifier {
     if (_pageList.length > 2) {
       Provider.of<PostProvider>(context, listen: false)
           .getPostData(_pageList[_pageList.length - 2][0]);
+      Provider.of<PostProvider>(context, listen: false).getChildPostList();
     }
     _pageList.removeAt(_pageList.length - 1);
     print(_pageList);

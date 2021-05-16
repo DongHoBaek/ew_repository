@@ -114,6 +114,48 @@ class _DetailPostState extends State<DetailPost> {
           actions: [isEdit ? _buildSaveButton() : _buildPopupMenuButton()]);
     }
 
+    Widget _buildFamilyPostRow(text, onTap) {
+      return InkWell(
+        child: Container(
+          height: size.height * 0.04,
+          child: Row(
+            children: [SizedBox(width: 20,), Icon(Icons.arrow_back_ios_outlined, size: 15,), Text(text)],
+          ),
+        ),
+        onTap: onTap,
+      );
+    }
+//수정중
+    Widget _buildRootPostButton() {
+      return _buildFamilyPostRow('뿌리 게시물로 가기', () {
+        if(Provider.of<PostProvider>(context, listen: false).currentDocId == Provider.of<PostProvider>(context, listen: false).rootPostDID){
+          return null;
+        }else{
+          Provider.of<PostProvider>(context, listen: false)
+              .getPostData(Provider.of<PostProvider>(context, listen: false).rootPostDID)
+              .whenComplete(() =>
+              Provider.of<PageNavProvider>(context, listen: false)
+                  .goToOtherPage(context, DetailPostPage.pageName));
+          Provider.of<PostProvider>(context, listen: false).getChildPostList();
+        }
+      });
+    }
+
+    Widget _buildParentPostButton() {
+      return _buildFamilyPostRow('부모 게시물로 가기', () {
+        if(Provider.of<PostProvider>(context, listen: false).parentPostDID == null){
+          return null;
+        }else{
+          Provider.of<PostProvider>(context, listen: false)
+              .getPostData(Provider.of<PostProvider>(context, listen: false).parentPostDID)
+              .whenComplete(() =>
+              Provider.of<PageNavProvider>(context, listen: false)
+                  .goToOtherPage(context, DetailPostPage.pageName));
+          Provider.of<PostProvider>(context, listen: false).getChildPostList();
+        }
+      });
+    }
+
     Widget _buildUserBox() {
       return Container(
         margin: EdgeInsets.only(top: 10),
@@ -297,12 +339,13 @@ class _DetailPostState extends State<DetailPost> {
           scrollDirection: Axis.horizontal,
           itemCount: postProvider.childPostList.length,
           itemBuilder: (context, index) {
-            return _buildCommentBox(size.width * 0.75, postProvider.childPostList[index][2], () {
+            return _buildCommentBox(
+                size.width * 0.75, postProvider.childPostList[index][2], () {
               postProvider
                   .getPostData(postProvider.childPostList[index][0])
                   .whenComplete(() =>
-                  Provider.of<PageNavProvider>(context, listen: false)
-                      .goToOtherPage(context, DetailPostPage.pageName));
+                      Provider.of<PageNavProvider>(context, listen: false)
+                          .goToOtherPage(context, DetailPostPage.pageName));
               postProvider.getChildPostList();
             });
           });
@@ -339,8 +382,13 @@ class _DetailPostState extends State<DetailPost> {
           child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: ScrollPhysics(),
-              child:
-                  Row(children: postProvider.childPostList.isEmpty ? [_buildAddContent()] : [_buildAddContent(), _buildCommentBoxList(postProvider)])),
+              child: Row(
+                  children: postProvider.childPostList.isEmpty
+                      ? [_buildAddContent()]
+                      : [
+                          _buildAddContent(),
+                          _buildCommentBoxList(postProvider)
+                        ])),
         ),
       ]);
     }
@@ -355,6 +403,8 @@ class _DetailPostState extends State<DetailPost> {
                 children: isEdit
                     ? [_buildEditContent()]
                     : [
+                        _buildRootPostButton(),
+                        _buildParentPostButton(),
                         _buildUserBox(),
                         _buildImage(),
                         _buildContentArea(),
