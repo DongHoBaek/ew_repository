@@ -13,6 +13,7 @@ class PostProvider with ChangeNotifier {
   String _uid;
   String _unm;
   int _likes;
+  bool _displayAllPost = true;
   List<dynamic> _homePostList = [];
   List<dynamic> _childPostList = [];
   List<dynamic> _myPostList = [];
@@ -33,6 +34,8 @@ class PostProvider with ChangeNotifier {
 
   int get likes => _likes;
 
+  bool get displayAllPost => _displayAllPost;
+
   List<dynamic> get homePostList => _homePostList;
 
   List<dynamic> get childPostList => _childPostList;
@@ -41,14 +44,26 @@ class PostProvider with ChangeNotifier {
 
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
 
+  void changeDisplay(){
+    _displayAllPost = !_displayAllPost;
+    getHomePostList();
+    if(_displayAllPost == true){
+      print('you can see all Post now');
+    }else{
+      print('you can see root Post now');
+    }
+  }
+
   void setCurrentDocId(String currentDocId) {
     _currentDocId = currentDocId;
     print("set document id to $_currentDocId");
   }
 
-  void removeCurrentDocId(){
+  void removeDocId(){
     _currentDocId = null;
-    print("set document id to $_currentDocId");
+    _rootPostDID = null;
+    print("set currentDocument id to $_currentDocId");
+    print("set rootDocument id to $_rootPostDID");
   }
 
   void createPost(String title, String content, String uid, String unm) {
@@ -119,9 +134,13 @@ class PostProvider with ChangeNotifier {
   }
 
   Future getHomePostList() async{
-    var snapshot = await posts.get();
-    _homePostList = getPostList(snapshot);
-
+    if(_displayAllPost == true){
+      var snapshot = await posts.get();
+      _homePostList = getPostList(snapshot);
+    }else{
+      var snapshot = await posts.where('parentPostDID', isNull: true).get();
+      _homePostList = getPostList(snapshot);
+    }
     print('HomePostList: $_homePostList');
 
     notifyListeners();
@@ -137,7 +156,7 @@ class PostProvider with ChangeNotifier {
   }
 
   //2차원 데이터 _postList (id, title, content) 반환
-  List<dynamic> getPostList(var snapshot){
+  List<dynamic> getPostList(snapshot){
     List<dynamic> postList = [];
     List<String> tmpList = [];
 
@@ -155,13 +174,10 @@ class PostProvider with ChangeNotifier {
           cont = cont.substring(0, 25) + '...';
         }
         tmpList.add(cont);
-
         postList.add(tmpList);
-
-        return postList;
       }
+      return postList;
     }
-
     return null;
   }
 

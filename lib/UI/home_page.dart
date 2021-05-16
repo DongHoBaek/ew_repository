@@ -42,6 +42,7 @@ class _HomeState extends State<Home> {
             setState(() {
               _isViewComment = value;
             });
+            Provider.of<PostProvider>(context, listen: false).changeDisplay();
           });
     }
 
@@ -73,7 +74,7 @@ class _HomeState extends State<Home> {
               _buildDrawerButton(Icons.home_outlined, () {
                 Navigator.pop(context);
                 Provider.of<PageNavProvider>(context, listen: false)
-                    .goToOtherPage(UserHomePage.pageName);
+                    .goToOtherPage(context, UserHomePage.pageName);
               }, '마이페이지'),
               _buildDrawerButton(Icons.logout, () {}, '로그아웃'),
             ],
@@ -257,7 +258,8 @@ class _HomeState extends State<Home> {
                   .getPostData(postProvider.homePostList[index][0])
                   .whenComplete(() =>
                       Provider.of<PageNavProvider>(context, listen: false)
-                          .goToOtherPage(DetailPostPage.pageName));
+                          .goToOtherPage(context, DetailPostPage.pageName));
+              postProvider.getChildPostList();
             });
           });
     }
@@ -346,9 +348,9 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.blueAccent,
         onPressed: () {
           Provider.of<PostProvider>(context, listen: false)
-              .removeCurrentDocId();
+              .removeDocId();
           Provider.of<PageNavProvider>(context, listen: false)
-              .goToOtherPage(WritePostPage.pageName);
+              .goToOtherPage(context, WritePostPage.pageName);
         },
       ),
     );

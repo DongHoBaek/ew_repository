@@ -21,6 +21,7 @@ class DetailPost extends StatefulWidget {
 }
 
 class _DetailPostState extends State<DetailPost> {
+  bool isLiked = false;
   bool isEdit = false;
   User user = FirebaseAuth.instance.currentUser;
 
@@ -39,7 +40,7 @@ class _DetailPostState extends State<DetailPost> {
             Provider.of<PostProvider>(context, listen: false)
                 .updatePost(titleController.text, contentController.text);
             Provider.of<PostProvider>(context, listen: false)
-                .getPostList(false);
+                .getChildPostList();
             setState(() {
               isEdit = false;
             });
@@ -75,7 +76,7 @@ class _DetailPostState extends State<DetailPost> {
                       Provider.of<PostProvider>(context, listen: false)
                           .deletePost();
                       Provider.of<PostProvider>(context, listen: false)
-                          .getPostList(false);
+                          .getHomePostList();
                       Navigator.pop(context);
                     }),
                     _buildPopupMenuItem('익명화', () {
@@ -83,7 +84,7 @@ class _DetailPostState extends State<DetailPost> {
                       Provider.of<PostProvider>(context, listen: false)
                           .anonymizationPost();
                       Provider.of<PostProvider>(context, listen: false)
-                          .getPostList(false);
+                          .getHomePostList();
                     }),
                     _buildPopupMenuItem('신고', () {}),
                   ]
@@ -163,6 +164,7 @@ class _DetailPostState extends State<DetailPost> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Spacer(),
+            IconButton(icon: Icon(Icons.favorite_outline), onPressed: () {}),
             IconButton(icon: Icon(Icons.bookmark_outline), onPressed: () {})
           ],
         ),
@@ -266,7 +268,7 @@ class _DetailPostState extends State<DetailPost> {
       return InkWell(
         onTap: () {
           Provider.of<PageNavProvider>(context, listen: false)
-              .goToOtherPage(WritePostPage.pageName);
+              .goToOtherPage(context, WritePostPage.pageName);
         },
         child: Container(
             padding: EdgeInsets.all(10),
@@ -293,14 +295,15 @@ class _DetailPostState extends State<DetailPost> {
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
-          itemCount: postProvider.postList.length,
+          itemCount: postProvider.childPostList.length,
           itemBuilder: (context, index) {
-            return _buildCommentBox(size.width * 0.75, postProvider.postList[index][2], () {
+            return _buildCommentBox(size.width * 0.75, postProvider.childPostList[index][2], () {
               postProvider
-                  .getPostData(postProvider.postList[index][0])
+                  .getPostData(postProvider.childPostList[index][0])
                   .whenComplete(() =>
                   Provider.of<PageNavProvider>(context, listen: false)
-                      .goToOtherPage(DetailPostPage.pageName));
+                      .goToOtherPage(context, DetailPostPage.pageName));
+              postProvider.getChildPostList();
             });
           });
     }
@@ -337,7 +340,7 @@ class _DetailPostState extends State<DetailPost> {
               scrollDirection: Axis.horizontal,
               physics: ScrollPhysics(),
               child:
-                  Row(children: [_buildAddContent(), _buildCommentBoxList(postProvider)])),
+                  Row(children: postProvider.childPostList.isEmpty ? [_buildAddContent()] : [_buildAddContent(), _buildCommentBoxList(postProvider)])),
         ),
       ]);
     }
@@ -357,11 +360,7 @@ class _DetailPostState extends State<DetailPost> {
                         _buildContentArea(),
                         Consumer<PostProvider>(
                             builder: (context, postProvider, child) {
-                          if (postProvider.postList.isEmpty) {
-                            return Container();
-                          } else {
-                            return _buildCommentBoxListArea(postProvider);
-                          }
+                          return _buildCommentBoxListArea(postProvider);
                         })
                       ]),
           ),

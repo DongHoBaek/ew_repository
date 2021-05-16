@@ -32,8 +32,8 @@ class _WritePostState extends State<WritePost> {
       if (_formKey.currentState.validate()) {
         Provider.of<PostProvider>(context, listen: false).createPost(titleController.text, contentController.text,
             user.uid, user.displayName);
-        Provider.of<PostProvider>(context, listen: false).getPostList(false);
-        Provider.of<PageNavProvider>(context, listen: false).goBack();
+        Provider.of<PostProvider>(context, listen: false).getHomePostList();
+        Provider.of<PageNavProvider>(context, listen: false).goBack(context);
       }
     }
 

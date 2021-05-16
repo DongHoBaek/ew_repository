@@ -59,7 +59,7 @@ class App extends StatelessWidget {
                                       ],
                                     ));
                           } else {
-                            pageNavProvider.goBack();
+                            pageNavProvider.goBack(context);
                             return Future.value(false);
                           }
                         },

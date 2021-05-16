@@ -131,7 +131,8 @@ class UserHome extends StatelessWidget {
                   .getPostData(postProvider.myPostList[index][0])
                   .whenComplete(() =>
                       Provider.of<PageNavProvider>(context, listen: false)
-                          .goToOtherPage(DetailPostPage.pageName));
+                          .goToOtherPage(context, DetailPostPage.pageName));
+              postProvider.getChildPostList();
             });
           });
     }
