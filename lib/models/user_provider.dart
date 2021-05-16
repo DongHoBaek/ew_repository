@@ -3,11 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
+  String _userDocId;
   String _uid;
   String _name;
   String _email;
   List<String> _bookmarkList;
   List<String> _likeList;
+
+  String get userDocId => _userDocId;
 
   String get uid => _uid;
 
@@ -26,30 +29,44 @@ class UserProvider extends ChangeNotifier {
 
     _uid = user.uid;
     _name = user.displayName;
-    _name = user.email;
+    _email = user.email;
 
-    if(!isReg()){
-      register();
+    _userDocId = getUserDocId();
+    if(_userDocId == null){
+      _userDocId = register();
     }
+
+    notifyListeners();
   }
 
-  bool isReg(){
-    bool ret;
+  void logout(){
+    _uid = null;
+    _name = null;
+    _email = null;
+    _userDocId = null;
+
+    notifyListeners();
+  }
+
+  String getUserDocId(){
+    String ret;
 
     users.where("uid", isEqualTo: _uid).get()
         .then((snapshot) {
-          ret = snapshot.docs.isNotEmpty;
+          ret = snapshot.docs.first.id;
     });
 
     return ret;
   }
 
-  void register(){
+  String register(){
     DocumentReference ref = users.doc();
 
     ref.set({'uid':_uid});
     ref.collection("bookmarkList");
     ref.collection("likeList");
+
+    return ref.id;
   }
 
   void degister(){
@@ -61,4 +78,6 @@ class UserProvider extends ChangeNotifier {
               .catchError((error) => print("Failed to Degist user: $error"));
     });
   }
+
+
 }

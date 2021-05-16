@@ -57,6 +57,8 @@ class PostProvider with ChangeNotifier {
   void setCurrentDocId(String currentDocId) {
     _currentDocId = currentDocId;
     print("set document id to $_currentDocId");
+
+    notifyListeners();
   }
 
   void removeDocId(){
@@ -82,10 +84,11 @@ class PostProvider with ChangeNotifier {
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));
+
+    setCurrentDocId(ref.id);
   }
 
   Future getPostData(String currentDocId) async {
-    setCurrentDocId(currentDocId);
     await posts
         .doc(currentDocId)
         .get()
@@ -103,7 +106,7 @@ class PostProvider with ChangeNotifier {
         print('Document does not exist on the database');
       }
     });
-    notifyListeners();
+    setCurrentDocId(currentDocId);
   }
 
   void updatePost(String title, String content) {
@@ -114,6 +117,8 @@ class PostProvider with ChangeNotifier {
         .update({'content': content, 'title': title})
         .then((value) => print("Post Updated"))
         .catchError((error) => print("Failed to update post: $error"));
+
+    notifyListeners();
   }
 
   void deletePost() {
@@ -122,12 +127,13 @@ class PostProvider with ChangeNotifier {
         .delete()
         .then((value) => print("Post Delete"))
         .catchError((error) => print("Failed to delete post: $error"));
+
+    setCurrentDocId(null);
   }
 
   void anonymizationPost() {
-    String deleteDID = _currentDocId;
     posts
-        .doc(deleteDID)
+        .doc(_currentDocId)
         .update({'unm': '익명'})
         .then((value) => print("Post Anonymized"))
         .catchError((error) => print("Failed to Anonymize post: $error"));

@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/UI/write_post_page.dart';
 import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 
 class DetailPostPage extends Page {
   static final String pageName = 'DetailPostPage';
@@ -23,7 +23,6 @@ class DetailPost extends StatefulWidget {
 class _DetailPostState extends State<DetailPost> {
   bool isLiked = false;
   bool isEdit = false;
-  User user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,7 @@ class _DetailPostState extends State<DetailPost> {
       return PopupMenuButton(
           icon: Icon(Icons.more_vert),
           itemBuilder: (context) {
-            return user.uid ==
+            return Provider.of<UserProvider>(context, listen: false).uid ==
                     Provider.of<PostProvider>(context, listen: false).uid
                 ? [
                     _buildPopupMenuItem('편집', () {

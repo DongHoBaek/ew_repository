@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/models/page_nav_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 
 import 'detail_post_page.dart';
 
@@ -19,7 +19,6 @@ class UserHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    User user = FirebaseAuth.instance.currentUser;
 
     Widget _buildAppBar() {
       return AppBar(
@@ -43,7 +42,7 @@ class UserHome extends StatelessWidget {
               height: 30,
             ),
             Text(
-              user.displayName,
+              Provider.of<UserProvider>(context, listen: false).name,
               textScaleFactor: 1.5,
               style: TextStyle(fontWeight: FontWeight.bold),
             )
@@ -125,7 +124,8 @@ class UserHome extends StatelessWidget {
           shrinkWrap: true,
           itemCount: postProvider.myPostList.length,
           itemBuilder: (context, index) {
-            return _buildPostButton(size.height * 0.14, user.displayName,
+            return _buildPostButton(size.height * 0.14,
+                Provider.of<UserProvider>(context, listen: false).name,
                 postProvider.myPostList[index][1], () {
               postProvider
                   .getPostData(postProvider.myPostList[index][0])
@@ -144,7 +144,7 @@ class UserHome extends StatelessWidget {
           print('userPage postProvider consumer!');
           if (postProvider.myPostList.isEmpty) {
             Provider.of<PostProvider>(context, listen: false)
-                .getMyPostList(user.uid);
+                .getMyPostList(Provider.of<UserProvider>(context, listen: false).uid);
             return Container();
           } else {
             return Container(
