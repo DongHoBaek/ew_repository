@@ -17,7 +17,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<PageNavProvider>(create: (_) => PageNavProvider()),
+        ChangeNotifierProvider<PageNavProvider>(
+            create: (_) => PageNavProvider()),
         ChangeNotifierProvider<PostProvider>(create: (_) => PostProvider()),
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider())
       ],
@@ -41,7 +42,7 @@ class App extends StatelessWidget {
                         builder: (context, pageNavProvider, child) {
                       return WillPopScope(
                         onWillPop: () {
-                          if (pageNavProvider.currentPage == 'HomePage')  {
+                          if (pageNavProvider.currentPage == 'HomePage') {
                             return showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(

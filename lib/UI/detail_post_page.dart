@@ -118,23 +118,35 @@ class _DetailPostState extends State<DetailPost> {
         child: Container(
           height: size.height * 0.04,
           child: Row(
-            children: [SizedBox(width: 20,), Icon(Icons.arrow_back_ios_outlined, size: 15,), Text(text)],
+            children: [
+              SizedBox(
+                width: 20,
+              ),
+              Icon(
+                Icons.arrow_back_ios_outlined,
+                size: 15,
+              ),
+              Text(text)
+            ],
           ),
         ),
         onTap: onTap,
       );
     }
+
 //수정중
     Widget _buildRootPostButton() {
       return _buildFamilyPostRow('뿌리 게시물로 가기', () {
-        if(Provider.of<PostProvider>(context, listen: false).currentDocId == Provider.of<PostProvider>(context, listen: false).rootPostDID){
+        if (Provider.of<PostProvider>(context, listen: false).currentDocId ==
+            Provider.of<PostProvider>(context, listen: false).rootPostDID) {
           return null;
-        }else{
+        } else {
           Provider.of<PostProvider>(context, listen: false)
-              .getPostData(Provider.of<PostProvider>(context, listen: false).rootPostDID)
+              .getPostData(
+                  Provider.of<PostProvider>(context, listen: false).rootPostDID)
               .whenComplete(() =>
-              Provider.of<PageNavProvider>(context, listen: false)
-                  .goToOtherPage(context, DetailPostPage.pageName));
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(context, DetailPostPage.pageName));
           Provider.of<PostProvider>(context, listen: false).getChildPostList();
         }
       });
@@ -142,14 +154,16 @@ class _DetailPostState extends State<DetailPost> {
 
     Widget _buildParentPostButton() {
       return _buildFamilyPostRow('부모 게시물로 가기', () {
-        if(Provider.of<PostProvider>(context, listen: false).parentPostDID == null){
+        if (Provider.of<PostProvider>(context, listen: false).parentPostDID ==
+            null) {
           return null;
-        }else{
+        } else {
           Provider.of<PostProvider>(context, listen: false)
-              .getPostData(Provider.of<PostProvider>(context, listen: false).parentPostDID)
+              .getPostData(Provider.of<PostProvider>(context, listen: false)
+                  .parentPostDID)
               .whenComplete(() =>
-              Provider.of<PageNavProvider>(context, listen: false)
-                  .goToOtherPage(context, DetailPostPage.pageName));
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(context, DetailPostPage.pageName));
           Provider.of<PostProvider>(context, listen: false).getChildPostList();
         }
       });

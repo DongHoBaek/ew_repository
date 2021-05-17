@@ -60,8 +60,10 @@ class _HomeState extends State<Home> {
           child: ListView(
             children: [
               ListTile(
-                title: Text(Provider.of<UserProvider>(context, listen: false).name),
-                subtitle: Text(Provider.of<UserProvider>(context, listen: false).email),
+                title: Text(
+                    Provider.of<UserProvider>(context, listen: false).name),
+                subtitle: Text(
+                    Provider.of<UserProvider>(context, listen: false).email),
                 leading: CircleAvatar(
                   backgroundColor: Colors.grey,
                 ),
@@ -346,8 +348,7 @@ class _HomeState extends State<Home> {
         child: Icon(Icons.add),
         backgroundColor: Colors.blueAccent,
         onPressed: () {
-          Provider.of<PostProvider>(context, listen: false)
-              .removeDocId();
+          Provider.of<PostProvider>(context, listen: false).removeDocId();
           Provider.of<PageNavProvider>(context, listen: false)
               .goToOtherPage(context, WritePostPage.pageName);
         },

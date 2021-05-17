@@ -36,7 +36,7 @@ class UserProvider extends ChangeNotifier {
       _userDocId = register();
     }
 
-    notifyListeners();
+    print('uid: $_uid, name: $_name, email: $_email, userDocId: $_userDocId');
   }
 
   void logout(){

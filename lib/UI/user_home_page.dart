@@ -124,7 +124,8 @@ class UserHome extends StatelessWidget {
           shrinkWrap: true,
           itemCount: postProvider.myPostList.length,
           itemBuilder: (context, index) {
-            return _buildPostButton(size.height * 0.14,
+            return _buildPostButton(
+                size.height * 0.14,
                 Provider.of<UserProvider>(context, listen: false).name,
                 postProvider.myPostList[index][1], () {
               postProvider
@@ -143,8 +144,8 @@ class UserHome extends StatelessWidget {
         builder: (context, postProvider, child) {
           print('userPage postProvider consumer!');
           if (postProvider.myPostList.isEmpty) {
-            Provider.of<PostProvider>(context, listen: false)
-                .getMyPostList(Provider.of<UserProvider>(context, listen: false).uid);
+            Provider.of<PostProvider>(context, listen: false).getMyPostList(
+                Provider.of<UserProvider>(context, listen: false).uid);
             return Container();
           } else {
             return Container(
