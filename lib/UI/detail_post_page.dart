@@ -76,7 +76,7 @@ class _DetailPostState extends State<DetailPost> {
                           .deletePost();
                       Provider.of<PostProvider>(context, listen: false)
                           .getHomePostList();
-                      Navigator.pop(context);
+                      Provider.of<PageNavProvider>(context, listen: false).goBack(context);
                     }),
                     _buildPopupMenuItem('익명화', () {
                       Navigator.pop(context);
@@ -153,7 +153,7 @@ class _DetailPostState extends State<DetailPost> {
     }
 
     Widget _buildParentPostButton() {
-      return _buildFamilyPostRow('부모 게시물로 가기', () {
+      return _buildFamilyPostRow('이전 가지 게시물로 가기', () {
         if (Provider.of<PostProvider>(context, listen: false).parentPostDID ==
             null) {
           return null;
