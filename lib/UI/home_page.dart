@@ -77,7 +77,9 @@ class _HomeState extends State<Home> {
                 Provider.of<PageNavProvider>(context, listen: false)
                     .goToOtherPage(context, UserHomePage.pageName);
               }, '마이페이지'),
-              _buildDrawerButton(Icons.logout, () {}, '로그아웃'),
+              _buildDrawerButton(Icons.logout, () {
+                Provider.of<UserProvider>(context, listen: false).logout();
+              }, '로그아웃'),
             ],
           ),
         ),

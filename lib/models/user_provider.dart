@@ -32,52 +32,48 @@ class UserProvider extends ChangeNotifier {
     _email = user.email;
 
     _userDocId = getUserDocId();
-    if(_userDocId == null){
+    if (_userDocId == null) {
       _userDocId = register();
     }
 
     print('uid: $_uid, name: $_name, email: $_email, userDocId: $_userDocId');
   }
 
-  void logout(){
+  Future logout() async {
+    await FirebaseAuth.instance.signOut();
     _uid = null;
     _name = null;
     _email = null;
     _userDocId = null;
-
-    notifyListeners();
   }
 
-  String getUserDocId(){
+  String getUserDocId() {
     String ret;
 
-    users.where("uid", isEqualTo: _uid).get()
-        .then((snapshot) {
-          ret = snapshot.docs.first.id;
+    users.where("uid", isEqualTo: _uid).get().then((snapshot) {
+      ret = snapshot.docs.first.id;
     });
 
     return ret;
   }
 
-  String register(){
+  String register() {
     DocumentReference ref = users.doc();
 
-    ref.set({'uid':_uid});
+    ref.set({'uid': _uid});
     ref.collection("bookmarkList");
     ref.collection("likeList");
 
     return ref.id;
   }
 
-  void degister(){
-    users.where("uid", isEqualTo: _uid).get()
-        .then((snapshot){
-          DocumentReference doc = snapshot.docs.first.reference;
-          doc.delete()
-              .then((value) => print("User Degist"))
-              .catchError((error) => print("Failed to Degist user: $error"));
+  void degister() {
+    users.where("uid", isEqualTo: _uid).get().then((snapshot) {
+      DocumentReference doc = snapshot.docs.first.reference;
+      doc
+          .delete()
+          .then((value) => print("User Degist"))
+          .catchError((error) => print("Failed to Degist user: $error"));
     });
   }
-
-
 }

@@ -63,20 +63,17 @@ class LoginPage extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Container(
-              padding: EdgeInsets.only(top: 100, bottom: 100),
-              child: Text('Toward\nthe\ntruth',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Oranienbaum',
-                    fontSize: 70,
-                    fontWeight: FontWeight.normal,
-                  )),
+            Image(
+              image: AssetImage('assets/launcher_icon.png'),
             ),
+            SizedBox(height: size.height*0.12,),
             _buildButtonRow(),
+            SizedBox(height: size.height*0.1,)
           ],
         ),
       ),
