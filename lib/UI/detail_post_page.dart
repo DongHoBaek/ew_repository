@@ -76,7 +76,12 @@ class _DetailPostState extends State<DetailPost> {
                           .deletePost();
                       Provider.of<PostProvider>(context, listen: false)
                           .getHomePostList();
-                      Provider.of<PageNavProvider>(context, listen: false).goBack(context);
+                      Provider.of<PostProvider>(context, listen: false)
+                          .getMyPostList(
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .uid);
+                      Provider.of<PageNavProvider>(context, listen: false)
+                          .goBack(context);
                     }),
                     _buildPopupMenuItem('익명화', () {
                       Navigator.pop(context);

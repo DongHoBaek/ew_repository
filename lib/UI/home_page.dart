@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     PullToRefresh pullToRefresh = PullToRefresh(context);
-    Size size = MediaQuery.of(context).size;
+    double size = MediaQuery.of(context).size.height;
     print('HomePage build!');
 
     Widget _buildToggleButton() {
@@ -45,55 +45,58 @@ class _HomeState extends State<Home> {
           });
     }
 
-    Widget _buildDrawerButton(IconData icon, Function onTap, String title) {
+    Widget _buildDrawerButton(Function onTap, String title) {
       return ListTile(
-        leading: Icon(icon),
         onTap: onTap,
-        title: Text(title),
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       );
     }
 
     Widget _buildDrawer() {
       return Drawer(
-        child: Container(
-          color: Colors.grey[100],
-          child: ListView(
-            children: [
-              ListTile(
-                title: Text(
-                    Provider.of<UserProvider>(context, listen: false).name),
-                subtitle: Text(
-                    Provider.of<UserProvider>(context, listen: false).email),
-                leading: CircleAvatar(
-                  backgroundColor: Colors.grey,
-                ),
+        child: ListView(
+          children: [
+            ListTile(
+              title: Text(
+                Provider.of<UserProvider>(context, listen: false).name,
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Divider(
-                color: Colors.black54,
-                height: 1,
+              leading: CircleAvatar(
+                backgroundColor: Colors.grey,
               ),
-              _buildDrawerButton(Icons.home_outlined, () {
-                Navigator.pop(context);
-                Provider.of<PageNavProvider>(context, listen: false)
-                    .goToOtherPage(context, UserHomePage.pageName);
-              }, '마이페이지'),
-              _buildDrawerButton(Icons.logout, () {
-                Provider.of<UserProvider>(context, listen: false).logout();
-              }, '로그아웃'),
-            ],
-          ),
+              trailing: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            _buildDrawerButton(() async {
+              Navigator.pop(context);
+              Provider.of<PostProvider>(context, listen: false).getMyPostList(
+                  Provider.of<UserProvider>(context, listen: false).uid);
+              Provider.of<PageNavProvider>(context, listen: false)
+                  .goToOtherPage(context, UserHomePage.pageName);
+            }, '마이페이지'),
+            _buildDrawerButton(() {
+              Provider.of<UserProvider>(context, listen: false).logout();
+            }, '로그아웃'),
+          ],
         ),
       );
     }
 
     Widget _buildSuggestPostButton(double width, String title, Function onTap) {
       return Container(
-          padding: EdgeInsets.all(10),
-          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.only(left: 4),
+          margin: EdgeInsets.only(left: 15, right: 15, bottom: 4),
           width: width,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(10),
             boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Colors.grey[400],
@@ -107,30 +110,26 @@ class _HomeState extends State<Home> {
             child: Container(
               child: Row(
                 children: [
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.grey,
-                      ),
+                  Container(
+                    width: 108,
+                    height: 108,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey,
                     ),
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  Expanded(
-                    flex: 4,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -139,10 +138,10 @@ class _HomeState extends State<Home> {
     }
 
     Widget _buildPostButton(
-        double height, String unm, String title, Function onTap) {
+        double height, String unm, String title, dateTime, Function onTap) {
       return Container(
           padding: EdgeInsets.all(10),
-          margin: EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+          margin: EdgeInsets.only(left: 15, right: 15, bottom: 10),
           height: height,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -172,6 +171,9 @@ class _HomeState extends State<Home> {
                         ),
                         Spacer(),
                         Text('$unm'),
+                        Text('$dateTime', style: TextStyle(
+                          color: Colors.grey
+                        ),),
                         SizedBox(
                           height: 5,
                         ),
@@ -194,7 +196,7 @@ class _HomeState extends State<Home> {
                     flex: 2,
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                         color: Colors.grey,
                       ),
                     ),
@@ -210,19 +212,19 @@ class _HomeState extends State<Home> {
           scrollDirection: Axis.horizontal,
           itemCount: 5,
           itemBuilder: (context, index) {
-            return _buildSuggestPostButton(size.width * 0.75, '임시', () {});
+            return _buildSuggestPostButton(232, '임시', () {});
           });
     }
 
     Widget _buildSuggestPostListArea() {
       return Column(children: [
         Container(
-          margin: EdgeInsets.only(top: 10),
-          height: size.height * 0.05,
+          margin: EdgeInsets.only(bottom: 10),
+          height: 30,
           child: Row(
             children: [
               SizedBox(
-                width: size.width * 0.05,
+                width: 15,
               ),
               Text(
                 'Today\'s topic',
@@ -241,7 +243,7 @@ class _HomeState extends State<Home> {
           ),
         ),
         Container(
-          height: size.height * 0.2,
+          height: 120,
           child: _buildSuggestPostList(),
         ),
       ]);
@@ -254,9 +256,10 @@ class _HomeState extends State<Home> {
           itemCount: postProvider.homePostList.length,
           itemBuilder: (context, index) {
             return _buildPostButton(
-                size.height * 0.14,
-                postProvider.homePostList[index][1],
-                postProvider.homePostList[index][2], () {
+                120,
+                postProvider.homePostList[index][2],
+                postProvider.homePostList[index][3],
+                postProvider.homePostList[index][1], () {
               postProvider
                   .getPostData(postProvider.homePostList[index][0])
                   .whenComplete(() =>
@@ -270,11 +273,11 @@ class _HomeState extends State<Home> {
     Widget _buildPostListArea(postProvider) {
       return Column(children: [
         Container(
-          height: size.height * 0.1,
+          height: size * 0.1,
           child: Row(
             children: [
               SizedBox(
-                width: size.width * 0.05,
+                width: 15,
               ),
               Text(
                 'Post',
@@ -289,6 +292,7 @@ class _HomeState extends State<Home> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
@@ -334,7 +338,6 @@ class _HomeState extends State<Home> {
                 onRefresh: pullToRefresh.onRefresh,
                 onLoading: pullToRefresh.onLoading,
                 child: Container(
-                  color: Colors.white,
                   child: SingleChildScrollView(
                     physics: ScrollPhysics(),
                     child: Column(children: [

@@ -31,10 +31,11 @@ class UserProvider extends ChangeNotifier {
     _name = user.displayName;
     _email = user.email;
 
-    _userDocId = getUserDocId();
-    if (_userDocId == null) {
-      _userDocId = register();
-    }
+    // _userDocId = getUserDocId();
+    // if (_userDocId == null) {
+    //   _userDocId = register();
+    // }
+    register();
 
     print('uid: $_uid, name: $_name, email: $_email, userDocId: $_userDocId');
   }
@@ -54,11 +55,13 @@ class UserProvider extends ChangeNotifier {
       ret = snapshot.docs.first.id;
     });
 
+    print('ret: $ret');
+
     return ret;
   }
 
   String register() {
-    DocumentReference ref = users.doc();
+    DocumentReference ref = users.doc(_uid);
 
     ref.set({'uid': _uid});
     ref.collection("bookmarkList");

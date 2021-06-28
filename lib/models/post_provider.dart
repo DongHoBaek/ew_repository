@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class PostProvider with ChangeNotifier {
   User user = FirebaseAuth.instance.currentUser;
@@ -12,6 +13,8 @@ class PostProvider with ChangeNotifier {
   String _content;
   String _uid;
   String _unm;
+  String _imageURL;
+  String _postTime;
   int _likes;
   bool _displayAllPost = true;
   List<dynamic> _homePostList = [];
@@ -68,19 +71,23 @@ class PostProvider with ChangeNotifier {
     print("set rootDocument id to $_rootPostDID");
   }
 
-  void createPost(String title, String content, String uid, String unm) {
-    DocumentReference ref = posts.doc();
+  void createPost(
+      String title, String content, String uid, String unm, var postTime) {
+    DocumentReference ref = posts.doc('${postTime}_$uid');
     String rootPostDID = _rootPostDID == null ? ref.id : _rootPostDID;
     String parentPostDID = _currentDocId;
     ref
         .set({
-          'content': content,
-          'title': title,
-          'uid': uid,
           'unm': unm,
+          'uid': uid,
+          'title': title,
+          'content': content,
+          'image_url': null,
           'rootPostDID': rootPostDID,
           'parentPostDID': parentPostDID,
-          'likes': 0
+          'num_of_likes': 0,
+          'num_of_comment': 0,
+          'post_time': postTime
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));
@@ -170,9 +177,12 @@ class PostProvider with ChangeNotifier {
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {
+        final DateFormat formatter = DateFormat('yyyy-MM-dd');
+        final String formattedPostTime = formatter. format(docs[i].data()['post_time'].toDate());
         tmpList = [];
 
         tmpList.add(docs[i].id);
+        tmpList.add(formattedPostTime);
         tmpList.add(docs[i].data()['unm']);
         tmpList.add(docs[i].data()['title']);
 

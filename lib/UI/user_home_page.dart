@@ -139,26 +139,16 @@ class UserHome extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(),
-      body: Consumer<PostProvider>(
-        builder: (context, postProvider, child) {
-          print('userPage postProvider consumer!');
-          if (postProvider.myPostList.isEmpty) {
-            Provider.of<PostProvider>(context, listen: false).getMyPostList(
-                Provider.of<UserProvider>(context, listen: false).uid);
-            return Container();
-          } else {
-            return Container(
+      body: Container(
                 color: Colors.white,
                 child: SingleChildScrollView(
                     physics: ScrollPhysics(),
                     child: Column(children: [
                       _buildUserInfo(),
-                      _buildPostList(postProvider)
-                    ])));
-          }
-        },
-      ),
+                      _buildPostList(Provider.of<PostProvider>(context))
+                    ])))
     );
   }
 }
