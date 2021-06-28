@@ -7,6 +7,7 @@ class UserProvider extends ChangeNotifier {
   String _username;
   String _email;
   String _nickname;
+  String _profileMessage;
   List<String> _myPosts;
   List<String> _bookmarkedPosts;
   List<String> _likedPosts;
@@ -19,6 +20,8 @@ class UserProvider extends ChangeNotifier {
   String get email => _email;
 
   String get nickname => _nickname;
+
+  String get profileMessage => _profileMessage;
 
   List<String> get myPosts => _myPosts;
 
@@ -43,6 +46,7 @@ class UserProvider extends ChangeNotifier {
         _email = documentSnapshot.data()['email'];
         _username = documentSnapshot.data()['username'];
         _nickname = documentSnapshot.data()['nickname'];
+        _profileMessage = documentSnapshot.data()['profileMessage'];
         _myPosts = documentSnapshot.data()['my_posts'];
         _bookmarkedPosts = documentSnapshot.data()['bookmarked_posts'];
         _likedPosts = documentSnapshot.data()['liked_posts'];
@@ -62,6 +66,7 @@ class UserProvider extends ChangeNotifier {
     _email = null;
     _username = null;
     _nickname = null;
+    _profileMessage = null;
     _myPosts = null;
     _bookmarkedPosts = null;
     _likedPosts = null;
@@ -77,6 +82,7 @@ class UserProvider extends ChangeNotifier {
       'email':user.email,
       'username':user.displayName,
       'nickname':null,
+      'profileMessage':null,
       'my_posts':null,
       'bookmarked_posts':null,
       'liked_posts':null,
@@ -93,11 +99,20 @@ class UserProvider extends ChangeNotifier {
         .catchError((error) => print("Failed to Degist user: $error"));
   }
 
-  bool updateProfile(String nickname, String imageUrl){
+  bool updateProfile(String nickname, String profileMessage, String imageUrl){
     if(nickname.length >= 1) {
       users.doc(_uid)
-          .update({'nickname': nickname, 'profile_image': imageUrl})
-          .then((value) => print("Profile updated"))
+          .update({
+            'nickname': nickname,
+            'profileMessage': profileMessage,
+            'profile_image': imageUrl
+          })
+          .then((value) {
+            print("Profile updated");
+            _nickname = nickname;
+            _profileMessage = profileMessage;
+            _profileImage = profileImage;
+          })
           .catchError((error) => print("Failed to update profile: $error"));
       return true;
     } else {
