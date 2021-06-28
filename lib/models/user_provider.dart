@@ -3,80 +3,105 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
-  String _userDocId;
   String _uid;
-  String _name;
+  String _username;
   String _email;
-  List<String> _bookmarkList;
-  List<String> _likeList;
-
-  String get userDocId => _userDocId;
+  String _nickname;
+  List<String> _myPosts;
+  List<String> _bookmarkedPosts;
+  List<String> _likedPosts;
+  String _profileImage;
 
   String get uid => _uid;
 
-  String get name => _name;
+  String get name => _username;
 
   String get email => _email;
 
-  List<String> get bookmarkList => _bookmarkList;
+  String get nickname => _nickname;
 
-  List<String> get likeList => _likeList;
+  List<String> get myPosts => _myPosts;
+
+  List<String> get bookmarkedPosts => _bookmarkedPosts;
+
+  List<String> get likedPosts => _likedPosts;
+
+  String get profileImage => _profileImage;
 
   CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-  void login() {
+  Future login() async {
     User user = FirebaseAuth.instance.currentUser;
 
     _uid = user.uid;
-    _name = user.displayName;
-    _email = user.email;
 
-    // _userDocId = getUserDocId();
-    // if (_userDocId == null) {
-    //   _userDocId = register();
-    // }
-    register();
+    await users
+        .doc(_uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        _email = documentSnapshot.data()['email'];
+        _username = documentSnapshot.data()['username'];
+        _nickname = documentSnapshot.data()['nickname'];
+        _myPosts = documentSnapshot.data()['my_posts'];
+        _bookmarkedPosts = documentSnapshot.data()['bookmarked_posts'];
+        _likedPosts = documentSnapshot.data()['liked_posts'];
+        _profileImage = documentSnapshot.data()['profile_image'];
+        print('get data!');
 
-    print('uid: $_uid, name: $_name, email: $_email, userDocId: $_userDocId');
-  }
-
-  Future logout() async {
-    await FirebaseAuth.instance.signOut();
-    _uid = null;
-    _name = null;
-    _email = null;
-    _userDocId = null;
-  }
-
-  String getUserDocId() {
-    String ret;
-
-    users.where("uid", isEqualTo: _uid).get().then((snapshot) {
-      ret = snapshot.docs.first.id;
+        notifyListeners();
+      } else {
+        print('Document does not exist on the database');
+        register(user);
+      }
     });
-
-    print('ret: $ret');
-
-    return ret;
   }
 
-  String register() {
+  void logout(){
+    _uid = null;
+    _email = null;
+    _username = null;
+    _nickname = null;
+    _myPosts = null;
+    _bookmarkedPosts = null;
+    _likedPosts = null;
+    _profileImage = null;
+
+    notifyListeners();
+  }
+
+  void register(User user){
     DocumentReference ref = users.doc(_uid);
 
-    ref.set({'uid': _uid});
-    ref.collection("bookmarkList");
-    ref.collection("likeList");
-
-    return ref.id;
+    ref.set({
+      'email':user.email,
+      'username':user.displayName,
+      'nickname':null,
+      'my_posts':null,
+      'bookmarked_posts':null,
+      'liked_posts':null,
+      'profile_image':null
+        })
+        .then((value) => print("User Registed"))
+        .catchError((error) => print("Failed to regist user: $error"));
+    login();
   }
 
-  void degister() {
-    users.where("uid", isEqualTo: _uid).get().then((snapshot) {
-      DocumentReference doc = snapshot.docs.first.reference;
-      doc
-          .delete()
-          .then((value) => print("User Degist"))
-          .catchError((error) => print("Failed to Degist user: $error"));
-    });
+  void degister(){
+    users.doc(_uid).delete()
+        .then((value) => print("User Degist"))
+        .catchError((error) => print("Failed to Degist user: $error"));
+  }
+
+  bool updateProfile(String nickname, String imageUrl){
+    if(nickname.length >= 1) {
+      users.doc(_uid)
+          .update({'nickname': nickname, 'profile_image': imageUrl})
+          .then((value) => print("Profile updated"))
+          .catchError((error) => print("Failed to update profile: $error"));
+      return true;
+    } else {
+      return false;
+    }
   }
 }
