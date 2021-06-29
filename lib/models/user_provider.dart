@@ -100,23 +100,51 @@ class UserProvider extends ChangeNotifier {
   }
 
   bool updateProfile(String nickname, String profileMessage, String imageUrl){
-    if(nickname.length >= 1) {
-      users.doc(_uid)
-          .update({
-            'nickname': nickname,
-            'profileMessage': profileMessage,
-            'profile_image': imageUrl
-          })
-          .then((value) {
-            print("Profile updated");
-            _nickname = nickname;
-            _profileMessage = profileMessage;
-            _profileImage = profileImage;
-          })
-          .catchError((error) => print("Failed to update profile: $error"));
-      return true;
-    } else {
-      return false;
-    }
+    users.doc(_uid)
+        .update({
+          'nickname': nickname,
+          'profileMessage': profileMessage,
+          'profile_image': imageUrl
+        })
+        .then((value) {
+          print("Profile updated");
+          _nickname = nickname;
+          _profileMessage = profileMessage;
+          _profileImage = profileImage;
+        })
+        .catchError((error) => print("Failed to update profile: $error"));
+    notifyListeners();
+  }
+
+  void bookmark(String postDid) {
+    _bookmarkedPosts.add(postDid);
+    _bookmarkedPosts.sort();
+    users.doc(_uid)
+        .update({
+          'bookmarked_posts': _bookmarkedPosts
+        })
+        .then((value) {
+          print("bookmarked");
+        })
+        .catchError((error) => print("Failed to bookmark: $error"));
+    notifyListeners();
+  }
+
+  void unbookmark(String postDid){
+    _bookmarkedPosts.remove(postDid);
+    users.doc(_uid)
+        .update({
+          'bookmarked_posts': _bookmarkedPosts
+        })
+        .then((value) {
+          print("unbookmark");
+        })
+        .catchError((error) => print("Failed to unbookmark: $error"));
+    notifyListeners();
+  }
+
+  bool isBookmarked(String postDid){
+    bool result = _bookmarkedPosts.contains(postDid);
+    return result;
   }
 }
