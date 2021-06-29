@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/UI/login_page.dart';
+import 'package:ttt_project_003/models/image_picker_provider.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
@@ -20,7 +21,8 @@ class App extends StatelessWidget {
         ChangeNotifierProvider<PageNavProvider>(
             create: (_) => PageNavProvider()),
         ChangeNotifierProvider<PostProvider>(create: (_) => PostProvider()),
-        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider())
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+        ChangeNotifierProvider<ImagePickerProvider>(create: (_) => ImagePickerProvider()),
       ],
       child: FutureBuilder(
         future: Firebase.initializeApp(),

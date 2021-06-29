@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/image_picker_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
 class SettingUserProfile extends StatefulWidget {
@@ -10,6 +12,7 @@ class SettingUserProfile extends StatefulWidget {
 class _SettingUserProfileState extends State<SettingUserProfile> {
   TextEditingController _nicknameController = TextEditingController();
   TextEditingController _statusMessageController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -23,7 +26,6 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
             Container(
               height: MediaQuery.of(context).size.height,
               color: Colors.black.withOpacity(0.5),
-
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -34,15 +36,25 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
-                      child: IconButton(
-                        icon: Icon(null),
-                        onPressed: (){},
-                      ),
+                    Consumer<ImagePickerProvider>(
+                      builder: (context, imagePickerProvider, child) {
+                        return InkWell(
+                          onTap: (){
+                            imagePickerProvider.pickImage();
+                          },
+                          child: CircleAvatar(
+                            radius: 50,
+                            child: ClipOval(
+                              child: imagePickerProvider.image != null
+                                  ? Image.file(imagePickerProvider.image, fit: BoxFit.cover, width: 100, height: 100,) : Container(color: Colors.grey,),
+                            ),
+                          )
+                        );
+                      }
                     ),
+                    TextButton(onPressed: (){
+                      Provider.of<ImagePickerProvider>(context, listen: false).clearImage();
+                    }, child: Text('기본 이미지로 설정', style: TextStyle(color: Colors.black54),)),
                     Padding(
                       padding: EdgeInsets.only(left: 40, right: 40, top: 20),
                       child: _nicknameTextFormField(),
@@ -51,12 +63,17 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                       padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
                       child: _statusMessageTextFormField(),
                     ),
-                    TextButton(onPressed: (){
-                      if (_formKey.currentState.validate()) {
-                        Provider.of<UserProvider>(context, listen: false).updateProfile(_nicknameController.text, _statusMessageController.text, "");
-                      }
-                    }, child: Text('확인', style: TextStyle(color: Colors.black87)
-                    ),)
+                    TextButton(
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          Provider.of<UserProvider>(context, listen: false)
+                              .updateProfile(_nicknameController.text,
+                                  _statusMessageController.text, "");
+                        }
+                      },
+                      child:
+                          Text('확인', style: TextStyle(color: Colors.black87)),
+                    )
                   ],
                 ),
               ),
