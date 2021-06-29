@@ -21,7 +21,6 @@ class DetailPost extends StatefulWidget {
 }
 
 class _DetailPostState extends State<DetailPost> {
-  bool isLiked = false;
   bool isEdit = false;
 
   @override
@@ -31,6 +30,8 @@ class _DetailPostState extends State<DetailPost> {
     TextEditingController contentController =
         TextEditingController(text: Provider.of<PostProvider>(context).content);
     Size size = MediaQuery.of(context).size;
+    String postDid = Provider.of<PostProvider>(context, listen: false).currentDocId;
+    bool isBookmarked = Provider.of<UserProvider>(context).isBookmarked(postDid);
 
     Widget _buildSaveButton() {
       return IconButton(
@@ -224,8 +225,15 @@ class _DetailPostState extends State<DetailPost> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Spacer(),
-            IconButton(icon: Icon(Icons.favorite_outline), onPressed: () {}),
-            IconButton(icon: Icon(Icons.bookmark_outline), onPressed: () {})
+            IconButton(
+                icon: Icon(Icons.favorite_outline), onPressed: () {}),
+            IconButton(
+                icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outline),
+                onPressed: () {
+                  isBookmarked ?
+                    Provider.of<UserProvider>(context).bookmark(postDid) :
+                    Provider.of<UserProvider>(context).unbookmark(postDid);
+                })
           ],
         ),
       );
