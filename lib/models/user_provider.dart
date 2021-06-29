@@ -39,14 +39,15 @@ class UserProvider extends ChangeNotifier {
         .doc(_uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
-        _email = documentSnapshot.data()['email'];
-        _username = documentSnapshot.data()['username'];
-        _nickname = documentSnapshot.data()['nickname'];
-        _myPosts = documentSnapshot.data()['my_posts'];
-        _bookmarkedPosts = documentSnapshot.data()['bookmarked_posts'];
-        _likedPosts = documentSnapshot.data()['liked_posts'];
-        _profileImage = documentSnapshot.data()['profile_image'];
+        _email = data['email'];
+        _username = data['username'];
+        _nickname = data['nickname'];
+        _myPosts = data['my_posts'];
+        _bookmarkedPosts = data['bookmarked_posts'];
+        _likedPosts = data['liked_posts'];
+        _profileImage = data['profile_image'];
         print('get data!');
 
         notifyListeners();
