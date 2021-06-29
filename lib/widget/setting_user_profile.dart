@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 
 class SettingUserProfile extends StatefulWidget {
   @override
@@ -38,9 +40,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                       decoration: BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
                       child: IconButton(
                         icon: Icon(null),
-                        onPressed: (){
-
-                        },
+                        onPressed: (){},
                       ),
                     ),
                     Padding(
@@ -51,7 +51,11 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                       padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
                       child: _statusMessageTextFormField(),
                     ),
-                    TextButton(onPressed: (){}, child: Text('확인', style: TextStyle(color: Colors.black87)
+                    TextButton(onPressed: (){
+                      if (_formKey.currentState.validate()) {
+                        Provider.of<UserProvider>(context, listen: false).updateProfile(_nicknameController.text, "");
+                      }
+                    }, child: Text('확인', style: TextStyle(color: Colors.black87)
                     ),)
                   ],
                 ),

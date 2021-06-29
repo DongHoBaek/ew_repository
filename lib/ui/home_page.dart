@@ -57,6 +57,7 @@ class _HomeState extends State<Home> {
     }
 
     Widget _buildDrawer() {
+      print('name: ' + Provider.of<UserProvider>(context, listen: false).name);
       return Drawer(
         child: ListView(
           children: [
@@ -292,78 +293,82 @@ class _HomeState extends State<Home> {
       ]);
     }
 
-    return Stack(
-      children: [
-        Scaffold(
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: Colors.black),
-            backgroundColor: Colors.white,
-            elevation: 0.0,
-            title: Text(
-              'HomePage',
-              style: TextStyle(color: Colors.black),
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        return Stack(
+          children: [
+            Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                iconTheme: IconThemeData(color: Colors.black),
+                backgroundColor: Colors.white,
+                elevation: 0.0,
+                title: Text(
+                  'HomePage',
+                  style: TextStyle(color: Colors.black),
+                ),
+                actions: [_buildToggleButton()],
+              ),
+              drawer: _buildDrawer(),
+              body: Consumer<PostProvider>(
+                builder: (context, postProvider, child) {
+                  print('HomePage postProvider consumer!');
+                  if (postProvider.homePostList.isEmpty) {
+                    Provider.of<PostProvider>(context, listen: false).getHomePostList();
+                    return Container();
+                  } else {
+                    return SmartRefresher(
+                        enablePullDown: true,
+                        header: WaterDropHeader(),
+                        footer: CustomFooter(
+                          builder: (BuildContext context, LoadStatus mode) {
+                            Widget body;
+                            if (mode == LoadStatus.idle) {
+                              body = Text("pull up load");
+                            } else if (mode == LoadStatus.loading) {
+                              body = CircularProgressIndicator();
+                            } else if (mode == LoadStatus.failed) {
+                              body = Text("Load Failed!Click retry!");
+                            } else if (mode == LoadStatus.canLoading) {
+                              body = Text("release to load more");
+                            } else {
+                              body = Text("No more Data");
+                            }
+                            return Container(
+                              height: 55.0,
+                              child: Center(child: body),
+                            );
+                          },
+                        ),
+                        controller: pullToRefresh.refreshController,
+                        onRefresh: pullToRefresh.onRefresh,
+                        onLoading: pullToRefresh.onLoading,
+                        child: Container(
+                          child: SingleChildScrollView(
+                            physics: ScrollPhysics(),
+                            child: Column(children: [
+                              _buildSuggestPostListArea(),
+                              _buildPostListArea(postProvider)
+                            ]),
+                          ),
+                        ));
+                  }
+                },
+              ),
+              floatingActionButton: FloatingActionButton(
+                child: Icon(Icons.add),
+                backgroundColor: Colors.blueAccent,
+                onPressed: () {
+                  Provider.of<PostProvider>(context, listen: false).removeDocId();
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(context, WritePostPage.pageName);
+                },
+              ),
             ),
-            actions: [_buildToggleButton()],
-          ),
-          drawer: _buildDrawer(),
-          body: Consumer<PostProvider>(
-            builder: (context, postProvider, child) {
-              print('HomePage postProvider consumer!');
-              if (postProvider.homePostList.isEmpty) {
-                Provider.of<PostProvider>(context, listen: false).getHomePostList();
-                return Container();
-              } else {
-                return SmartRefresher(
-                    enablePullDown: true,
-                    header: WaterDropHeader(),
-                    footer: CustomFooter(
-                      builder: (BuildContext context, LoadStatus mode) {
-                        Widget body;
-                        if (mode == LoadStatus.idle) {
-                          body = Text("pull up load");
-                        } else if (mode == LoadStatus.loading) {
-                          body = CircularProgressIndicator();
-                        } else if (mode == LoadStatus.failed) {
-                          body = Text("Load Failed!Click retry!");
-                        } else if (mode == LoadStatus.canLoading) {
-                          body = Text("release to load more");
-                        } else {
-                          body = Text("No more Data");
-                        }
-                        return Container(
-                          height: 55.0,
-                          child: Center(child: body),
-                        );
-                      },
-                    ),
-                    controller: pullToRefresh.refreshController,
-                    onRefresh: pullToRefresh.onRefresh,
-                    onLoading: pullToRefresh.onLoading,
-                    child: Container(
-                      child: SingleChildScrollView(
-                        physics: ScrollPhysics(),
-                        child: Column(children: [
-                          _buildSuggestPostListArea(),
-                          _buildPostListArea(postProvider)
-                        ]),
-                      ),
-                    ));
-              }
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            backgroundColor: Colors.blueAccent,
-            onPressed: () {
-              Provider.of<PostProvider>(context, listen: false).removeDocId();
-              Provider.of<PageNavProvider>(context, listen: false)
-                  .goToOtherPage(context, WritePostPage.pageName);
-            },
-          ),
-        ),
-        SettingUserProfile()
-      ],
+            userProvider.nickname == null ? SettingUserProfile() : Container()
+          ],
+        );
+      }
     );
   }
 }
