@@ -99,14 +99,15 @@ class PostProvider with ChangeNotifier {
         .doc(currentDocId)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
+      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
-        _rootPostDID = documentSnapshot.data()['rootPostDID'];
-        _parentPostDID = documentSnapshot.data()['parentPostDID'];
-        _title = documentSnapshot.data()['title'];
-        _content = documentSnapshot.data()['content'];
-        _uid = documentSnapshot.data()['uid'];
-        _unm = documentSnapshot.data()['unm'];
-        _likes = documentSnapshot.data()['likes'];
+        _rootPostDID = data['rootPostDID'];
+        _parentPostDID = data['parentPostDID'];
+        _title = data['title'];
+        _content = data['content'];
+        _uid = data['uid'];
+        _unm = data['unm'];
+        _likes = data['likes'];
         print('get data!');
       } else {
         print('Document does not exist on the database');
@@ -175,16 +176,17 @@ class PostProvider with ChangeNotifier {
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {
+        Map<String, dynamic> data = docs[i].data() as Map<String, dynamic>;
         final DateFormat formatter = DateFormat('yyyy-MM-dd');
-        final String formattedPostTime = formatter. format(docs[i].data()['post_time'].toDate());
+        final String formattedPostTime = formatter. format(data['post_time'].toDate());
         tmpList = [];
 
         tmpList.add(docs[i].id);
         tmpList.add(formattedPostTime);
-        tmpList.add(docs[i].data()['unm']);
-        tmpList.add(docs[i].data()['title']);
+        tmpList.add(data['unm']);
+        tmpList.add(data['title']);
 
-        String cont = docs[i].data()['content'];
+        String cont = data['content'];
         if (cont.length > 25) {
           cont = cont.substring(0, 25) + '...';
         }
@@ -205,12 +207,13 @@ class PostProvider with ChangeNotifier {
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {
+        Map<String, dynamic> data = docs[i].data() as Map<String, dynamic>;
         myTmpList = [];
 
         myTmpList.add(docs[i].id);
-        myTmpList.add(docs[i].data()['title']);
+        myTmpList.add(data['title']);
 
-        String myCont = docs[i].data()['content'];
+        String myCont = data['content'];
         if (myCont.length > 25) {
           myCont = myCont.substring(0, 25) + '...';
         }
