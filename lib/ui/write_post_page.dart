@@ -33,7 +33,7 @@ class _WritePostState extends State<WritePost> {
             titleController.text,
             contentController.text,
             Provider.of<UserProvider>(context, listen: false).uid,
-            Provider.of<UserProvider>(context, listen: false).name,
+            Provider.of<UserProvider>(context, listen: false).username,
         DateTime.now()
         );
         Provider.of<PostProvider>(context, listen: false).getHomePostList();

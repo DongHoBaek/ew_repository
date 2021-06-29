@@ -53,7 +53,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                     ),
                     TextButton(onPressed: (){
                       if (_formKey.currentState.validate()) {
-                        Provider.of<UserProvider>(context, listen: false).updateProfile(_nicknameController.text, "");
+                        Provider.of<UserProvider>(context, listen: false).updateProfile(_nicknameController.text, _statusMessageController.text, "");
                       }
                     }, child: Text('확인', style: TextStyle(color: Colors.black87)
                     ),)

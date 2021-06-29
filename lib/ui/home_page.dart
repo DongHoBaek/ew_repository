@@ -57,13 +57,13 @@ class _HomeState extends State<Home> {
     }
 
     Widget _buildDrawer() {
-      print('name: ' + Provider.of<UserProvider>(context, listen: false).name);
+      print('name: ' + Provider.of<UserProvider>(context, listen: false).username);
       return Drawer(
         child: ListView(
           children: [
             ListTile(
               title: Text(
-                Provider.of<UserProvider>(context, listen: false).name,
+                Provider.of<UserProvider>(context, listen: false).username,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               leading: CircleAvatar(

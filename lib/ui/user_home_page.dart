@@ -42,7 +42,7 @@ class UserHome extends StatelessWidget {
               height: 30,
             ),
             Text(
-              Provider.of<UserProvider>(context, listen: false).name,
+              Provider.of<UserProvider>(context, listen: false).username,
               textScaleFactor: 1.5,
               style: TextStyle(fontWeight: FontWeight.bold),
             )
@@ -126,7 +126,7 @@ class UserHome extends StatelessWidget {
           itemBuilder: (context, index) {
             return _buildPostButton(
                 size.height * 0.14,
-                Provider.of<UserProvider>(context, listen: false).name,
+                Provider.of<UserProvider>(context, listen: false).username,
                 postProvider.myPostList[index][1], () {
               postProvider
                   .getPostData(postProvider.myPostList[index][0])

@@ -67,7 +67,7 @@ class App extends StatelessWidget {
                         },
                         child: Navigator(
                           pages: [
-                            MaterialPage(child: (Provider.of<UserProvider>(context).name != null) ? Home() : CircularProgressIndicator()),
+                            MaterialPage(child: (Provider.of<UserProvider>(context).username != null) ? Home() : CircularProgressIndicator()),
                             if (pageNavProvider.currentPage ==
                                 WritePostPage.pageName)
                               WritePostPage(),
