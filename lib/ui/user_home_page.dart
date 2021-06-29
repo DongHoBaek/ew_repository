@@ -124,39 +124,31 @@ class UserHome extends StatelessWidget {
           shrinkWrap: true,
           itemCount: postProvider.myPostList.length,
           itemBuilder: (context, index) {
-            return _buildPostButton(size.height * 0.14,
+            return _buildPostButton(
+                size.height * 0.14,
                 Provider.of<UserProvider>(context, listen: false).name,
                 postProvider.myPostList[index][1], () {
               postProvider
                   .getPostData(postProvider.myPostList[index][0])
                   .whenComplete(() =>
                       Provider.of<PageNavProvider>(context, listen: false)
-                          .goToOtherPage(DetailPostPage.pageName));
+                          .goToOtherPage(context, DetailPostPage.pageName));
+              postProvider.getChildPostList();
             });
           });
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(),
-      body: Consumer<PostProvider>(
-        builder: (context, postProvider, child) {
-          print('userPage postProvider consumer!');
-          if (postProvider.myPostList.isEmpty) {
-            Provider.of<PostProvider>(context, listen: false)
-                .getMyPostList(Provider.of<UserProvider>(context, listen: false).uid);
-            return Container();
-          } else {
-            return Container(
+      body: Container(
                 color: Colors.white,
                 child: SingleChildScrollView(
                     physics: ScrollPhysics(),
                     child: Column(children: [
                       _buildUserInfo(),
-                      _buildPostList(postProvider)
-                    ])));
-          }
-        },
-      ),
+                      _buildPostList(Provider.of<PostProvider>(context))
+                    ])))
     );
   }
 }

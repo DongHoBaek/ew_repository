@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider extends ChangeNotifier {
   String _uid;
-  String _username;
+  String _username = "";
   String _email;
   String _nickname;
   String _profileMessage;
@@ -86,7 +86,7 @@ class UserProvider extends ChangeNotifier {
       'my_posts':null,
       'bookmarked_posts':null,
       'liked_posts':null,
-      'profile_image':null
+      'profile_image':""
         })
         .then((value) => print("User Registed"))
         .catchError((error) => print("Failed to regist user: $error"));

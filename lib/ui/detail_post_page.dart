@@ -21,6 +21,7 @@ class DetailPost extends StatefulWidget {
 }
 
 class _DetailPostState extends State<DetailPost> {
+  bool isLiked = false;
   bool isEdit = false;
 
   @override
@@ -74,15 +75,20 @@ class _DetailPostState extends State<DetailPost> {
                       Provider.of<PostProvider>(context, listen: false)
                           .deletePost();
                       Provider.of<PostProvider>(context, listen: false)
-                          .getPostList(false);
-                      Navigator.pop(context);
+                          .getHomePostList();
+                      Provider.of<PostProvider>(context, listen: false)
+                          .getMyPostList(
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .uid);
+                      Provider.of<PageNavProvider>(context, listen: false)
+                          .goBack(context);
                     }),
                     _buildPopupMenuItem('익명화', () {
                       Navigator.pop(context);
                       Provider.of<PostProvider>(context, listen: false)
                           .anonymizationPost();
                       Provider.of<PostProvider>(context, listen: false)
-                          .getPostList(false);
+                          .getHomePostList();
                     }),
                     _buildPopupMenuItem('신고', () {}),
                   ]
@@ -110,6 +116,62 @@ class _DetailPostState extends State<DetailPost> {
           elevation: 0.0,
           title: isEdit ? _buildEditTitle() : Container(),
           actions: [isEdit ? _buildSaveButton() : _buildPopupMenuButton()]);
+    }
+
+    Widget _buildFamilyPostRow(text, onTap) {
+      return InkWell(
+        child: Container(
+          height: size.height * 0.04,
+          child: Row(
+            children: [
+              SizedBox(
+                width: 20,
+              ),
+              Icon(
+                Icons.arrow_back_ios_outlined,
+                size: 15,
+              ),
+              Text(text)
+            ],
+          ),
+        ),
+        onTap: onTap,
+      );
+    }
+
+//수정중
+    Widget _buildRootPostButton() {
+      return _buildFamilyPostRow('뿌리 게시물로 가기', () {
+        if (Provider.of<PostProvider>(context, listen: false).currentDocId ==
+            Provider.of<PostProvider>(context, listen: false).rootPostDID) {
+          return null;
+        } else {
+          Provider.of<PostProvider>(context, listen: false)
+              .getPostData(
+                  Provider.of<PostProvider>(context, listen: false).rootPostDID)
+              .whenComplete(() =>
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(context, DetailPostPage.pageName));
+          Provider.of<PostProvider>(context, listen: false).getChildPostList();
+        }
+      });
+    }
+
+    Widget _buildParentPostButton() {
+      return _buildFamilyPostRow('이전 가지 게시물로 가기', () {
+        if (Provider.of<PostProvider>(context, listen: false).parentPostDID ==
+            null) {
+          return null;
+        } else {
+          Provider.of<PostProvider>(context, listen: false)
+              .getPostData(Provider.of<PostProvider>(context, listen: false)
+                  .parentPostDID)
+              .whenComplete(() =>
+                  Provider.of<PageNavProvider>(context, listen: false)
+                      .goToOtherPage(context, DetailPostPage.pageName));
+          Provider.of<PostProvider>(context, listen: false).getChildPostList();
+        }
+      });
     }
 
     Widget _buildUserBox() {
@@ -162,6 +224,7 @@ class _DetailPostState extends State<DetailPost> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Spacer(),
+            IconButton(icon: Icon(Icons.favorite_outline), onPressed: () {}),
             IconButton(icon: Icon(Icons.bookmark_outline), onPressed: () {})
           ],
         ),
@@ -265,7 +328,7 @@ class _DetailPostState extends State<DetailPost> {
       return InkWell(
         onTap: () {
           Provider.of<PageNavProvider>(context, listen: false)
-              .goToOtherPage(WritePostPage.pageName);
+              .goToOtherPage(context, WritePostPage.pageName);
         },
         child: Container(
             padding: EdgeInsets.all(10),
@@ -292,14 +355,16 @@ class _DetailPostState extends State<DetailPost> {
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
-          itemCount: postProvider.postList.length,
+          itemCount: postProvider.childPostList.length,
           itemBuilder: (context, index) {
-            return _buildCommentBox(size.width * 0.75, postProvider.postList[index][2], () {
+            return _buildCommentBox(
+                size.width * 0.75, postProvider.childPostList[index][2], () {
               postProvider
-                  .getPostData(postProvider.postList[index][0])
+                  .getPostData(postProvider.childPostList[index][0])
                   .whenComplete(() =>
-                  Provider.of<PageNavProvider>(context, listen: false)
-                      .goToOtherPage(DetailPostPage.pageName));
+                      Provider.of<PageNavProvider>(context, listen: false)
+                          .goToOtherPage(context, DetailPostPage.pageName));
+              postProvider.getChildPostList();
             });
           });
     }
@@ -335,8 +400,13 @@ class _DetailPostState extends State<DetailPost> {
           child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               physics: ScrollPhysics(),
-              child:
-                  Row(children: [_buildAddContent(), _buildCommentBoxList(postProvider)])),
+              child: Row(
+                  children: postProvider.childPostList.isEmpty
+                      ? [_buildAddContent()]
+                      : [
+                          _buildAddContent(),
+                          _buildCommentBoxList(postProvider)
+                        ])),
         ),
       ]);
     }
@@ -351,16 +421,14 @@ class _DetailPostState extends State<DetailPost> {
                 children: isEdit
                     ? [_buildEditContent()]
                     : [
+                        _buildRootPostButton(),
+                        _buildParentPostButton(),
                         _buildUserBox(),
                         _buildImage(),
                         _buildContentArea(),
                         Consumer<PostProvider>(
                             builder: (context, postProvider, child) {
-                          if (postProvider.postList.isEmpty) {
-                            return Container();
-                          } else {
-                            return _buildCommentBoxListArea(postProvider);
-                          }
+                          return _buildCommentBoxListArea(postProvider);
                         })
                       ]),
           ),

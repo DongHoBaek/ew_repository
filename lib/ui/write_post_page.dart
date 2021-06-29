@@ -29,11 +29,15 @@ class _WritePostState extends State<WritePost> {
 
     void checkButtonPressed() {
       if (_formKey.currentState.validate()) {
-        Provider.of<PostProvider>(context, listen: false).createPost(titleController.text, contentController.text,
+        Provider.of<PostProvider>(context, listen: false).createPost(
+            titleController.text,
+            contentController.text,
             Provider.of<UserProvider>(context, listen: false).uid,
-            Provider.of<UserProvider>(context, listen: false).name);
-        Provider.of<PostProvider>(context, listen: false).getPostList(false);
-        Provider.of<PageNavProvider>(context, listen: false).goBack();
+            Provider.of<UserProvider>(context, listen: false).name,
+        DateTime.now()
+        );
+        Provider.of<PostProvider>(context, listen: false).getHomePostList();
+        Provider.of<PageNavProvider>(context, listen: false).goBack(context);
       }
     }
 

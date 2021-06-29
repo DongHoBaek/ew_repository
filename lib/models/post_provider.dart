@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class PostProvider with ChangeNotifier {
 
@@ -10,7 +11,10 @@ class PostProvider with ChangeNotifier {
   String _content;
   String _uid;
   String _unm;
+  String _imageURL;
+  String _postTime;
   int _likes;
+  bool _displayAllPost = true;
   List<dynamic> _homePostList = [];
   List<dynamic> _childPostList = [];
   List<dynamic> _myPostList = [];
@@ -31,6 +35,8 @@ class PostProvider with ChangeNotifier {
 
   int get likes => _likes;
 
+  bool get displayAllPost => _displayAllPost;
+
   List<dynamic> get homePostList => _homePostList;
 
   List<dynamic> get childPostList => _childPostList;
@@ -39,6 +45,16 @@ class PostProvider with ChangeNotifier {
 
   CollectionReference posts = FirebaseFirestore.instance.collection('posts');
 
+  void changeDisplay() {
+    _displayAllPost = !_displayAllPost;
+    getHomePostList();
+    if (_displayAllPost == true) {
+      print('you can see all Post now');
+    } else {
+      print('you can see root Post now');
+    }
+  }
+
   void setCurrentDocId(String currentDocId) {
     _currentDocId = currentDocId;
     print("set document id to $_currentDocId");
@@ -46,24 +62,30 @@ class PostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeCurrentDocId(){
+  void removeDocId() {
     _currentDocId = null;
-    print("set document id to $_currentDocId");
+    _rootPostDID = null;
+    print("set currentDocument id to $_currentDocId");
+    print("set rootDocument id to $_rootPostDID");
   }
 
-  void createPost(String title, String content, String uid, String unm) {
-    DocumentReference ref = posts.doc();
+  void createPost(
+      String title, String content, String uid, String unm, var postTime) {
+    DocumentReference ref = posts.doc('${postTime}_$uid');
     String rootPostDID = _rootPostDID == null ? ref.id : _rootPostDID;
     String parentPostDID = _currentDocId;
     ref
         .set({
-          'content': content,
-          'title': title,
-          'uid': uid,
           'unm': unm,
+          'uid': uid,
+          'title': title,
+          'content': content,
+          'image_url': null,
           'rootPostDID': rootPostDID,
           'parentPostDID': parentPostDID,
-          'likes': 0
+          'num_of_likes': 0,
+          'num_of_comment': 0,
+          'post_time': postTime
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));
@@ -72,6 +94,7 @@ class PostProvider with ChangeNotifier {
   }
 
   Future getPostData(String currentDocId) async {
+    setCurrentDocId(currentDocId);
     await posts
         .doc(currentDocId)
         .get()
@@ -89,7 +112,6 @@ class PostProvider with ChangeNotifier {
         print('Document does not exist on the database');
       }
     });
-    setCurrentDocId(currentDocId);
   }
 
   void updatePost(String title, String content) {
@@ -122,17 +144,22 @@ class PostProvider with ChangeNotifier {
         .catchError((error) => print("Failed to Anonymize post: $error"));
   }
 
-  Future getHomePostList() async{
-    var snapshot = await posts.get();
-    _homePostList = getPostList(snapshot);
-
+  Future getHomePostList() async {
+    if (_displayAllPost == true) {
+      var snapshot = await posts.get();
+      _homePostList = getPostList(snapshot);
+    } else {
+      var snapshot = await posts.where('parentPostDID', isNull: true).get();
+      _homePostList = getPostList(snapshot);
+    }
     print('HomePostList: $_homePostList');
 
     notifyListeners();
   }
 
-  Future getChildPostList() async{
-    var snapshot = await posts.where('parentPostDID', isEqualTo: _currentDocId).get();
+  Future getChildPostList() async {
+    var snapshot =
+        await posts.where('parentPostDID', isEqualTo: _currentDocId).get();
     _childPostList = getPostList(snapshot);
 
     print('ChildPostList: $_childPostList');
@@ -141,16 +168,19 @@ class PostProvider with ChangeNotifier {
   }
 
   //2차원 데이터 _postList (id, title, content) 반환
-  List<dynamic> getPostList(var snapshot){
+  List<dynamic> getPostList(snapshot) {
     List<dynamic> postList = [];
     List<String> tmpList = [];
 
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
       for (int i = 0; i < docs.length; i++) {
+        final DateFormat formatter = DateFormat('yyyy-MM-dd');
+        final String formattedPostTime = formatter. format(docs[i].data()['post_time'].toDate());
         tmpList = [];
 
         tmpList.add(docs[i].id);
+        tmpList.add(formattedPostTime);
         tmpList.add(docs[i].data()['unm']);
         tmpList.add(docs[i].data()['title']);
 
@@ -159,13 +189,10 @@ class PostProvider with ChangeNotifier {
           cont = cont.substring(0, 25) + '...';
         }
         tmpList.add(cont);
-
         postList.add(tmpList);
-
-        return postList;
       }
+      return postList;
     }
-
     return null;
   }
 
@@ -190,7 +217,6 @@ class PostProvider with ChangeNotifier {
         myTmpList.add(myCont);
 
         myPostList.add(myTmpList);
-
       }
     }
     _myPostList = myPostList;
@@ -199,18 +225,22 @@ class PostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void liked(){
+  void liked() {
     _likes += 1;
-    posts.doc(_currentDocId).update({'likes':_likes})
+    posts
+        .doc(_currentDocId)
+        .update({'likes': _likes})
         .then((value) => print("post is liked"))
         .catchError((error) => print("Failed to like: $error"));
 
     notifyListeners();
   }
 
-  void unliked(){
+  void unliked() {
     _likes -= 1;
-    posts.doc(_currentDocId).update({'likes':_likes})
+    posts
+        .doc(_currentDocId)
+        .update({'likes': _likes})
         .then((value) => print("post is unliked"))
         .catchError((error) => print("Failed to unlike: $error"));
 
