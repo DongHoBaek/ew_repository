@@ -9,7 +9,7 @@ import 'package:ttt_project_003/models/user_provider.dart';
 
 import 'UI/detail_post_page.dart';
 import 'UI/home_page.dart';
-import 'UI/user_home_page.dart';
+import 'UI/user_profile_page.dart';
 import 'UI/write_post_page.dart';
 import 'models/page_nav_provider.dart';
 
@@ -36,10 +36,10 @@ class App extends StatelessWidget {
             return StreamBuilder(
                 stream: FirebaseAuth.instance.authStateChanges(),
                 builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                  Provider.of<UserProvider>(context, listen: false).login();
                   if (!snapshot.hasData) {
                     return LoginPage();
                   } else {
-                    Provider.of<UserProvider>(context, listen: false).login();
                     return Consumer<PageNavProvider>(
                         builder: (context, pageNavProvider, child) {
                       return WillPopScope(

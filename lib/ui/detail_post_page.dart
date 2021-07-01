@@ -30,8 +30,7 @@ class _DetailPostState extends State<DetailPost> {
     TextEditingController contentController =
         TextEditingController(text: Provider.of<PostProvider>(context).content);
     Size size = MediaQuery.of(context).size;
-    String postDid = Provider.of<PostProvider>(context, listen: false).currentDocId;
-    bool isBookmarked = Provider.of<UserProvider>(context).isBookmarked(postDid);
+    bool isBookmarked = Provider.of<UserProvider>(context, listen: false).isBookmarked(Provider.of<PostProvider>(context, listen: false).currentDocId);
 
     Widget _buildSaveButton() {
       return IconButton(
@@ -229,10 +228,16 @@ class _DetailPostState extends State<DetailPost> {
                 icon: Icon(Icons.favorite_outline), onPressed: () {}),
             IconButton(
                 icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outline),
-                onPressed: () {
-                  isBookmarked ?
-                    Provider.of<UserProvider>(context).bookmark(postDid) :
-                    Provider.of<UserProvider>(context).unbookmark(postDid);
+                onPressed: (){
+                  setState(() {
+                    if(isBookmarked == true){
+                      Provider.of<UserProvider>(context, listen: false).unBookmark(Provider.of<PostProvider>(context, listen: false).currentDocId);
+                      isBookmarked = Provider.of<UserProvider>(context, listen: false).isBookmarked(Provider.of<PostProvider>(context, listen: false).currentDocId);
+                    }else{
+                      Provider.of<UserProvider>(context, listen: false).bookmark(Provider.of<PostProvider>(context, listen: false).currentDocId);
+                      isBookmarked = Provider.of<UserProvider>(context, listen: false).isBookmarked(Provider.of<PostProvider>(context, listen: false).currentDocId);
+                    }
+                  });
                 })
           ],
         ),

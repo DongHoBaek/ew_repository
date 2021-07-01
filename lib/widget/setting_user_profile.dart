@@ -64,11 +64,13 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                       child: _statusMessageTextFormField(),
                     ),
                     TextButton(
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()){
+                          await Provider.of<ImagePickerProvider>(context, listen: false).uploadImageToFirebaseStorage();
+
                           Provider.of<UserProvider>(context, listen: false)
                               .updateProfile(_nicknameController.text,
-                                  _statusMessageController.text, "");
+                              _statusMessageController.text, Provider.of<ImagePickerProvider>(context, listen: false).profileImageURL);
                         }
                       },
                       child:
