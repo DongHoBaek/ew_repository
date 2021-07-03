@@ -107,7 +107,7 @@ class PostProvider with ChangeNotifier {
         _content = data['content'];
         _uid = data['uid'];
         _unm = data['unm'];
-        _likes = data['likes'];
+        _likes = data['num_of_likes'];
         print('get data!');
       } else {
         print('Document does not exist on the database');
@@ -232,7 +232,7 @@ class PostProvider with ChangeNotifier {
     _likes += 1;
     posts
         .doc(_currentDocId)
-        .update({'likes': _likes})
+        .update({'num_of_likes': _likes})
         .then((value) => print("post is liked"))
         .catchError((error) => print("Failed to like: $error"));
 
@@ -243,7 +243,7 @@ class PostProvider with ChangeNotifier {
     _likes -= 1;
     posts
         .doc(_currentDocId)
-        .update({'likes': _likes})
+        .update({'num_of_likes': _likes})
         .then((value) => print("post is unliked"))
         .catchError((error) => print("Failed to unlike: $error"));
 
