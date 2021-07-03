@@ -144,7 +144,13 @@ class UserProvider extends ChangeNotifier {
   }
 
   bool isBookmarked(String postDid){
-    bool result = _bookmarkedPosts.contains(postDid);
+    bool result;
+
+    if(_bookmarkedPosts == null){
+      result = false;
+    } else {
+      result = _bookmarkedPosts.contains(postDid);
+    }
 
     return result;
   }
@@ -177,7 +183,13 @@ class UserProvider extends ChangeNotifier {
   }
 
   bool isLiked(String postDid){
-    bool result = _likedPosts.contains(postDid);
+    bool result;
+
+    if(_likedPosts == null){
+      result = false;
+    } else {
+      result = _likedPosts.contains(postDid);
+    }
 
     return result;
   }
