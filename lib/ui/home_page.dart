@@ -140,7 +140,7 @@ class _HomeState extends State<Home> {
     }
 
     Widget _buildPostButton(
-        double height, String unm, String title, dateTime, Function onTap) {
+        double height, String unm, String title, dateTime, String postId,Function onTap) {
       return Container(
           padding: EdgeInsets.all(10),
           margin: EdgeInsets.only(left: 15, right: 15, bottom: 10),
@@ -182,10 +182,11 @@ class _HomeState extends State<Home> {
                         Row(
                           children: [
                             Icon(
-                              Icons.favorite,
+                              Provider.of<UserProvider>(context, listen: false).isLiked(postId) ?
+                              Icons.favorite : Icons.favorite_outline,
                               color: Colors.red,
                             ),
-                            Text('120')
+                            Text(Provider.of<PostProvider>(context).likes.toString())
                           ],
                         )
                       ],
@@ -261,7 +262,8 @@ class _HomeState extends State<Home> {
                 120,
                 postProvider.homePostList[index][2],
                 postProvider.homePostList[index][3],
-                postProvider.homePostList[index][1], () {
+                postProvider.homePostList[index][1],
+                postProvider.homePostList[index][0], () {
               postProvider
                   .getPostData(postProvider.homePostList[index][0])
                   .whenComplete(() =>

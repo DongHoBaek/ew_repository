@@ -83,9 +83,9 @@ class UserProvider extends ChangeNotifier {
       'username':user.displayName,
       'nickname':null,
       'profileMessage':null,
-      'my_posts':null,
-      'bookmarked_posts':null,
-      'liked_posts':null,
+      'my_posts':[],
+      'bookmarked_posts':[],
+      'liked_posts':[],
       'profile_image':""
         })
         .then((value) => print("User Registed"))
@@ -145,6 +145,40 @@ class UserProvider extends ChangeNotifier {
 
   bool isBookmarked(String postDid){
     bool result = _bookmarkedPosts.contains(postDid);
+
+    return result;
+  }
+
+  void like(String postDid) {
+    _likedPosts.add(postDid);
+    _likedPosts.sort();
+    users.doc(_uid)
+        .update({
+      'liked_posts': _likedPosts
+    })
+        .then((value) {
+      print("liked");
+    })
+        .catchError((error) => print("Failed to like: $error"));
+    notifyListeners();
+  }
+
+  void unlike(String postDid){
+    _likedPosts.remove(postDid);
+    users.doc(_uid)
+        .update({
+      'liked_posts': _likedPosts
+    })
+        .then((value) {
+      print("unlike");
+    })
+        .catchError((error) => print("Failed to unlike: $error"));
+    notifyListeners();
+  }
+
+  bool isLiked(String postDid){
+    bool result = _likedPosts.contains(postDid);
+
     return result;
   }
 }
