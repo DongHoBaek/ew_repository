@@ -8,9 +8,9 @@ class UserProvider extends ChangeNotifier {
   String _email;
   String _nickname;
   String _profileMessage;
-  static List _myPosts;
+  static List _myPosts = [];
   static List _bookmarkedPosts = [];
-  static List _likedPosts;
+  static List _likedPosts = [];
   String _profileImage;
 
   String get uid => _uid;

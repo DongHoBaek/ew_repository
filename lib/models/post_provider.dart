@@ -185,6 +185,7 @@ class PostProvider with ChangeNotifier {
         tmpList.add(formattedPostTime);
         tmpList.add(data['unm']);
         tmpList.add(data['title']);
+        tmpList.add(data['num_of_likes'].toString());
 
         String cont = data['content'];
         if (cont.length > 25) {
