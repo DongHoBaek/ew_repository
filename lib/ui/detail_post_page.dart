@@ -230,19 +230,19 @@ class _DetailPostState extends State<DetailPost> {
                 icon: Icon(isLiked ? Icons.favorite : Icons.favorite_outline),
                 onPressed: () {
                   if (isLiked) {
-                    Provider.of<UserProvider>(context, listen: false).like(postDid);
-                    Provider.of<PostProvider>(context, listen: false).liked();
-                  } else {
                     Provider.of<UserProvider>(context, listen: false).unlike(postDid);
                     Provider.of<PostProvider>(context, listen: false).unliked();
+                  } else {
+                    Provider.of<UserProvider>(context, listen: false).like(postDid);
+                    Provider.of<PostProvider>(context, listen: false).liked();
                   }
                 }),
             IconButton(
                 icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outline),
                 onPressed: () {
                   isBookmarked ?
-                    Provider.of<UserProvider>(context, listen: false).bookmark(postDid) :
-                    Provider.of<UserProvider>(context, listen: false).unbookmark(postDid);
+                    Provider.of<UserProvider>(context, listen: false).unbookmark(postDid) :
+                    Provider.of<UserProvider>(context, listen: false).bookmark(postDid);
                 })
           ],
         ),
