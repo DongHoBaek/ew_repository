@@ -1,10 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
-
-import 'feed_screen.dart';
-
+import 'package:ttt_project_003/models/firebase_auth_state.dart';
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -37,9 +36,7 @@ class AuthScreen extends StatelessWidget {
   TextButton _googleLoginBtn(context) {
     return TextButton(
       onPressed: () {
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (_) => FeedScreen()),
-            (Route<dynamic> route) => false);
+        Provider.of<FirebaseAuthState>(context, listen: false).signInWithGoogle();
       },
       child: Container(
         width: size.width * 0.65,

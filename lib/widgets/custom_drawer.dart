@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
+import 'package:ttt_project_003/models/firebase_auth_state.dart';
 import 'package:ttt_project_003/repository/user_repo.dart';
-import 'package:ttt_project_003/screens/auth_screen.dart';
 import 'package:ttt_project_003/screens/profile_screen.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
 
@@ -34,7 +35,8 @@ class CustomDrawer extends StatelessWidget {
             title: Text('Sign Out'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_)=>AuthScreen()), (Route<dynamic> route) => false);
+              Provider.of<FirebaseAuthState>(context, listen: false)
+                  .signOut();
             },
           ),
         ],

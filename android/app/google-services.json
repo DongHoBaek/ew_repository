@@ -84,6 +84,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "113797425193-08lml82jmjul1sc3kdfi48oco13kakff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redpeach.ttt_project_0419",
+            "certificate_hash": "3319f1af2b2532feab1997b50f74dcaf2cb992c3"
+          }
+        },
+        {
           "client_id": "113797425193-198kli74tim4ku9b27nr5b07d7r8iht9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -97,6 +105,14 @@
           "android_info": {
             "package_name": "com.redpeach.ttt_project_0419",
             "certificate_hash": "ab31514c3ff5e8a8ff5187496584e1656f65031c"
+          }
+        },
+        {
+          "client_id": "113797425193-l3fedkcokjeo1qvhr5v0odk5sshlnonq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redpeach.ttt_project_0419",
+            "certificate_hash": "1105dcfd492c3d9a1acf03a896c9bcf000327aff"
           }
         },
         {
