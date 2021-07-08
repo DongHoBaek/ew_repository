@@ -5,6 +5,7 @@ import 'package:ttt_project_003/models/firebase_auth_state.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/screens/profile_screen.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
+import 'package:ttt_project_003/widgets/setting_user_profile.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -51,13 +52,22 @@ class CustomDrawer extends StatelessWidget {
             userProvider.username,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          subtitle: Text(userProvider.profileMessage),
+          subtitle: userProvider.profileMessage == ""
+              ? Text('메세지를 입력해주세요.')
+              : Text(userProvider.profileMessage),
           trailing: IconButton(
             icon: Icon(
               Icons.edit,
               size: 20,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => SettingUserProfile(
+                        inputNickname: userProvider.nickname,
+                        inputMessage: userProvider.profileMessage,
+                      )));
+            },
           ),
         ),
       );

@@ -8,7 +8,9 @@ InputDecorationTheme inputDecorTheme() {
       enabledBorder: _activeInputBorder(),
       errorBorder: _errorInputBorder(),
       focusedBorder: _activeInputBorder(),
-      focusedErrorBorder: _errorInputBorder());
+      focusedErrorBorder: _errorInputBorder(),
+      hintStyle: TextStyle(color: Colors.black26)
+  );
 }
 
 OutlineInputBorder _errorInputBorder() {

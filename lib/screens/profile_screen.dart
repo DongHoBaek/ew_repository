@@ -56,7 +56,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             height: 5,
           ),
-          Text(userProvider.profileMessage)
+          userProvider.profileMessage == ""
+              ? Text('메세지를 입력해주세요.')
+              : Text(userProvider.profileMessage),
         ],
       ),
     );

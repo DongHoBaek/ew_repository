@@ -94,10 +94,16 @@ class _WritePostScreenState extends State<WritePostScreen> {
           onPressed: () {
             if (_formKey.currentState.validate()) {
               print('Validation success!!');
-              Provider.of<PostProvider>(context, listen: false)
-                  .createPost(_titleController.text, _contentController.text,
-                      DateTime.now())
-                  .whenComplete(() => Navigator.pop(context));
+              if (_title == "") {
+                Provider.of<PostProvider>(context, listen: false)
+                    .updatePost(_titleController.text, _contentController.text);
+              } else {
+                Provider.of<PostProvider>(context, listen: false).createPost(
+                    _titleController.text,
+                    _contentController.text,
+                    DateTime.now());
+              }
+              Navigator.pop(context);
             }
           },
         ));

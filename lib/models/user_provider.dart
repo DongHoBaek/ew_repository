@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ttt_project_003/constant/firestore_keys.dart';
+import 'package:ttt_project_003/models/gallery_state.dart';
 
 class UserProvider extends ChangeNotifier {
   static String _uid;
@@ -70,7 +71,7 @@ class UserProvider extends ChangeNotifier {
           KEY_EMAIL: user.email,
           KEY_USERNAME: user.displayName,
           KEY_NICKNAME: null,
-          KEY_PROFILMSG: '메세지를 설정해주세요',
+          KEY_PROFILMSG: "",
           KEY_MYPOSTS: [],
           KEY_BOOKMARKEDPOSTS: [],
           KEY_LIKEDPOSTS: [],
@@ -78,6 +79,7 @@ class UserProvider extends ChangeNotifier {
         })
         .then((value) => print("User Registed"))
         .catchError((error) => print("Failed to regist user: $error"));
+    print('set user data');
     getUserData();
   }
 
@@ -89,17 +91,20 @@ class UserProvider extends ChangeNotifier {
         .catchError((error) => print("Failed to Degist user: $error"));
   }
 
-  bool updateProfile(String nickname, String profileMessage, String imageUrl) {
+  Future<void> updateProfile(String nickname, String profileMessage) async {
+    String imgUrl = await GalleryState().uploadAndDownloadUserImg();
+
     users.doc(_uid).update({
-      'nickname': nickname,
-      'profileMessage': profileMessage,
-      'profile_image': imageUrl
+      KEY_NICKNAME: nickname,
+      KEY_PROFILMSG: profileMessage,
+      KEY_PROFILEIMG: imgUrl
     }).then((value) {
       print("Profile updated");
       _nickname = nickname;
       _profileMessage = profileMessage;
-      _profileImage = profileImage;
+      _profileImage = imgUrl;
     }).catchError((error) => print("Failed to update profile: $error"));
+
     notifyListeners();
   }
 

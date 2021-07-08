@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
 
@@ -18,8 +17,8 @@ class RoundedAvatar extends StatelessWidget {
             backgroundColor: Colors.grey,
           )
         : ClipOval(
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
+            child: Image.network(
+              imageUrl,
               fit: BoxFit.cover,
               width: size,
               height: size,

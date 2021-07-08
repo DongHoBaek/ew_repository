@@ -94,8 +94,6 @@ class PostProvider with ChangeNotifier {
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));
-
-    setCurrentDocId(ref.id);
   }
 
   Future getPostData(String currentDocId) async {
@@ -106,6 +104,7 @@ class PostProvider with ChangeNotifier {
         .then((DocumentSnapshot documentSnapshot) {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
+
       if (documentSnapshot.exists) {
         _rootPostDID = data['rootPostDID'];
         _parentPostDID = data['parentPostDID'];
