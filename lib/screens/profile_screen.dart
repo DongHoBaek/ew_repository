@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
-import 'package:ttt_project_003/repository/user_repo.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/widgets/post_body.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
-
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -18,13 +18,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserRepo _userRepo = UserRepo();
+    UserProvider userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(),
       body: CustomScrollView(slivers: <Widget>[
         SliverList(
           delegate: SliverChildListDelegate([
-            _userProfile(_userRepo),
+            _userProfile(userProvider),
             _tabButtons(),
             _selectedIndicator(),
           ]),
@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Container _userProfile(UserRepo _userRepo) {
+  Container _userProfile(userProvider) {
     return Container(
       height: size.height * 0.26,
       width: size.width,
@@ -44,15 +44,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           RoundedAvatar(
             size: 100,
-            imageUrl: _userRepo.profileImageUrl,
+            imageUrl: userProvider.profileImage,
           ),
           SizedBox(
             height: 20,
           ),
           Text(
-            _userRepo.username,
+            userProvider.username,
             style: TextStyle(fontSize: font_l_size),
-          )
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(userProvider.profileMessage)
         ],
       ),
     );

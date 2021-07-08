@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
 import 'package:ttt_project_003/models/firebase_auth_state.dart';
-import 'package:ttt_project_003/repository/user_repo.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/screens/profile_screen.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
-
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -14,12 +13,10 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserRepo _userRepo = UserRepo();
-
     return Drawer(
       child: ListView(
         children: [
-          _drawerHeader(_userRepo),
+          _drawerHeader(),
           Divider(
             color: Colors.black38,
           ),
@@ -35,8 +32,7 @@ class CustomDrawer extends StatelessWidget {
             title: Text('Sign Out'),
             onTap: () {
               Navigator.pop(context);
-              Provider.of<FirebaseAuthState>(context, listen: false)
-                  .signOut();
+              Provider.of<FirebaseAuthState>(context, listen: false).signOut();
             },
           ),
         ],
@@ -44,17 +40,27 @@ class CustomDrawer extends StatelessWidget {
     );
   }
 
-  Padding _drawerHeader(UserRepo _userRepo) {
-    return Padding(
-      padding: EdgeInsets.only(top: common_xs_gap),
-      child: ListTile(
-        leading: RoundedAvatar(imageUrl: _userRepo.profileImageUrl),
-        title: Text(
-          _userRepo.username,
-          style: TextStyle(fontWeight: FontWeight.bold),
+  Consumer _drawerHeader() {
+    return Consumer<UserProvider>(builder:
+        (BuildContext context, UserProvider userProvider, Widget child) {
+      return Padding(
+        padding: EdgeInsets.only(top: common_xs_gap),
+        child: ListTile(
+          leading: RoundedAvatar(imageUrl: userProvider.profileImage),
+          title: Text(
+            userProvider.username,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(userProvider.profileMessage),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.edit,
+              size: 20,
+            ),
+            onPressed: () {},
+          ),
         ),
-        subtitle: Text(_userRepo.statusMessage),
-      ),
-    );
+      );
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
 import 'constant/input_decor.dart';
@@ -42,6 +43,8 @@ class _MyAppState extends State<MyApp> {
                     create: (_) => GalleryState()),
                 ChangeNotifierProvider<FirebaseAuthState>.value(
                     value: _firebaseAuthState),
+                ChangeNotifierProvider<UserProvider>(
+                    create: (_) => UserProvider()),
               ],
               child: MaterialApp(
                 theme: _themeData(),

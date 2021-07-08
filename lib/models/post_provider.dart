@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
 
 class PostProvider with ChangeNotifier {
 
@@ -43,7 +44,7 @@ class PostProvider with ChangeNotifier {
 
   List<dynamic> get myPostList => _myPostList;
 
-  CollectionReference posts = FirebaseFirestore.instance.collection('posts');
+  CollectionReference posts = FirebaseFirestore.instance.collection(COLLECTION_POSTS);
 
   void changeDisplay() {
     _displayAllPost = !_displayAllPost;
@@ -76,16 +77,16 @@ class PostProvider with ChangeNotifier {
     String parentPostDID = _currentDocId;
     ref
         .set({
-          'unm': unm,
-          'uid': uid,
-          'title': title,
-          'content': content,
-          'image_url': null,
-          'rootPostDID': rootPostDID,
-          'parentPostDID': parentPostDID,
-          'num_of_likes': 0,
-          'num_of_comment': 0,
-          'post_time': postTime
+          KEY_AUTHORUNM: unm,
+          KEY_AUTHORUID: uid,
+          KEY_TITLE: title,
+          KEY_CONTENT: content,
+          KEY_POSTIMG: null,
+          KEY_ROOTPOSTDID: rootPostDID,
+          KEY_PARENTPOSTDID: parentPostDID,
+          KEY_NUMOFLIKES: 0,
+          KEY_NUMOFCOMMENTS: 0,
+          KEY_POSTTIME: postTime
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));

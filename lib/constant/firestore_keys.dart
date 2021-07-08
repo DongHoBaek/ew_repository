@@ -1,6 +1,5 @@
 const COLLECTION_USERS = 'Users';
 const COLLECTION_POSTS = 'Posts';
-const COLLECTION_COMMENTS = 'Comments';
 
 const KEY_USERNAME = 'username';
 const KEY_NICKNAME = 'nickname';

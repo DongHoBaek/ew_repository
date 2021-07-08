@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
 
 class UserProvider extends ChangeNotifier {
-  String _uid;
-  String _username = "";
-  String _email;
-  String _nickname;
-  String _profileMessage;
+  static String _uid;
+  static String _username = "";
+  static String _email;
+  static String _nickname;
+  static String _profileMessage;
   static List _myPosts;
   static List _bookmarkedPosts = [];
   static List _likedPosts;
-  String _profileImage;
+  static String _profileImage;
 
   String get uid => _uid;
 
@@ -31,9 +32,10 @@ class UserProvider extends ChangeNotifier {
 
   String get profileImage => _profileImage;
 
-  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  CollectionReference users =
+      FirebaseFirestore.instance.collection(COLLECTION_USERS);
 
-  Future login() async {
+  Future getUserData() async {
     User user = FirebaseAuth.instance.currentUser;
 
     _uid = user.uid;
@@ -42,55 +44,41 @@ class UserProvider extends ChangeNotifier {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
-        _email = data['email'];
-        _username = data['username'];
-        _nickname = data['nickname'];
-        _myPosts = data['my_posts'];
-        _bookmarkedPosts = data['bookmarked_posts'];
-        _likedPosts = data['liked_posts'];
-        _profileImage = data['profile_image'];
+        _email = data[KEY_EMAIL];
+        _username = data[KEY_USERNAME];
+        _nickname = data[KEY_NICKNAME];
+        _myPosts = data[KEY_MYPOSTS];
+        _bookmarkedPosts = data[KEY_BOOKMARKEDPOSTS];
+        _likedPosts = data[KEY_LIKEDPOSTS];
+        _profileImage = data[KEY_PROFILEIMG];
+        _profileMessage = data[KEY_PROFILMSG];
         print('get user data!');
-        print(_bookmarkedPosts);
 
         notifyListeners();
       } else {
         print('Document does not exist on the database');
-        register(user);
+        _setUserData(user);
       }
     });
   }
 
-  void logout() {
-    _uid = null;
-    _email = null;
-    _username = null;
-    _nickname = null;
-    _profileMessage = null;
-    _myPosts = null;
-    _bookmarkedPosts = null;
-    _likedPosts = null;
-    _profileImage = null;
-
-    notifyListeners();
-  }
-
-  void register(User user) {
+  void _setUserData(User user) {
     DocumentReference ref = users.doc(_uid);
 
     ref
         .set({
-          'email': user.email,
-          'username': user.displayName,
-          'nickname': null,
-          'profileMessage': null,
-          'my_posts': [],
-          'bookmarked_posts': [],
-          'liked_posts': [],
-          'profile_image': ""
+          KEY_EMAIL: user.email,
+          KEY_USERNAME: user.displayName,
+          KEY_NICKNAME: null,
+          KEY_PROFILMSG: '메세지를 설정해주세요',
+          KEY_MYPOSTS: [],
+          KEY_BOOKMARKEDPOSTS: [],
+          KEY_LIKEDPOSTS: [],
+          KEY_PROFILEIMG: ""
         })
         .then((value) => print("User Registed"))
         .catchError((error) => print("Failed to regist user: $error"));
-    login();
+    getUserData();
   }
 
   void degister() {
@@ -142,10 +130,10 @@ class UserProvider extends ChangeNotifier {
 
   bool isBookmarked(String postDid) {
     bool result = false;
-      if(_bookmarkedPosts != null) {
-        result = _bookmarkedPosts.contains(postDid);
-      }
-      return result;
+    if (_bookmarkedPosts != null) {
+      result = _bookmarkedPosts.contains(postDid);
+    }
+    return result;
   }
 
   void like(String postDid) {
@@ -153,9 +141,7 @@ class UserProvider extends ChangeNotifier {
     _likedPosts.insert(0, postDid);
     print(_likedPosts);
 
-    users
-        .doc(_uid)
-        .update({'liked_posts': _likedPosts}).then((value) {
+    users.doc(_uid).update({'liked_posts': _likedPosts}).then((value) {
       print("liked");
     }).catchError((error) => print("Failed to like: $error"));
     notifyListeners();
@@ -165,9 +151,7 @@ class UserProvider extends ChangeNotifier {
     print(postDid);
     _likedPosts.remove(postDid);
     print(_likedPosts);
-    users
-        .doc(_uid)
-        .update({'liked_posts': _likedPosts}).then((value) {
+    users.doc(_uid).update({'liked_posts': _likedPosts}).then((value) {
       print("unlike");
     }).catchError((error) => print("Failed to unlike: $error"));
     notifyListeners();
@@ -175,7 +159,7 @@ class UserProvider extends ChangeNotifier {
 
   bool isLiked(String postDid) {
     bool result = false;
-    if(_likedPosts != null) {
+    if (_likedPosts != null) {
       result = _likedPosts.contains(postDid);
     }
     return result;
