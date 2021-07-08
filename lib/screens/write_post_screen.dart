@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/widgets/header.dart';
 
 class WritePostScreen extends StatefulWidget {
@@ -93,8 +94,10 @@ class _WritePostScreenState extends State<WritePostScreen> {
           onPressed: () {
             if (_formKey.currentState.validate()) {
               print('Validation success!!');
-
-              Navigator.pop(context);
+              Provider.of<PostProvider>(context, listen: false)
+                  .createPost(_titleController.text, _contentController.text,
+                      DateTime.now())
+                  .whenComplete(() => Navigator.pop(context));
             }
           },
         ));

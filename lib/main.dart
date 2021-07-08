@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
@@ -13,6 +14,7 @@ import 'models/gallery_state.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(MyApp());
 }
 
@@ -45,6 +47,8 @@ class _MyAppState extends State<MyApp> {
                     value: _firebaseAuthState),
                 ChangeNotifierProvider<UserProvider>(
                     create: (_) => UserProvider()),
+                ChangeNotifierProvider<PostProvider>(
+                    create: (_) => PostProvider()),
               ],
               child: MaterialApp(
                 theme: _themeData(),

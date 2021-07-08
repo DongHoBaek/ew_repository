@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:ttt_project_003/constant/firestore_keys.dart';
+import 'package:ttt_project_003/models/gallery_state.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 
 class PostProvider with ChangeNotifier {
-
   String _currentDocId;
   String _rootPostDID;
   String _parentPostDID;
@@ -44,7 +45,8 @@ class PostProvider with ChangeNotifier {
 
   List<dynamic> get myPostList => _myPostList;
 
-  CollectionReference posts = FirebaseFirestore.instance.collection(COLLECTION_POSTS);
+  CollectionReference posts =
+      FirebaseFirestore.instance.collection(COLLECTION_POSTS);
 
   void changeDisplay() {
     _displayAllPost = !_displayAllPost;
@@ -70,18 +72,20 @@ class PostProvider with ChangeNotifier {
     print("set rootDocument id to $_rootPostDID");
   }
 
-  void createPost(
-      String title, String content, String uid, String unm, var postTime) {
-    DocumentReference ref = posts.doc('${postTime}_$uid');
+  Future<void> createPost(String title, String content, var postTime) async{
+    UserProvider _userProvider = UserProvider();
+    String imgUrl = await GalleryState().uploadAndDownloadPostImg(postTime);
+
+    DocumentReference ref = posts.doc('${postTime}_${_userProvider.uid}');
     String rootPostDID = _rootPostDID == null ? ref.id : _rootPostDID;
     String parentPostDID = _currentDocId;
     ref
         .set({
-          KEY_AUTHORUNM: unm,
-          KEY_AUTHORUID: uid,
+          KEY_AUTHORUNM: _userProvider.username,
+          KEY_AUTHORUID: _userProvider.uid,
           KEY_TITLE: title,
           KEY_CONTENT: content,
-          KEY_POSTIMG: null,
+          KEY_POSTIMG: imgUrl,
           KEY_ROOTPOSTDID: rootPostDID,
           KEY_PARENTPOSTDID: parentPostDID,
           KEY_NUMOFLIKES: 0,
@@ -100,7 +104,8 @@ class PostProvider with ChangeNotifier {
         .doc(currentDocId)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
-      Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
         _rootPostDID = data['rootPostDID'];
         _parentPostDID = data['parentPostDID'];
@@ -179,7 +184,8 @@ class PostProvider with ChangeNotifier {
       for (int i = 0; i < docs.length; i++) {
         Map<String, dynamic> data = docs[i].data() as Map<String, dynamic>;
         final DateFormat formatter = DateFormat('yyyy-MM-dd');
-        final String formattedPostTime = formatter. format(data['post_time'].toDate());
+        final String formattedPostTime =
+            formatter.format(data['post_time'].toDate());
         tmpList = [];
 
         tmpList.add(docs[i].id);
