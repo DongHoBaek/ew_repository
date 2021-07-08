@@ -26,7 +26,7 @@ class GalleryState extends ChangeNotifier {
 
   Future<String> uploadAndDownloadPostImg(DateTime dateTime) async {
     String downloadURL;
-    
+
     File imageFile = File(_image.path);
     Reference reference = _firebaseStorage
         .ref()
@@ -40,7 +40,7 @@ class GalleryState extends ChangeNotifier {
 
   Future<String> uploadAndDownloadUserImg() async {
     String downloadURL;
-    String imageName;
+
     File imageFile = File(_image.path);
     Reference reference = _firebaseStorage
         .ref()
