@@ -55,10 +55,10 @@ class FirebaseAuthState extends ChangeNotifier {
   void watchAuthChange() {
     _firebaseAuth.authStateChanges().listen((user) {
       if (user == null && _user == null) {
-        changeFirebaseAuthStatus();
+        changeFirebaseAuthStatus(FirebaseAuthStatus.signout);
       } else if (user != _user) {
         _user = user;
-        changeFirebaseAuthStatus();
+        changeFirebaseAuthStatus(FirebaseAuthStatus.signin);
       }
     });
   }

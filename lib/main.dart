@@ -28,6 +28,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    _firebaseAuthState.watchAuthChange();
     return FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {
