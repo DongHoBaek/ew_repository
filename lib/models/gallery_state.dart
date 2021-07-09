@@ -27,27 +27,32 @@ class GalleryState extends ChangeNotifier {
   Future<String> uploadAndDownloadPostImg(DateTime dateTime) async {
     String downloadURL;
 
-    File imageFile = File(_image.path);
-    Reference reference = _firebaseStorage
-        .ref()
-        .child('PostImg/${dateTime}_${UserProvider().uid}');
-    await reference.putFile(imageFile);
+    if (_image != null) {
+      File imageFile = File(_image.path);
+      Reference reference = _firebaseStorage
+          .ref()
+          .child('PostImg/')
+          .child('${UserProvider().uid}/$dateTime');
+      await reference.putFile(imageFile);
 
-    downloadURL = (await reference.getDownloadURL()).toString();
-
+      downloadURL = (await reference.getDownloadURL()).toString();
+    }
     return downloadURL;
   }
 
   Future<String> uploadAndDownloadUserImg() async {
     String downloadURL;
 
-    File imageFile = File(_image.path);
-    Reference reference = _firebaseStorage
-        .ref()
-        .child('UserImg/${UserProvider().uid}');
-    await reference.putFile(imageFile);
+    if (_image != null) {
+      File imageFile = File(_image.path);
+      Reference reference =
+          _firebaseStorage.ref().child('UserImg/${UserProvider().uid}');
+      await reference.putFile(imageFile);
 
-    downloadURL = (await reference.getDownloadURL()).toString();
+      downloadURL = (await reference.getDownloadURL()).toString();
+    }else if(UserProvider().profileImage != null){
+      downloadURL = UserProvider().profileImage;
+    }
 
     return downloadURL;
   }

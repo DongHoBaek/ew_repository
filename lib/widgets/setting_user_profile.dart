@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
+import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
 class SettingUserProfile extends StatefulWidget {
   String inputNickname;
@@ -19,6 +21,8 @@ class SettingUserProfile extends StatefulWidget {
 class _SettingUserProfileState extends State<SettingUserProfile> {
   TextEditingController _nicknameController;
   TextEditingController _statusMessageController;
+  String _imageUrl = UserProvider().profileImage;
+  bool _loading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -37,62 +41,83 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
     _statusMessageController = TextEditingController(text: widget.inputMessage);
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Form(
-        key: _formKey,
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.6,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Consumer<GalleryState>(
-                    builder: (context, galleryState, child) {
-                  return InkWell(
-                      onTap: () {
-                        galleryState.getImage();
-                      },
-                      child: CircleAvatar(
-                        radius: 50,
-                        child: ClipOval(
-                          child: galleryState.image != null
-                              ? Image.file(
-                                  File(galleryState.image.path),
-                                  fit: BoxFit.cover,
-                                  width: 100,
-                                  height: 100,
-                                )
-                              : Container(
-                                  color: Colors.grey,
-                                ),
-                        ),
-                      ));
-                }),
-                TextButton(
-                    onPressed: () {
-                      Provider.of<GalleryState>(context, listen: false)
-                          .clearImage();
-                    },
-                    child: Text(
-                      '기본 이미지로 설정',
-                      style: TextStyle(color: Colors.black54),
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(left: 40, right: 40, top: 20),
-                  child: _nicknameTextFormField(),
+      appBar: AppBar(),
+      body: Stack(
+        children: [
+          IgnorePointer(
+            ignoring: _loading ? true : false,
+            child: Form(
+              key: _formKey,
+              child: Container(
+                height: size.height,
+                width: size.width,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Consumer<GalleryState>(
+                        builder: (context, galleryState, child) {
+                      return InkWell(
+                          onTap: () {
+                            galleryState.getImage();
+                          },
+                          child: CircleAvatar(
+                            radius: 50,
+                            child: ClipOval(
+                              child: galleryState.image != null
+                                  ? Image.file(
+                                      File(galleryState.image.path),
+                                      fit: BoxFit.cover,
+                                      width: 100,
+                                      height: 100,
+                                    )
+                                  : _imageUrl != null
+                                      ? Image.network(
+                                          _imageUrl,
+                                          fit: BoxFit.cover,
+                                          width: 100,
+                                          height: 100,
+                                        )
+                                      : Container(
+                                          color: Colors.grey,
+                                        ),
+                            ),
+                          ));
+                    }),
+                    TextButton(
+                        onPressed: () {
+                          Provider.of<GalleryState>(context, listen: false)
+                              .clearImage();
+                          setState(() {
+                            _imageUrl = null;
+                          });
+                        },
+                        child: Text(
+                          '기본 이미지로 설정',
+                          style: TextStyle(color: Colors.black54),
+                        )),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 40, right: 40, top: 20, bottom: 20),
+                      child: _nicknameTextFormField(),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
+                      child: _statusMessageTextFormField(),
+                    ),
+                    _submitBtn(context)
+                  ],
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 40, right: 40, bottom: 20),
-                  child: _statusMessageTextFormField(),
-                ),
-                _submitBtn(context)
-              ],
+              ),
             ),
           ),
-        ),
+          _loading
+              ? Container(
+                  height: size.height,
+                  width: size.width,
+                  child: MyProgressIndicator())
+              : Container()
+        ],
       ),
     );
   }
@@ -101,10 +126,13 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
     return TextButton(
       onPressed: () {
         if (_formKey.currentState.validate()) {
-          Provider.of<UserProvider>(context, listen: false).updateProfile(
-              _nicknameController.text, _statusMessageController.text);
-
-          Navigator.pop(context);
+          setState(() {
+            _loading = true;
+          });
+          Provider.of<UserProvider>(context, listen: false)
+              .updateProfile(
+                  _nicknameController.text, _statusMessageController.text)
+              .whenComplete(() => Navigator.pop(context));
         }
       },
       child: Text('확인', style: TextStyle(color: Colors.black87)),

@@ -49,26 +49,26 @@ class CustomDrawer extends StatelessWidget {
         child: ListTile(
           leading: RoundedAvatar(imageUrl: userProvider.profileImage),
           title: Text(
-            userProvider.username,
+            userProvider.nickname != null
+                ? userProvider.nickname
+                : userProvider.username,
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: userProvider.profileMessage == ""
               ? Text('메세지를 입력해주세요.')
               : Text(userProvider.profileMessage),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.edit,
-              size: 20,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => SettingUserProfile(
-                        inputNickname: userProvider.nickname,
-                        inputMessage: userProvider.profileMessage,
-                      )));
-            },
+          trailing: Icon(
+            Icons.edit,
+            size: 20,
           ),
+          onTap: () {
+            Navigator.pop(context);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => SettingUserProfile(
+                      inputNickname: userProvider.nickname,
+                      inputMessage: userProvider.profileMessage,
+                    )));
+          },
         ),
       );
     });

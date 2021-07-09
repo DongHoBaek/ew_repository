@@ -50,7 +50,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             height: 20,
           ),
           Text(
-            userProvider.username,
+            userProvider.nickname != null
+                ? userProvider.nickname
+                : userProvider.username,
             style: TextStyle(fontSize: font_l_size),
           ),
           SizedBox(

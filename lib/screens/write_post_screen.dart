@@ -149,7 +149,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
           child: Container(
             height: 200,
             width: size.width,
-            color: Colors.grey[300],
+            color: Colors.grey[100],
             child: galleryState.image != null
                 ? Image.file(
                     File(galleryState.image.path),

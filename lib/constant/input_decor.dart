@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 InputDecorationTheme inputDecorTheme() {
   return InputDecorationTheme(
-      fillColor: Colors.grey[300],
+      fillColor: Colors.grey[100],
       filled: true,
       border: OutlineInputBorder(borderSide: BorderSide.none),
       enabledBorder: _activeInputBorder(),

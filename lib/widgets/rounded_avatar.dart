@@ -11,7 +11,7 @@ class RoundedAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return imageUrl == ""
+    return imageUrl == null
         ? CircleAvatar(
             radius: size * 0.5,
             backgroundColor: Colors.grey,
