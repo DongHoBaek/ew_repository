@@ -6,10 +6,14 @@ import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
 import 'constant/screen_size.dart';
 import 'models/firebase_auth_state.dart';
+import 'models/post_provider.dart';
 
 class Home extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _HomeState createState() {
+    PostProvider().getHomePostList();
+    return _HomeState();
+  }
 }
 
 class _HomeState extends State<Home> {
@@ -18,6 +22,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     if (size == null) size = MediaQuery.of(context).size;
+
     return Consumer<FirebaseAuthState>(builder: (BuildContext context,
         FirebaseAuthState firebaseAuthState, Widget child) {
       switch (firebaseAuthState.firebaseAuthStatus) {

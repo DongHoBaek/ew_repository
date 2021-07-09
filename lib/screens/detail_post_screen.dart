@@ -66,9 +66,9 @@ class DetailPostScreen extends StatelessWidget {
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => WritePostScreen(
-                            inputTitle: postList[0],
-                            inputContent: postList[1],
-                            imageUrl: postList[5],
+                            inputTitle: postList[6][1],
+                            inputContent: postList[8][1],
+                            imageUrl: postList[0][1],
                           )));
                 },
               ),
@@ -135,7 +135,7 @@ class DetailPostScreen extends StatelessWidget {
 
   Header _titleBox() {
     return Header(
-      text: postList[0],
+      text: postList[6][1],
       padding: 0.0,
       actions: [
         Icon(Icons.favorite_outline),
@@ -150,7 +150,7 @@ class DetailPostScreen extends StatelessWidget {
   Container _contentBox() {
     return Container(
       constraints: BoxConstraints(minHeight: size.height * 0.17),
-      child: Text(postList[1], maxLines: null),
+      child: Text(postList[8][1], maxLines: null),
     );
   }
 
@@ -160,7 +160,7 @@ class DetailPostScreen extends StatelessWidget {
       height: 200,
       color: Colors.grey,
       child: CachedNetworkImage(
-        imageUrl: postList[5],
+        imageUrl: postList[0][1],
         fit: BoxFit.cover,
       ),
     );
@@ -174,12 +174,12 @@ class DetailPostScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              RoundedAvatar(size: 40, imageUrl: postList[5]),
+              RoundedAvatar(size: 40, imageUrl: postList[0][1]),
               SizedBox(
                 width: common_gap,
               ),
               Text(
-                postList[2],
+                postList[4][1],
                 style:
                     TextStyle(fontSize: font_size, fontWeight: FontWeight.bold),
               )

@@ -15,9 +15,11 @@ class PostProvider with ChangeNotifier {
   String _unm;
   String _imageURL;
   String _postTime;
-  int _likes;
+  int _numOfLikes;
+  int _numOfComments;
   bool _displayAllPost = true;
-  List<dynamic> _homePostList = [];
+  static List<dynamic> _homePostList = [];
+  static List<dynamic> _currentPostList = [];
   List<dynamic> _childPostList = [];
   List<dynamic> _myPostList = [];
 
@@ -35,11 +37,19 @@ class PostProvider with ChangeNotifier {
 
   String get unm => _unm;
 
-  int get likes => _likes;
+  String get imageURL => _imageURL;
+
+  String get postTime => _postTime;
+
+  int get numOfLikes => _numOfLikes;
+
+  int get numOfComments => _numOfComments;
 
   bool get displayAllPost => _displayAllPost;
 
   List<dynamic> get homePostList => _homePostList;
+
+  List<dynamic> get currentPostList => _currentPostList;
 
   List<dynamic> get childPostList => _childPostList;
 
@@ -72,7 +82,7 @@ class PostProvider with ChangeNotifier {
     print("set rootDocument id to $_rootPostDID");
   }
 
-  Future<void> createPost(String title, String content, var postTime) async{
+  Future<void> createPost(String title, String content, var postTime) async {
     UserProvider _userProvider = UserProvider();
     String imgUrl = await GalleryState().uploadAndDownloadPostImg(postTime);
 
@@ -105,15 +115,24 @@ class PostProvider with ChangeNotifier {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
 
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formattedPostTime =
+      formatter.format(data[KEY_POSTTIME].toDate());
+
       if (documentSnapshot.exists) {
-        _rootPostDID = data['rootPostDID'];
-        _parentPostDID = data['parentPostDID'];
-        _title = data['title'];
-        _content = data['content'];
-        _uid = data['uid'];
-        _unm = data['unm'];
-        _likes = data['num_of_likes'];
+        _currentPostList = data.entries.map((e) => [e.key, e.value]).toList();
+        _rootPostDID = data[KEY_ROOTPOSTDID];
+        _parentPostDID = data[KEY_PARENTPOSTDID];
+        _title = data[KEY_TITLE];
+        _content = data[KEY_CONTENT];
+        _uid = data[KEY_AUTHORUID];
+        _unm = data[KEY_AUTHORUNM];
+        _numOfLikes = data[KEY_NUMOFLIKES];
+        _numOfComments = data[KEY_NUMOFCOMMENTS];
+        _imageURL = data[KEY_POSTIMG];
+        _postTime = formattedPostTime;
         print('get data!');
+        print(_currentPostList);
       } else {
         print('Document does not exist on the database');
       }
@@ -153,10 +172,10 @@ class PostProvider with ChangeNotifier {
   Future getHomePostList() async {
     if (_displayAllPost == true) {
       var snapshot = await posts.get();
-      _homePostList = getPostList(snapshot);
+      _homePostList = _getPostList(snapshot);
     } else {
-      var snapshot = await posts.where('parentPostDID', isNull: true).get();
-      _homePostList = getPostList(snapshot);
+      var snapshot = await posts.where(KEY_PARENTPOSTDID, isNull: true).get();
+      _homePostList = _getPostList(snapshot);
     }
     print('HomePostList: $_homePostList');
 
@@ -165,8 +184,8 @@ class PostProvider with ChangeNotifier {
 
   Future getChildPostList() async {
     var snapshot =
-        await posts.where('parentPostDID', isEqualTo: _currentDocId).get();
-    _childPostList = getPostList(snapshot);
+        await posts.where(KEY_PARENTPOSTDID, isEqualTo: _currentDocId).get();
+    _childPostList = _getPostList(snapshot);
 
     print('ChildPostList: $_childPostList');
 
@@ -174,25 +193,29 @@ class PostProvider with ChangeNotifier {
   }
 
   //2차원 데이터 _postList (id, title, content) 반환
-  List<dynamic> getPostList(snapshot) {
+  List<dynamic> _getPostList(snapshot) {
     List<dynamic> postList = [];
-    List<String> tmpList = [];
+    List<dynamic> tmpList = [];
 
     if (snapshot != null) {
       List<QueryDocumentSnapshot> docs = snapshot.docs.toList();
+
       for (int i = 0; i < docs.length; i++) {
         Map<String, dynamic> data = docs[i].data() as Map<String, dynamic>;
         final DateFormat formatter = DateFormat('yyyy-MM-dd');
         final String formattedPostTime =
-            formatter.format(data['post_time'].toDate());
+            formatter.format(data[KEY_POSTTIME].toDate());
+
         tmpList = [];
 
         tmpList.add(docs[i].id);
+        tmpList.add(data[KEY_POSTIMG]);
         tmpList.add(formattedPostTime);
-        tmpList.add(data['unm']);
-        tmpList.add(data['title']);
+        tmpList.add(data[KEY_NUMOFLIKES]);
+        tmpList.add(data[KEY_AUTHORUNM]);
+        tmpList.add(data[KEY_TITLE]);
 
-        String cont = data['content'];
+        String cont = data[KEY_CONTENT];
         if (cont.length > 25) {
           cont = cont.substring(0, 25) + '...';
         }
@@ -235,10 +258,10 @@ class PostProvider with ChangeNotifier {
   }
 
   void liked() {
-    _likes += 1;
+    _numOfLikes += 1;
     posts
         .doc(_currentDocId)
-        .update({'num_of_likes': _likes})
+        .update({'num_of_likes': _numOfLikes})
         .then((value) => print("post is liked"))
         .catchError((error) => print("Failed to like: $error"));
 
@@ -246,10 +269,10 @@ class PostProvider with ChangeNotifier {
   }
 
   void unliked() {
-    _likes -= 1;
+    _numOfLikes -= 1;
     posts
         .doc(_currentDocId)
-        .update({'num_of_likes': _likes})
+        .update({'num_of_likes': _numOfLikes})
         .then((value) => print("post is unliked"))
         .catchError((error) => print("Failed to unlike: $error"));
 
