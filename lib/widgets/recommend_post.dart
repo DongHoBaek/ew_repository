@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
-import 'package:ttt_project_003/screens/detail_post_screen.dart';
 
 
 class RecommendPost extends StatelessWidget {
@@ -24,8 +23,8 @@ class RecommendPost extends StatelessWidget {
         child: InkWell(
           child: _postInfo(),
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => DetailPostScreen(postList: this.postList)));
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (_) => DetailPostScreen(postList: this.postList)));
           },
         ),
       ),

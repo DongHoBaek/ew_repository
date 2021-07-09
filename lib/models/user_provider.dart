@@ -15,6 +15,9 @@ class UserProvider extends ChangeNotifier {
   static List _likedPosts;
   static String _profileImage;
 
+  String _authorProfileImg;
+  String _authorNickname;
+
   String get uid => _uid;
 
   String get username => _username;
@@ -33,8 +36,26 @@ class UserProvider extends ChangeNotifier {
 
   String get profileImage => _profileImage;
 
+  String get authorProfileImg => _authorProfileImg;
+
+  String get authorNickname => _authorNickname;
+
   CollectionReference users =
       FirebaseFirestore.instance.collection(COLLECTION_USERS);
+
+  Future authorUserData(uid) async {
+    await users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      if (documentSnapshot.exists) {
+        _authorProfileImg = data[KEY_PROFILEIMG];
+        _authorNickname = data[KEY_NICKNAME];
+      }
+    });
+
+    return authorProfileImg;
+  }
 
   Future getUserData() async {
     User user = FirebaseAuth.instance.currentUser;

@@ -19,7 +19,7 @@ class PostProvider with ChangeNotifier {
   int _numOfComments;
   bool _displayAllPost = true;
   static List<dynamic> _homePostList = [];
-  static List<dynamic> _currentPostList = [];
+  static Map<String, dynamic> _currentPostMap;
   List<dynamic> _childPostList = [];
   List<dynamic> _myPostList = [];
 
@@ -49,7 +49,7 @@ class PostProvider with ChangeNotifier {
 
   List<dynamic> get homePostList => _homePostList;
 
-  List<dynamic> get currentPostList => _currentPostList;
+  Map<String, dynamic> get currentPostMap => _currentPostMap;
 
   List<dynamic> get childPostList => _childPostList;
 
@@ -120,7 +120,7 @@ class PostProvider with ChangeNotifier {
       formatter.format(data[KEY_POSTTIME].toDate());
 
       if (documentSnapshot.exists) {
-        _currentPostList = data.entries.map((e) => [e.key, e.value]).toList();
+        _currentPostMap = data;
         _rootPostDID = data[KEY_ROOTPOSTDID];
         _parentPostDID = data[KEY_PARENTPOSTDID];
         _title = data[KEY_TITLE];
@@ -132,19 +132,24 @@ class PostProvider with ChangeNotifier {
         _imageURL = data[KEY_POSTIMG];
         _postTime = formattedPostTime;
         print('get data!');
-        print(_currentPostList);
+        print(_currentPostMap);
       } else {
         print('Document does not exist on the database');
       }
     });
   }
 
-  void updatePost(String title, String content) {
+  Future<void> updatePost(String title, String content) async {
+    Timestamp time = _currentPostMap[KEY_POSTTIME];
+    var date = DateTime.fromMicrosecondsSinceEpoch(time.millisecondsSinceEpoch);
+    String imgUrl = await GalleryState().uploadAndDownloadPostImg(date);
+
+    _imageURL = imgUrl;
     _title = title;
     _content = content;
     posts
         .doc(_currentDocId)
-        .update({'content': content, 'title': title})
+        .update({KEY_CONTENT: content, KEY_TITLE: title, KEY_POSTIMG: imgUrl})
         .then((value) => print("Post Updated"))
         .catchError((error) => print("Failed to update post: $error"));
 
@@ -209,6 +214,7 @@ class PostProvider with ChangeNotifier {
         tmpList = [];
 
         tmpList.add(docs[i].id);
+        tmpList.add(data[KEY_AUTHORUID]);
         tmpList.add(data[KEY_POSTIMG]);
         tmpList.add(formattedPostTime);
         tmpList.add(data[KEY_NUMOFLIKES]);

@@ -1,18 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/screens/write_post_screen.dart';
 import 'package:ttt_project_003/widgets/header.dart';
 import 'package:ttt_project_003/widgets/recommend_post_body.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
 
-
 class DetailPostScreen extends StatelessWidget {
-  final List postList;
+  final Map<String, dynamic> postMap;
 
-  DetailPostScreen({Key key, @required this.postList}) : super(key: key);
+  DetailPostScreen({Key key, @required this.postMap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class DetailPostScreen extends StatelessWidget {
                   _goRootPost(),
                   SizedBox(height: common_gap),
                   _goParentPost(),
-                  _userInfo(),
+                  _userInfo(context),
                   _imageBox(),
                   _titleBox(),
                   _contentBox(),
@@ -66,49 +68,49 @@ class DetailPostScreen extends StatelessWidget {
                   Navigator.pop(context);
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => WritePostScreen(
-                            inputTitle: postList[6][1],
-                            inputContent: postList[8][1],
-                            imageUrl: postList[0][1],
+                            inputTitle: postMap[KEY_TITLE],
+                            inputContent: postMap[KEY_CONTENT],
+                            imageUrl: postMap[KEY_POSTIMG],
                           )));
                 },
               ),
             )),
             PopupMenuItem(
                 child: Container(
-                  height: 48,
-                  width: 80,
-                  child: InkWell(
-                    child: Center(
-                        child: Text(
-                          '삭제',
-                        )),
-                    onTap: () {},
-                  ),
+              height: 48,
+              width: 80,
+              child: InkWell(
+                child: Center(
+                    child: Text(
+                  '삭제',
                 )),
+                onTap: () {},
+              ),
+            )),
             PopupMenuItem(
                 child: Container(
-                  height: 48,
-                  width: 80,
-                  child: InkWell(
-                    child: Center(
-                        child: Text(
-                          '익명화',
-                        )),
-                    onTap: () {},
-                  ),
+              height: 48,
+              width: 80,
+              child: InkWell(
+                child: Center(
+                    child: Text(
+                  '익명화',
                 )),
+                onTap: () {},
+              ),
+            )),
             PopupMenuItem(
                 child: Container(
-                  height: 48,
-                  width: 80,
-                  child: InkWell(
-                    child: Center(
-                        child: Text(
-                          '신고',
-                        )),
-                    onTap: () {},
-                  ),
+              height: 48,
+              width: 80,
+              child: InkWell(
+                child: Center(
+                    child: Text(
+                  '신고',
                 )),
+                onTap: () {},
+              ),
+            )),
           ];
         });
   }
@@ -135,7 +137,7 @@ class DetailPostScreen extends StatelessWidget {
 
   Header _titleBox() {
     return Header(
-      text: postList[6][1],
+      text: postMap[KEY_TITLE],
       padding: 0.0,
       actions: [
         Icon(Icons.favorite_outline),
@@ -150,7 +152,7 @@ class DetailPostScreen extends StatelessWidget {
   Container _contentBox() {
     return Container(
       constraints: BoxConstraints(minHeight: size.height * 0.17),
-      child: Text(postList[8][1], maxLines: null),
+      child: Text(postMap[KEY_CONTENT], maxLines: null),
     );
   }
 
@@ -160,13 +162,13 @@ class DetailPostScreen extends StatelessWidget {
       height: 200,
       color: Colors.grey,
       child: CachedNetworkImage(
-        imageUrl: postList[0][1],
+        imageUrl: postMap[KEY_POSTIMG],
         fit: BoxFit.cover,
       ),
     );
   }
 
-  Padding _userInfo() {
+  Padding _userInfo(context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: common_gap),
       child: Container(
@@ -174,12 +176,15 @@ class DetailPostScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              RoundedAvatar(size: 40, imageUrl: postList[0][1]),
+              RoundedAvatar(
+                  size: 40,
+                  imageUrl:
+                      Provider.of<UserProvider>(context).authorProfileImg),
               SizedBox(
                 width: common_gap,
               ),
               Text(
-                postList[4][1],
+                Provider.of<UserProvider>(context).authorNickname,
                 style:
                     TextStyle(fontSize: font_size, fontWeight: FontWeight.bold),
               )

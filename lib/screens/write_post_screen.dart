@@ -8,6 +8,7 @@ import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/widgets/header.dart';
+import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
 class WritePostScreen extends StatefulWidget {
   String imageUrl;
@@ -25,6 +26,8 @@ class WritePostScreen extends StatefulWidget {
 
 class _WritePostScreenState extends State<WritePostScreen> {
   String _title = 'Create New Post';
+
+  bool _loading = false;
 
   TextEditingController _titleController;
 
@@ -52,33 +55,46 @@ class _WritePostScreenState extends State<WritePostScreen> {
     _titleController = TextEditingController(text: widget.inputTitle);
     _contentController = TextEditingController(text: widget.inputContent);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(_title),
-        ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: common_gap),
-              child: Container(
-                height: size.height,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Header(text: 'Image', padding: 0.0),
-                    _imageBox(),
-                    Header(text: 'Title', padding: 0.0),
-                    _titleField(),
-                    Header(text: 'Content', padding: 0.0),
-                    Expanded(child: _contentField()),
-                    _submitBtn(context)
-                  ],
+    return IgnorePointer(
+      ignoring: _loading ? true : false,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(_title),
+          ),
+          body: Stack(
+            children: [
+              Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: common_gap),
+                    child: Container(
+                      height: size.height,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Header(text: 'Image', padding: 0.0),
+                          _imageBox(),
+                          Header(text: 'Title', padding: 0.0),
+                          _titleField(),
+                          Header(text: 'Content', padding: 0.0),
+                          Expanded(child: _contentField()),
+                          _submitBtn(context)
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ));
+              _loading
+                  ? Container(
+                      height: size.height,
+                      width: size.width,
+                      child: MyProgressIndicator())
+                  : Container()
+            ],
+          )),
+    );
   }
 
   Padding _submitBtn(BuildContext context) {
@@ -94,16 +110,27 @@ class _WritePostScreenState extends State<WritePostScreen> {
           onPressed: () {
             if (_formKey.currentState.validate()) {
               print('Validation success!!');
+              setState(() {
+                _loading = true;
+              });
               if (_title == "") {
                 Provider.of<PostProvider>(context, listen: false)
-                    .updatePost(_titleController.text, _contentController.text);
+                    .updatePost(_titleController.text, _contentController.text)
+                    .whenComplete(() {
+                  Provider.of<PostProvider>(context, listen: false)
+                      .getHomePostList();
+                  Navigator.pop(context);
+                });
               } else {
-                Provider.of<PostProvider>(context, listen: false).createPost(
-                    _titleController.text,
-                    _contentController.text,
-                    DateTime.now());
+                Provider.of<PostProvider>(context, listen: false)
+                    .createPost(_titleController.text, _contentController.text,
+                        DateTime.now())
+                    .whenComplete(() {
+                  Provider.of<PostProvider>(context, listen: false)
+                      .getHomePostList();
+                  Navigator.pop(context);
+                });
               }
-              Navigator.pop(context);
             }
           },
         ));

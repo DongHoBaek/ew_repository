@@ -40,13 +40,13 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
     _nicknameController = TextEditingController(text: widget.inputNickname);
     _statusMessageController = TextEditingController(text: widget.inputMessage);
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: Stack(
-        children: [
-          IgnorePointer(
-            ignoring: _loading ? true : false,
-            child: Form(
+    return IgnorePointer(
+      ignoring: _loading ? true : false,
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Stack(
+          children: [
+            Form(
               key: _formKey,
               child: Container(
                 height: size.height,
@@ -110,14 +110,14 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
                 ),
               ),
             ),
-          ),
-          _loading
-              ? Container(
-                  height: size.height,
-                  width: size.width,
-                  child: MyProgressIndicator())
-              : Container()
-        ],
+            _loading
+                ? Container(
+                    height: size.height,
+                    width: size.width,
+                    child: MyProgressIndicator())
+                : Container()
+          ],
+        ),
       ),
     );
   }
