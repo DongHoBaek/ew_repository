@@ -6,12 +6,10 @@ import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
 import 'constant/screen_size.dart';
 import 'models/firebase_auth_state.dart';
-import 'models/post_provider.dart';
 
 class Home extends StatefulWidget {
   @override
   _HomeState createState() {
-    PostProvider().getHomePostList();
     return _HomeState();
   }
 }

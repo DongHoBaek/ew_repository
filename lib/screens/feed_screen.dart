@@ -5,8 +5,14 @@ import 'package:ttt_project_003/widgets/header.dart';
 import 'package:ttt_project_003/widgets/post_body.dart';
 import 'package:ttt_project_003/widgets/recommend_post_body.dart';
 
+class FeedScreen extends StatefulWidget {
+  @override
+  _FeedScreenState createState() {
+    return _FeedScreenState();
+  }
+}
 
-class FeedScreen extends StatelessWidget {
+class _FeedScreenState extends State<FeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

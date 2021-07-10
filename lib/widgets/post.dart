@@ -9,8 +9,9 @@ import 'package:ttt_project_003/screens/detail_post_screen.dart';
 
 class Post extends StatelessWidget {
   List postList;
+  String authorNickname;
 
-  Post({Key key, @required this.postList}) : super(key: key);
+  Post({Key key, @required this.postList, @required this.authorNickname}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +22,11 @@ class Post extends StatelessWidget {
         onTap: () async {
           await Provider.of<PostProvider>(context, listen: false)
               .getPostData(postList[0]);
-          await Provider.of<UserProvider>(context, listen: false).authorUserData(postList[1]);
+          await Provider.of<UserProvider>(context, listen: false)
+              .authorUserData(postList[1]);
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => DetailPostScreen(
-                    postMap:
-                        Provider.of<PostProvider>(context).currentPostMap,
+                    postMap: Provider.of<PostProvider>(context).currentPostMap,
                   )));
         },
         child: Container(
@@ -53,7 +54,10 @@ class Post extends StatelessWidget {
                         ),
                         Spacer(),
                         Text(
-                          postList[5],
+                          authorNickname !=
+                                  null
+                              ? authorNickname
+                              : postList[5],
                           style: TextStyle(fontSize: font_xs_size),
                         ),
                         Text(

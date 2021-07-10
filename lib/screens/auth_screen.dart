@@ -35,8 +35,8 @@ class AuthScreen extends StatelessWidget {
 
   TextButton _googleLoginBtn(context) {
     return TextButton(
-      onPressed: () {
-        Provider.of<FirebaseAuthState>(context, listen: false).signInWithGoogle();
+      onPressed: ()async {
+        await Provider.of<FirebaseAuthState>(context, listen: false).signInWithGoogle();
       },
       child: Container(
         width: size.width * 0.65,

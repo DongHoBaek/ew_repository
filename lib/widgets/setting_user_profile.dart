@@ -29,6 +29,7 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
   @override
   void dispose() {
     GalleryState().clearImage();
+    UserProvider().getUserData();
     _nicknameController.dispose();
     _statusMessageController.dispose();
 
@@ -124,14 +125,17 @@ class _SettingUserProfileState extends State<SettingUserProfile> {
 
   TextButton _submitBtn(BuildContext context) {
     return TextButton(
-      onPressed: () {
+      onPressed: () async{
         if (_formKey.currentState.validate()) {
           setState(() {
+            widget.inputNickname = _nicknameController.text;
+            widget.inputMessage = _statusMessageController.text;
             _loading = true;
           });
+          await Provider.of<UserProvider>(context, listen: false).updateProfile(
+              _nicknameController.text, _statusMessageController.text);
           Provider.of<UserProvider>(context, listen: false)
-              .updateProfile(
-                  _nicknameController.text, _statusMessageController.text)
+              .getUserData()
               .whenComplete(() => Navigator.pop(context));
         }
       },

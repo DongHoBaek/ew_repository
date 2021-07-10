@@ -13,7 +13,7 @@ class FirebaseAuthState extends ChangeNotifier {
 
   User get user => _user;
 
-  void signInWithGoogle() async {
+  Future signInWithGoogle() async {
     if (_googleSignIn == null) _googleSignIn = GoogleSignIn();
 
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();

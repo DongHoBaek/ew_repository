@@ -20,7 +20,8 @@ class GalleryState extends ChangeNotifier {
 
   void clearImage() {
     _image = null;
-    print('write post screen에서 GalleryState.clearImage 실행 됨');
+    UserProvider().clearProfileImg();
+    print('GalleryState.clearImage 실행 됨');
     notifyListeners();
   }
 
@@ -50,8 +51,12 @@ class GalleryState extends ChangeNotifier {
       await reference.putFile(imageFile);
 
       downloadURL = (await reference.getDownloadURL()).toString();
-    }else if(UserProvider().profileImage != null){
+    } else if (UserProvider().profileImage != null) {
       downloadURL = UserProvider().profileImage;
+    }else{
+      Reference reference =
+      _firebaseStorage.ref().child('UserImg/${UserProvider().uid}');
+      await reference.delete();
     }
 
     return downloadURL;

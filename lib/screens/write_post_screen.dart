@@ -7,6 +7,9 @@ import 'package:ttt_project_003/constant/common_size.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
+import 'package:ttt_project_003/screens/detail_post_screen.dart';
+import 'package:ttt_project_003/screens/feed_screen.dart';
 import 'package:ttt_project_003/widgets/header.dart';
 import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 
@@ -38,6 +41,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
   @override
   void dispose() {
     GalleryState().clearImage();
+    UserProvider().getUserData();
     _titleController.dispose();
     _contentController.dispose();
 
@@ -111,15 +115,27 @@ class _WritePostScreenState extends State<WritePostScreen> {
             if (_formKey.currentState.validate()) {
               print('Validation success!!');
               setState(() {
+                widget.inputTitle = _titleController.text;
+                widget.inputContent = _contentController.text;
                 _loading = true;
               });
               if (_title == "") {
                 Provider.of<PostProvider>(context, listen: false)
                     .updatePost(_titleController.text, _contentController.text)
-                    .whenComplete(() {
-                  Provider.of<PostProvider>(context, listen: false)
+                    .whenComplete(() async {
+                  await Provider.of<PostProvider>(context, listen: false)
+                      .getPostData(
+                          Provider.of<PostProvider>(context, listen: false)
+                              .currentDocId);
+                  await Provider.of<PostProvider>(context, listen: false)
                       .getHomePostList();
-                  Navigator.pop(context);
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => DetailPostScreen(
+                              postMap: Provider.of<PostProvider>(context)
+                                  .currentPostMap)),
+                      (route) => route is FeedScreen);
                 });
               } else {
                 Provider.of<PostProvider>(context, listen: false)

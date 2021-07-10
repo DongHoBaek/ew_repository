@@ -43,7 +43,8 @@ class UserProvider extends ChangeNotifier {
   CollectionReference users =
       FirebaseFirestore.instance.collection(COLLECTION_USERS);
 
-  Future authorUserData(uid) async {
+  Future<String> authorUserData(uid) async {
+    String authorNickname;
     await users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
@@ -51,10 +52,15 @@ class UserProvider extends ChangeNotifier {
       if (documentSnapshot.exists) {
         _authorProfileImg = data[KEY_PROFILEIMG];
         _authorNickname = data[KEY_NICKNAME];
+        authorNickname = data[KEY_NICKNAME];
       }
     });
 
-    return authorProfileImg;
+    return authorNickname;
+  }
+
+  void clearProfileImg() {
+    _profileImage = null;
   }
 
   Future getUserData() async {
