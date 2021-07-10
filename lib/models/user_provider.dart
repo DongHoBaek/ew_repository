@@ -102,20 +102,12 @@ class UserProvider extends ChangeNotifier {
           KEY_MYPOSTS: [],
           KEY_BOOKMARKEDPOSTS: [],
           KEY_LIKEDPOSTS: [],
-          KEY_PROFILEIMG: ""
+          KEY_PROFILEIMG: null
         })
         .then((value) => print("User Registed"))
         .catchError((error) => print("Failed to regist user: $error"));
     print('set user data');
     getUserData();
-  }
-
-  void degister() {
-    users
-        .doc(_uid)
-        .delete()
-        .then((value) => print("User Degist"))
-        .catchError((error) => print("Failed to Degist user: $error"));
   }
 
   Future<void> updateProfile(String nickname, String profileMessage) async {

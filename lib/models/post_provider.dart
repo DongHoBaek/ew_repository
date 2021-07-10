@@ -6,9 +6,9 @@ import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
 class PostProvider with ChangeNotifier {
-  String _currentDocId;
-  String _rootPostDID;
-  String _parentPostDID;
+  static String _currentDocId;
+  static String _rootPostDID;
+  static String _parentPostDID;
   String _title;
   String _content;
   String _uid;
@@ -20,8 +20,8 @@ class PostProvider with ChangeNotifier {
   bool _displayAllPost = true;
   static List<dynamic> _homePostList = [];
   static Map<String, dynamic> _currentPostMap;
-  List<dynamic> _childPostList = [];
-  List<dynamic> _myPostList = [];
+  static List<dynamic> _childPostList = [];
+  static List<dynamic> _myPostList = [];
 
   String get currentDocId => _currentDocId;
 
