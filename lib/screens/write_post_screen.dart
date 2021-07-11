@@ -8,7 +8,6 @@ import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
-import 'package:ttt_project_003/screens/detail_post_screen.dart';
 import 'package:ttt_project_003/screens/feed_screen.dart';
 import 'package:ttt_project_003/widgets/header.dart';
 import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
@@ -123,27 +122,15 @@ class _WritePostScreenState extends State<WritePostScreen> {
                 Provider.of<PostProvider>(context, listen: false)
                     .updatePost(_titleController.text, _contentController.text)
                     .whenComplete(() async {
-                  await Provider.of<PostProvider>(context, listen: false)
-                      .getPostData(
-                          Provider.of<PostProvider>(context, listen: false)
-                              .currentDocId);
-                  await Provider.of<PostProvider>(context, listen: false)
-                      .getHomePostList();
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => DetailPostScreen(
-                              postMap: Provider.of<PostProvider>(context)
-                                  .currentPostMap)),
-                      (route) => route is FeedScreen);
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => FeedScreen()),
+                      (route) => false);
                 });
               } else {
                 Provider.of<PostProvider>(context, listen: false)
                     .createPost(_titleController.text, _contentController.text,
                         DateTime.now())
                     .whenComplete(() {
-                  Provider.of<PostProvider>(context, listen: false)
-                      .getHomePostList();
                   Navigator.pop(context);
                 });
               }

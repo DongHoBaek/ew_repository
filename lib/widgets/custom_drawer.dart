@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
 import 'package:ttt_project_003/models/firebase_auth_state.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/screens/profile_screen.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
@@ -26,7 +27,7 @@ class CustomDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => ProfileScreen()));
+                  .push(MaterialPageRoute(builder: (_) => ProfileScreen(postList: Provider.of<PostProvider>(context).myPosts)));
             },
           ),
           ListTile(

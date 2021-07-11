@@ -17,6 +17,9 @@ class UserProvider extends ChangeNotifier {
 
   String _authorProfileImg;
   String _authorNickname;
+  String _authorName;
+  String _authorMsg;
+  List _authorPosts;
 
   String get uid => _uid;
 
@@ -40,6 +43,12 @@ class UserProvider extends ChangeNotifier {
 
   String get authorNickname => _authorNickname;
 
+  String get authorName => _authorName;
+
+  String get authorMsg => _authorMsg;
+
+  List get authorPosts => _authorPosts;
+
   CollectionReference users =
       FirebaseFirestore.instance.collection(COLLECTION_USERS);
 
@@ -52,6 +61,9 @@ class UserProvider extends ChangeNotifier {
       if (documentSnapshot.exists) {
         _authorProfileImg = data[KEY_PROFILEIMG];
         _authorNickname = data[KEY_NICKNAME];
+        _authorName = data[KEY_USERNAME];
+        _authorMsg = data[KEY_PROFILMSG];
+        _authorPosts = data[KEY_MYPOSTS];
         authorNickname = data[KEY_NICKNAME];
       }
     });
@@ -88,6 +100,13 @@ class UserProvider extends ChangeNotifier {
         _setUserData(user);
       }
     });
+  }
+
+  void addMyPost(did) {
+    _myPosts.add(did);
+    DocumentReference ref = users.doc(_uid);
+    ref.update({KEY_MYPOSTS: _myPosts}).then(
+        (value) => print('MyPostList updated'));
   }
 
   void _setUserData(User user) {

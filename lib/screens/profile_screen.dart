@@ -7,6 +7,10 @@ import 'package:ttt_project_003/widgets/post_body.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
 
 class ProfileScreen extends StatefulWidget {
+  List<Map<String, dynamic>> postList;
+
+  ProfileScreen({Key key, this.postList}) : super(key: key);
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -19,6 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(),
       body: CustomScrollView(slivers: <Widget>[
@@ -156,13 +161,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             duration: Duration(milliseconds: 500),
             transform: Matrix4.translationValues(_leftImagesPageMargin, 0, 0),
             curve: Curves.fastOutSlowIn,
-            child: PostBody(),
+            child: PostBody(postList: widget.postList),
           ),
           AnimatedContainer(
             duration: Duration(milliseconds: 500),
             transform: Matrix4.translationValues(_rightImagesPageMargin, 0, 0),
             curve: Curves.fastOutSlowIn,
-            child: PostBody(),
+            child: PostBody(postList: widget.postList),
           ),
         ],
       ),

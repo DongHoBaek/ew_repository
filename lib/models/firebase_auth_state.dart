@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
 class FirebaseAuthState extends ChangeNotifier {
@@ -54,12 +55,13 @@ class FirebaseAuthState extends ChangeNotifier {
   }
 
   void watchAuthChange() {
-    _firebaseAuth.authStateChanges().listen((user) {
+    _firebaseAuth.authStateChanges().listen((user) async {
       if (user == null && _user == null) {
         changeFirebaseAuthStatus(FirebaseAuthStatus.signout);
       } else if (user != _user) {
         _user = user;
-        UserProvider().getUserData();
+        await UserProvider().getUserData();
+        await PostProvider().getMyPostList();
         changeFirebaseAuthStatus(FirebaseAuthStatus.signin);
       }
     });

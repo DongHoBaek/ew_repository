@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:ttt_project_003/models/gallery_state.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/screens/write_post_screen.dart';
 import 'package:ttt_project_003/widgets/custom_drawer.dart';
 import 'package:ttt_project_003/widgets/header.dart';
@@ -35,12 +38,14 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
             RecommendPostBody(),
             Header(text: 'Post'),
-            PostBody(),
+            PostBody(postList: Provider.of<PostProvider>(context).homePosts,),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          Provider.of<PostProvider>(context, listen: false).removeDocId();
+          Provider.of<GalleryState>(context, listen: false).clearImage();
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => WritePostScreen()));
         },

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
 class GalleryState extends ChangeNotifier {
@@ -25,6 +27,25 @@ class GalleryState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<String> updatePostImg(String did) async {
+    String downloadURL;
+    String imgName = did.split('_')[0];
+
+    if (_image != null) {
+      File imageFile = File(_image.path);
+      Reference reference = _firebaseStorage
+          .ref()
+          .child('PostImg/')
+          .child('${UserProvider().uid}/$imgName');
+      await reference.putFile(imageFile);
+
+      downloadURL = (await reference.getDownloadURL()).toString();
+    } else if (PostProvider().currentPostMap[KEY_POSTIMG] != null) {
+      downloadURL = PostProvider().currentPostMap[KEY_POSTIMG];
+    }
+    return downloadURL;
+  }
+
   Future<String> uploadAndDownloadPostImg(DateTime dateTime) async {
     String downloadURL;
 
@@ -37,6 +58,8 @@ class GalleryState extends ChangeNotifier {
       await reference.putFile(imageFile);
 
       downloadURL = (await reference.getDownloadURL()).toString();
+    } else if (PostProvider().currentPostMap[KEY_POSTIMG] != null) {
+      downloadURL = PostProvider().currentPostMap[KEY_POSTIMG];
     }
     return downloadURL;
   }
@@ -53,12 +76,23 @@ class GalleryState extends ChangeNotifier {
       downloadURL = (await reference.getDownloadURL()).toString();
     } else if (UserProvider().profileImage != null) {
       downloadURL = UserProvider().profileImage;
-    }else{
+    } else {
       Reference reference =
-      _firebaseStorage.ref().child('UserImg/${UserProvider().uid}');
+          _firebaseStorage.ref().child('UserImg/${UserProvider().uid}');
       await reference.delete();
     }
 
     return downloadURL;
+  }
+
+  Future deletePostImg(String did) async {
+    String imgName = did.split('_')[0];
+
+    Reference reference = _firebaseStorage
+        .ref()
+        .child('PostImg/')
+        .child('${UserProvider().uid}/$imgName');
+
+    await reference.delete();
   }
 }

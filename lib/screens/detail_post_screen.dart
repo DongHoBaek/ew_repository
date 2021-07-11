@@ -34,7 +34,6 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
 
   @override
   void dispose() {
-    PostProvider().removeDocId();
     super.dispose();
   }
 
@@ -107,7 +106,13 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                           child: Text(
                         '삭제',
                       )),
-                      onTap: () {},
+                      onTap: () {
+                        print('삭제 버튼 클릭됨');
+                        Navigator.pop(context);
+                        Provider.of<PostProvider>(context, listen: false)
+                            .deletePost();
+                        Navigator.pop(context);
+                      },
                     ),
                   )),
                   PopupMenuItem(
@@ -198,10 +203,14 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
       width: size.width,
       height: 200,
       color: Colors.grey,
-      child: CachedNetworkImage(
-        imageUrl: widget.postMap[KEY_POSTIMG],
-        fit: BoxFit.cover,
-      ),
+      child: widget.postMap[KEY_POSTIMG] == null
+          ? Container(
+              child: Center(child: Text('No Image')),
+            )
+          : CachedNetworkImage(
+              imageUrl: widget.postMap[KEY_POSTIMG],
+              fit: BoxFit.cover,
+            ),
     );
   }
 
