@@ -5,93 +5,27 @@ import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
 
 class UserProvider extends ChangeNotifier {
-  static String _uid;
-  static String _username = "";
-  static String _email;
-  static String _nickname;
-  static String _profileMessage;
-  static List _myPosts;
-  static List _bookmarkedPosts = [];
-  static List _likedPosts;
-  static String _profileImage;
+  static Map<String, dynamic> _userDataMap;
+  static Map<String, dynamic> _otherUserDataMap;
 
-  String _authorProfileImg;
-  String _authorNickname;
-  String _authorName;
-  String _authorMsg;
-  List _authorPosts;
+  Map<String, dynamic> get otherUserDataMap => _otherUserDataMap;
 
-  String get uid => _uid;
-
-  String get username => _username;
-
-  String get email => _email;
-
-  String get nickname => _nickname;
-
-  String get profileMessage => _profileMessage;
-
-  List get myPosts => _myPosts;
-
-  List get bookmarkedPosts => _bookmarkedPosts;
-
-  List get likedPosts => _likedPosts;
-
-  String get profileImage => _profileImage;
-
-  String get authorProfileImg => _authorProfileImg;
-
-  String get authorNickname => _authorNickname;
-
-  String get authorName => _authorName;
-
-  String get authorMsg => _authorMsg;
-
-  List get authorPosts => _authorPosts;
+  Map<String, dynamic> get userDataMap => _userDataMap;
 
   CollectionReference users =
       FirebaseFirestore.instance.collection(COLLECTION_USERS);
 
-  Future<String> authorUserData(uid) async {
-    String authorNickname;
-    await users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
-      Map<String, dynamic> data =
-          documentSnapshot.data() as Map<String, dynamic>;
-
-      if (documentSnapshot.exists) {
-        _authorProfileImg = data[KEY_PROFILEIMG];
-        _authorNickname = data[KEY_NICKNAME];
-        _authorName = data[KEY_USERNAME];
-        _authorMsg = data[KEY_PROFILMSG];
-        _authorPosts = data[KEY_MYPOSTS];
-        authorNickname = data[KEY_NICKNAME];
-      }
-    });
-
-    return authorNickname;
-  }
-
-  void clearProfileImg() {
-    _profileImage = null;
-  }
-
-  Future getUserData() async {
+  Future<void> getUserData() async {
     User user = FirebaseAuth.instance.currentUser;
 
-    _uid = user.uid;
-
-    await users.doc(_uid).get().then((DocumentSnapshot documentSnapshot) {
+    await users.doc(user.uid).get().then((DocumentSnapshot documentSnapshot) {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
-        _email = data[KEY_EMAIL];
-        _username = data[KEY_USERNAME];
-        _nickname = data[KEY_NICKNAME];
-        _myPosts = data[KEY_MYPOSTS];
-        _bookmarkedPosts = data[KEY_BOOKMARKEDPOSTS];
-        _likedPosts = data[KEY_LIKEDPOSTS];
-        _profileImage = data[KEY_PROFILEIMG];
-        _profileMessage = data[KEY_PROFILMSG];
+        data[KEY_USERUID] = user.uid;
+
+        _userDataMap = data;
+
         print('get user data!');
 
         notifyListeners();
@@ -102,108 +36,130 @@ class UserProvider extends ChangeNotifier {
     });
   }
 
-  void addMyPost(did) {
-    _myPosts.add(did);
-    DocumentReference ref = users.doc(_uid);
-    ref.update({KEY_MYPOSTS: _myPosts}).then(
-        (value) => print('MyPostList updated'));
-  }
+  Future<void> _setUserData(User user) async {
+    DocumentReference ref = users.doc(user.uid);
 
-  void _setUserData(User user) {
-    DocumentReference ref = users.doc(_uid);
-
-    ref
+    await ref
         .set({
           KEY_EMAIL: user.email,
           KEY_USERNAME: user.displayName,
           KEY_NICKNAME: null,
-          KEY_PROFILMSG: "",
+          KEY_PROFILEMSG: null,
           KEY_MYPOSTS: [],
           KEY_BOOKMARKEDPOSTS: [],
           KEY_LIKEDPOSTS: [],
           KEY_PROFILEIMG: null
         })
-        .then((value) => print("User Registed"))
-        .catchError((error) => print("Failed to regist user: $error"));
-    print('set user data');
+        .then((value) => print("User Registered"))
+        .catchError((error) => print("Failed to register user: $error"));
+
     getUserData();
+  }
+
+  Future<String> getOtherUserData(uid) async {
+    await users.doc(uid).get().then((DocumentSnapshot documentSnapshot) {
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
+
+      if (documentSnapshot.exists) {
+        _otherUserDataMap = data;
+
+        print('get other user data!');
+
+      } else {
+        print('Document does not exist on the database');
+
+      }
+    });
+
+    return _otherUserDataMap[KEY_NICKNAME];
+  }
+
+  Future<void> addUserPost(did) async {
+    _userDataMap[KEY_MYPOSTS].add(did);
+
+    DocumentReference ref = users.doc(_userDataMap[KEY_USERUID]);
+
+    await ref.update({KEY_MYPOSTS: _userDataMap[KEY_MYPOSTS]}).then(
+        (value) => print('MyPostList updated'));
   }
 
   Future<void> updateProfile(String nickname, String profileMessage) async {
     String imgUrl = await GalleryState().uploadAndDownloadUserImg();
 
-    users.doc(_uid).update({
+    await users.doc(_userDataMap[KEY_USERUID]).update({
       KEY_NICKNAME: nickname,
-      KEY_PROFILMSG: profileMessage,
+      KEY_PROFILEMSG: profileMessage,
       KEY_PROFILEIMG: imgUrl
     }).then((value) {
+      _userDataMap[KEY_NICKNAME] = nickname;
+      _userDataMap[KEY_PROFILEMSG] = profileMessage;
+      _userDataMap[KEY_PROFILEIMG] = imgUrl;
       print("Profile updated");
-      _nickname = nickname;
-      _profileMessage = profileMessage;
-      _profileImage = imgUrl;
     }).catchError((error) => print("Failed to update profile: $error"));
 
     notifyListeners();
   }
 
-  void bookmark(String postDid) {
-    print(postDid);
-    _bookmarkedPosts.insert(0, postDid);
-    print(_bookmarkedPosts);
+  Future<void> bookmark(did) async {
+    _userDataMap[KEY_BOOKMARKEDPOSTS].insert(0, did);
+    print(_userDataMap[KEY_BOOKMARKEDPOSTS]);
 
-    users
-        .doc(_uid)
-        .update({'bookmarked_posts': _bookmarkedPosts}).then((value) {
+    await users.doc(_userDataMap[KEY_USERUID]).update(
+        {KEY_BOOKMARKEDPOSTS: _userDataMap[KEY_BOOKMARKEDPOSTS]}).then((value) {
       print("bookmarked");
     }).catchError((error) => print("Failed to bookmark: $error"));
+
     notifyListeners();
   }
 
-  void unbookmark(String postDid) {
-    print(postDid);
-    _bookmarkedPosts.remove(postDid);
-    print(_bookmarkedPosts);
-    users
-        .doc(_uid)
-        .update({'bookmarked_posts': _bookmarkedPosts}).then((value) {
-      print("unbookmark");
+  Future<void> unbookmark(did) async {
+    _userDataMap[KEY_BOOKMARKEDPOSTS].remove(did);
+    print(_userDataMap[KEY_BOOKMARKEDPOSTS]);
+
+    await users.doc(_userDataMap[KEY_USERUID]).update(
+        {KEY_BOOKMARKEDPOSTS: _userDataMap[KEY_BOOKMARKEDPOSTS]}).then((value) {
+      print("unbookmarked");
     }).catchError((error) => print("Failed to unbookmark: $error"));
     notifyListeners();
   }
 
-  bool isBookmarked(String postDid) {
+  bool isBookmarked(did) {
     bool result = false;
-    if (_bookmarkedPosts != null) {
-      result = _bookmarkedPosts.contains(postDid);
+    if (_userDataMap[KEY_BOOKMARKEDPOSTS] != null) {
+      result = _userDataMap[KEY_BOOKMARKEDPOSTS].contains(did);
     }
     return result;
   }
 
-  void like(String postDid) {
-    print(postDid);
-    _likedPosts.insert(0, postDid);
-    print(_likedPosts);
+  Future<void> like(did) async {
+    _userDataMap[KEY_LIKEDPOSTS].insert(0, did);
+    print(_userDataMap[KEY_LIKEDPOSTS]);
 
-    users.doc(_uid).update({'liked_posts': _likedPosts}).then((value) {
+    await users
+        .doc(_userDataMap[KEY_USERUID])
+        .update({KEY_LIKEDPOSTS: _userDataMap[KEY_LIKEDPOSTS]}).then((value) {
       print("liked");
     }).catchError((error) => print("Failed to like: $error"));
     notifyListeners();
   }
 
-  void unlike(String postDid) {
-    print(postDid);
-    _likedPosts.remove(postDid);
-    print(_likedPosts);
-    users.doc(_uid).update({'liked_posts': _likedPosts}).then((value) {
-      print("unlike");
+  Future<void> unlike(did) async {
+    _userDataMap[KEY_LIKEDPOSTS].remove(did);
+    print(_userDataMap[KEY_LIKEDPOSTS]);
+
+    await users
+        .doc(_userDataMap[KEY_USERUID])
+        .update({KEY_LIKEDPOSTS: _userDataMap[KEY_LIKEDPOSTS]}).then((value) {
+      print("unliked");
     }).catchError((error) => print("Failed to unlike: $error"));
     notifyListeners();
   }
 
-  bool isLiked(String postDid) {
+  bool isLiked(did) {
     bool result = false;
-    if (_likedPosts != null) {
-      result = _likedPosts.contains(postDid);
+    if (_userDataMap[KEY_LIKEDPOSTS] != null) {
+      result = _userDataMap[KEY_LIKEDPOSTS].contains(did);
     }
     return result;
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/models/firebase_auth_state.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
@@ -48,16 +49,16 @@ class CustomDrawer extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.only(top: common_xs_gap),
         child: ListTile(
-          leading: RoundedAvatar(imageUrl: userProvider.profileImage),
+          leading: RoundedAvatar(imageUrl: userProvider.userDataMap[KEY_PROFILEIMG]),
           title: Text(
-            userProvider.nickname != null
-                ? userProvider.nickname
-                : userProvider.username,
+            userProvider.userDataMap[KEY_NICKNAME] != null
+                ? userProvider.userDataMap[KEY_NICKNAME]
+                : userProvider.userDataMap[KEY_USERNAME],
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          subtitle: userProvider.profileMessage == ""
+          subtitle: userProvider.userDataMap[KEY_PROFILEMSG] == null
               ? Text('메세지를 입력해주세요.')
-              : Text(userProvider.profileMessage),
+              : Text(userProvider.userDataMap[KEY_PROFILEMSG]),
           trailing: Icon(
             Icons.edit,
             size: 20,
@@ -66,8 +67,8 @@ class CustomDrawer extends StatelessWidget {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (_) => SettingUserProfile(
-                      inputNickname: userProvider.nickname,
-                      inputMessage: userProvider.profileMessage,
+                      inputNickname: userProvider.userDataMap[KEY_NICKNAME],
+                      inputMessage: userProvider.userDataMap[KEY_PROFILEMSG],
                     )));
           },
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/widgets/post_body.dart';
@@ -49,23 +50,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           RoundedAvatar(
             size: 100,
-            imageUrl: userProvider.profileImage,
+            imageUrl: userProvider.userDataMap[KEY_PROFILEIMG],
           ),
           SizedBox(
             height: 20,
           ),
           Text(
-            userProvider.nickname != null
-                ? userProvider.nickname
-                : userProvider.username,
+            userProvider.userDataMap[KEY_NICKNAME] != null
+                ? userProvider.userDataMap[KEY_NICKNAME]
+                : userProvider.userDataMap[KEY_USERNAME],
             style: TextStyle(fontSize: font_l_size),
           ),
           SizedBox(
             height: 5,
           ),
-          userProvider.profileMessage == ""
+          userProvider.userDataMap[KEY_PROFILEMSG] == null
               ? Text('메세지를 입력해주세요.')
-              : Text(userProvider.profileMessage),
+              : Text(userProvider.userDataMap[KEY_PROFILEMSG]),
         ],
       ),
     );

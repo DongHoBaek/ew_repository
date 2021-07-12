@@ -56,7 +56,7 @@ class PostProvider with ChangeNotifier {
   Future<void> createPost(String title, String content, var postTime) async {
     UserProvider _userProvider = UserProvider();
     String imgUrl = await GalleryState().uploadAndDownloadPostImg(postTime);
-    String documentId = '${postTime}_${_userProvider.uid}';
+    String documentId = '${postTime}_${_userProvider.userDataMap[KEY_USERUID]}';
 
     DocumentReference ref = posts.doc(documentId);
 
@@ -65,8 +65,8 @@ class PostProvider with ChangeNotifier {
 
     ref
         .set({
-          KEY_AUTHORUNM: _userProvider.username,
-          KEY_AUTHORUID: _userProvider.uid,
+          KEY_AUTHORUNM: _userProvider.userDataMap[KEY_USERNAME],
+          KEY_AUTHORUID: _userProvider.userDataMap[KEY_USERUID],
           KEY_TITLE: title,
           KEY_CONTENT: content,
           KEY_COMMENTS: [],
@@ -79,7 +79,7 @@ class PostProvider with ChangeNotifier {
         })
         .then((value) => print("Post Added"))
         .catchError((error) => print("Failed to add post: $error"));
-    _userProvider.addMyPost(documentId);
+    _userProvider.addUserPost(documentId);
     getHomePosts();
     getMyPostList();
   }
@@ -135,7 +135,8 @@ class PostProvider with ChangeNotifier {
   // }
 
   Future getOtherUserPosts() async {
-    List otherUserDids = UserProvider().authorPosts;
+    List otherUserDids = UserProvider().otherUserDataMap[KEY_MYPOSTS];
+
     List<Map<String, dynamic>> tmpList = [];
 
     if (otherUserDids != null) {
@@ -156,7 +157,8 @@ class PostProvider with ChangeNotifier {
   }
 
   Future getMyPostList() async {
-    List myDids = UserProvider().myPosts;
+    List myDids = UserProvider().userDataMap[KEY_MYPOSTS];
+
     List<Map<String, dynamic>> tmpList = [];
 
     if (myDids != null) {

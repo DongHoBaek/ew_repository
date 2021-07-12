@@ -26,7 +26,7 @@ class Post extends StatelessWidget {
           await Provider.of<PostProvider>(context, listen: false)
               .getPostData(postMap[KEY_POSTDID]);
           await Provider.of<UserProvider>(context, listen: false)
-              .authorUserData(postMap[KEY_AUTHORUID]);
+              .getOtherUserData(postMap[KEY_AUTHORUID]);
           Navigator.of(context).push(MaterialPageRoute(
               builder: (_) => DetailPostScreen(
                     postMap: Provider.of<PostProvider>(context).currentPostMap,

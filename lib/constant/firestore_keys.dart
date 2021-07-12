@@ -1,11 +1,12 @@
 const COLLECTION_USERS = 'Users';
 const COLLECTION_POSTS = 'Posts';
 
+const KEY_USERUID = 'user_uid';
 const KEY_USERNAME = 'username';
 const KEY_NICKNAME = 'nickname';
 const KEY_EMAIL = 'email';
 const KEY_PROFILEIMG = 'profile_image';
-const KEY_PROFILMSG = 'profile_message';
+const KEY_PROFILEMSG = 'profile_message';
 const KEY_LIKEDPOSTS = 'liked_posts';
 const KEY_BOOKMARKEDPOSTS = 'bookmarked_posts';
 const KEY_MYPOSTS = 'my_posts';

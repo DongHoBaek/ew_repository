@@ -24,7 +24,7 @@ class PostBody extends StatelessWidget {
               itemBuilder: (context, index) {
                 return FutureBuilder(
                     future: UserProvider()
-                        .authorUserData(postList[index][KEY_AUTHORUID]),
+                        .getOtherUserData(postList[index][KEY_AUTHORUID]),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Center(child: Text('데이터 불러오기 실패'));

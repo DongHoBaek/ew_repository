@@ -22,7 +22,7 @@ class GalleryState extends ChangeNotifier {
 
   void clearImage() {
     _image = null;
-    UserProvider().clearProfileImg();
+    // UserProvider().clearProfileImg();
     print('GalleryState.clearImage 실행 됨');
     notifyListeners();
   }
@@ -36,7 +36,7 @@ class GalleryState extends ChangeNotifier {
       Reference reference = _firebaseStorage
           .ref()
           .child('PostImg/')
-          .child('${UserProvider().uid}/$imgName');
+          .child('${UserProvider().userDataMap[KEY_USERUID]}/$imgName');
       await reference.putFile(imageFile);
 
       downloadURL = (await reference.getDownloadURL()).toString();
@@ -54,7 +54,7 @@ class GalleryState extends ChangeNotifier {
       Reference reference = _firebaseStorage
           .ref()
           .child('PostImg/')
-          .child('${UserProvider().uid}/$dateTime');
+          .child('${UserProvider().userDataMap[KEY_USERUID]}/$dateTime');
       await reference.putFile(imageFile);
 
       downloadURL = (await reference.getDownloadURL()).toString();
@@ -70,15 +70,15 @@ class GalleryState extends ChangeNotifier {
     if (_image != null) {
       File imageFile = File(_image.path);
       Reference reference =
-          _firebaseStorage.ref().child('UserImg/${UserProvider().uid}');
+          _firebaseStorage.ref().child('UserImg/${UserProvider().userDataMap[KEY_USERUID]}');
       await reference.putFile(imageFile);
 
       downloadURL = (await reference.getDownloadURL()).toString();
-    } else if (UserProvider().profileImage != null) {
-      downloadURL = UserProvider().profileImage;
+    } else if (UserProvider().userDataMap[KEY_PROFILEIMG] != null) {
+      downloadURL = UserProvider().userDataMap[KEY_PROFILEIMG];
     } else {
       Reference reference =
-          _firebaseStorage.ref().child('UserImg/${UserProvider().uid}');
+          _firebaseStorage.ref().child('UserImg/${UserProvider().userDataMap[KEY_USERUID]}');
       await reference.delete();
     }
 
@@ -91,7 +91,7 @@ class GalleryState extends ChangeNotifier {
     Reference reference = _firebaseStorage
         .ref()
         .child('PostImg/')
-        .child('${UserProvider().uid}/$imgName');
+        .child('${UserProvider().userDataMap[KEY_USERUID]}/$imgName');
 
     await reference.delete();
   }

@@ -27,7 +27,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   @override
   void initState() {
     _isMine =
-        UserProvider().uid == widget.postMap[KEY_AUTHORUID] ? true : false;
+        UserProvider().userDataMap[KEY_USERUID] == widget.postMap[KEY_AUTHORUID] ? true : false;
 
     super.initState();
   }
@@ -225,12 +225,12 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
               RoundedAvatar(
                   size: 40,
                   imageUrl:
-                      Provider.of<UserProvider>(context).authorProfileImg),
+                      Provider.of<UserProvider>(context).otherUserDataMap[KEY_PROFILEIMG]),
               SizedBox(
                 width: common_gap,
               ),
               Text(
-                Provider.of<UserProvider>(context).authorNickname,
+                Provider.of<UserProvider>(context).otherUserDataMap[KEY_NICKNAME],
                 style:
                     TextStyle(fontSize: font_size, fontWeight: FontWeight.bold),
               )

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
@@ -21,7 +22,7 @@ class SettingUserProfile extends StatefulWidget {
 class _SettingUserProfileState extends State<SettingUserProfile> {
   TextEditingController _nicknameController;
   TextEditingController _statusMessageController;
-  String _imageUrl = UserProvider().profileImage;
+  String _imageUrl = UserProvider().userDataMap[KEY_PROFILEIMG];
   bool _loading = false;
 
   final _formKey = GlobalKey<FormState>();
