@@ -38,7 +38,7 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
             RecommendPostBody(),
             Header(text: 'Post'),
-            PostBody(postList: Provider.of<PostProvider>(context).homePosts,),
+            PostBody(postList: Provider.of<PostProvider>(context).homePosts),
           ],
         ),
       ),

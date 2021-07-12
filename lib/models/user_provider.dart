@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/models/gallery_state.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
 
 class UserProvider extends ChangeNotifier {
   static Map<String, dynamic> _userDataMap;
@@ -153,6 +154,9 @@ class UserProvider extends ChangeNotifier {
         .update({KEY_LIKEDPOSTS: _userDataMap[KEY_LIKEDPOSTS]}).then((value) {
       print("liked");
     }).catchError((error) => print("Failed to like: $error"));
+
+    PostProvider().liked();
+
     notifyListeners();
   }
 
@@ -165,6 +169,9 @@ class UserProvider extends ChangeNotifier {
         .update({KEY_LIKEDPOSTS: _userDataMap[KEY_LIKEDPOSTS]}).then((value) {
       print("unliked");
     }).catchError((error) => print("Failed to unlike: $error"));
+
+    PostProvider().unliked();
+
     notifyListeners();
   }
 

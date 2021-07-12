@@ -5,7 +5,7 @@ import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
 class PostProvider with ChangeNotifier {
-  String _currentDocId;
+  static String _currentDocId;
   String _rootPostDocID;
   bool _displayAllPost = true;
   static Map<String, dynamic> _currentPostMap;
@@ -227,8 +227,8 @@ class PostProvider with ChangeNotifier {
     return null;
   }
 
-  void liked() {
-    posts
+  Future<void> liked() async{
+    await posts
         .doc(_currentDocId)
         .update({KEY_NUMOFLIKES: _currentPostMap[KEY_NUMOFLIKES] + 1})
         .then((value) => print("post is liked"))
@@ -239,12 +239,12 @@ class PostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void unliked() {
-    posts
+  Future<void> unliked() async{
+    await posts
         .doc(_currentDocId)
         .update({KEY_NUMOFLIKES: _currentPostMap[KEY_NUMOFLIKES] - 1})
-        .then((value) => print("post is liked"))
-        .catchError((error) => print("Failed to like: $error"));
+        .then((value) => print("post is unliked"))
+        .catchError((error) => print("Failed to unlike: $error"));
 
     _currentPostMap.update(KEY_NUMOFLIKES, (value) => value - 1);
 

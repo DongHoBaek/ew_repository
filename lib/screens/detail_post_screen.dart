@@ -24,6 +24,8 @@ class DetailPostScreen extends StatefulWidget {
 
 class _DetailPostScreenState extends State<DetailPostScreen> {
   bool _isMine;
+  bool _isLike;
+  bool _isBookmark;
 
   @override
   void initState() {
@@ -31,6 +33,8 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         UserProvider().userDataMap[KEY_USERUID] == widget.postMap[KEY_AUTHORUID]
             ? true
             : false;
+
+    _isLike = UserProvider().isLiked(PostProvider().currentDocId);
 
     super.initState();
   }
@@ -185,11 +189,28 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
       text: widget.postMap[KEY_TITLE],
       padding: 0.0,
       actions: [
-        Icon(Icons.favorite_outline),
+        InkWell(
+            onTap: () {
+              if (_isLike == false) {
+                setState(() {
+                  _isLike = true;
+                });
+                Provider.of<UserProvider>(context, listen: false).like(Provider.of<PostProvider>(context, listen: false).currentDocId);
+              } else {
+                setState(() {
+                  _isLike = false;
+                });
+                Provider.of<UserProvider>(context, listen: false).unlike(Provider.of<PostProvider>(context, listen: false).currentDocId);
+              }
+            },
+            child: Icon(
+              _isLike ? Icons.favorite : Icons.favorite_outline,
+              color: Colors.red,
+            )),
         SizedBox(
-          width: common_xxs_gap,
+          width: common_xs_gap,
         ),
-        Icon(Icons.bookmark_outline)
+        InkWell(onTap: () {}, child: Icon(Icons.bookmark_outline))
       ],
     );
   }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/firestore_keys.dart';
-import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 import 'package:ttt_project_003/widgets/post.dart';
@@ -13,8 +11,6 @@ class PostBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PostProvider>(builder:
-        (BuildContext context, PostProvider postProvider, Widget child) {
       return postList.length == 0
           ? Container()
           : ListView.builder(
@@ -38,6 +34,5 @@ class PostBody extends StatelessWidget {
                       }
                     });
               });
-    });
   }
 }
