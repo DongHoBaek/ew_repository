@@ -94,7 +94,6 @@ class PostProvider with ChangeNotifier {
       if (documentSnapshot.exists) {
         _currentPostMap = data;
         print('get data!');
-        print(_currentPostMap);
       } else {
         print('Document does not exist on the database');
       }
