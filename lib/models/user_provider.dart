@@ -22,6 +22,7 @@ class UserProvider extends ChangeNotifier {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
+
         data[KEY_USERUID] = user.uid;
 
         _userDataMap = data;
@@ -62,6 +63,8 @@ class UserProvider extends ChangeNotifier {
           documentSnapshot.data() as Map<String, dynamic>;
 
       if (documentSnapshot.exists) {
+        data[KEY_USERUID] = uid;
+
         _otherUserDataMap = data;
 
         print('get other user data!');
@@ -82,6 +85,15 @@ class UserProvider extends ChangeNotifier {
 
     await ref.update({KEY_MYPOSTS: _userDataMap[KEY_MYPOSTS]}).then(
         (value) => print('MyPostList updated'));
+  }
+
+  Future<void> removeUserPost(did) async {
+    _userDataMap[KEY_MYPOSTS].remove(did);
+
+    DocumentReference ref = users.doc(_userDataMap[KEY_USERUID]);
+
+    await ref.update({KEY_MYPOSTS: _userDataMap[KEY_MYPOSTS]}).then(
+            (value) => print('MyPostList updated'));
   }
 
   Future<void> updateProfile(String nickname, String profileMessage) async {

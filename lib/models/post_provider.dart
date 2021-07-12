@@ -115,12 +115,15 @@ class PostProvider with ChangeNotifier {
   }
 
   void deletePost() {
+    UserProvider _userProvider = UserProvider();
+
     posts
         .doc(_currentDocId)
         .delete()
         .then((value) => print("Post Deleted"))
         .catchError((error) => print("Failed to delete post: $error"));
     GalleryState().deletePostImg(_currentDocId);
+    _userProvider.removeUserPost(_currentDocId);
 
     getHomePosts();
     getMyPostList();
@@ -154,6 +157,8 @@ class PostProvider with ChangeNotifier {
     }
 
     _otherUserPosts = tmpList;
+
+    notifyListeners();
   }
 
   Future getMyPostList() async {

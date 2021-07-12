@@ -9,8 +9,9 @@ import 'package:ttt_project_003/widgets/rounded_avatar.dart';
 
 class ProfileScreen extends StatefulWidget {
   List<Map<String, dynamic>> postList;
+  Map<String, dynamic> userMap;
 
-  ProfileScreen({Key key, this.postList}) : super(key: key);
+  ProfileScreen({Key key, this.postList, this.userMap}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -31,8 +32,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SliverList(
           delegate: SliverChildListDelegate([
             _userProfile(userProvider),
-            _tabButtons(),
-            _selectedIndicator(),
+            widget.userMap != null
+                ? widget.userMap[KEY_USERUID] ==
+                        Provider.of<UserProvider>(context)
+                            .userDataMap[KEY_USERUID]
+                    ? _tabButtons()
+                    : Container()
+                : _tabButtons(),
+            widget.userMap != null
+                ? widget.userMap[KEY_USERUID] ==
+                        Provider.of<UserProvider>(context)
+                            .userDataMap[KEY_USERUID]
+                    ? _selectedIndicator()
+                    : Container()
+                : _selectedIndicator(),
           ]),
         ),
         _postPager()
@@ -50,23 +63,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: [
           RoundedAvatar(
             size: 100,
-            imageUrl: userProvider.userDataMap[KEY_PROFILEIMG],
+            imageUrl: widget.userMap != null
+                ? widget.userMap[KEY_PROFILEIMG]
+                : userProvider.userDataMap[KEY_PROFILEIMG],
           ),
           SizedBox(
             height: 20,
           ),
           Text(
-            userProvider.userDataMap[KEY_NICKNAME] != null
-                ? userProvider.userDataMap[KEY_NICKNAME]
-                : userProvider.userDataMap[KEY_USERNAME],
+            widget.userMap != null
+                ? widget.userMap[KEY_NICKNAME] != null
+                    ? widget.userMap[KEY_NICKNAME]
+                    : widget.userMap[KEY_USERNAME]
+                : userProvider.userDataMap[KEY_NICKNAME] != null
+                    ? userProvider.userDataMap[KEY_NICKNAME]
+                    : userProvider.userDataMap[KEY_USERNAME],
             style: TextStyle(fontSize: font_l_size),
           ),
           SizedBox(
             height: 5,
           ),
-          userProvider.userDataMap[KEY_PROFILEMSG] == null
-              ? Text('메세지를 입력해주세요.')
-              : Text(userProvider.userDataMap[KEY_PROFILEMSG]),
+          Text(
+            widget.userMap != null
+                ? widget.userMap[KEY_PROFILEMSG] != null
+                    ? widget.userMap[KEY_PROFILEMSG]
+                    : '메세지를 입력해주세요.'
+                : userProvider.userDataMap[KEY_PROFILEMSG] != null
+                    ? userProvider.userDataMap[KEY_PROFILEMSG]
+                    : '메세지를 입력해주세요.',
+          ),
         ],
       ),
     );

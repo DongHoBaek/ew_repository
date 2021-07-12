@@ -7,6 +7,7 @@ import 'package:ttt_project_003/constant/firestore_keys.dart';
 import 'package:ttt_project_003/constant/screen_size.dart';
 import 'package:ttt_project_003/models/post_provider.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
+import 'package:ttt_project_003/screens/profile_screen.dart';
 import 'package:ttt_project_003/screens/write_post_screen.dart';
 import 'package:ttt_project_003/widgets/header.dart';
 import 'package:ttt_project_003/widgets/recommend_post_body.dart';
@@ -27,7 +28,9 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   @override
   void initState() {
     _isMine =
-        UserProvider().userDataMap[KEY_USERUID] == widget.postMap[KEY_AUTHORUID] ? true : false;
+        UserProvider().userDataMap[KEY_USERUID] == widget.postMap[KEY_AUTHORUID]
+            ? true
+            : false;
 
     super.initState();
   }
@@ -222,15 +225,29 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              RoundedAvatar(
-                  size: 40,
-                  imageUrl:
-                      Provider.of<UserProvider>(context).otherUserDataMap[KEY_PROFILEIMG]),
+              InkWell(
+                onTap: () async {
+                  await Provider.of<PostProvider>(context, listen: false)
+                      .getOtherUserPosts();
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => ProfileScreen(
+                            postList: Provider.of<PostProvider>(context)
+                                .otherUserPosts,
+                            userMap: Provider.of<UserProvider>(context)
+                                .otherUserDataMap,
+                          )));
+                },
+                child: RoundedAvatar(
+                    size: 40,
+                    imageUrl: Provider.of<UserProvider>(context)
+                        .otherUserDataMap[KEY_PROFILEIMG]),
+              ),
               SizedBox(
                 width: common_gap,
               ),
               Text(
-                Provider.of<UserProvider>(context).otherUserDataMap[KEY_NICKNAME],
+                Provider.of<UserProvider>(context)
+                    .otherUserDataMap[KEY_NICKNAME],
                 style:
                     TextStyle(fontSize: font_size, fontWeight: FontWeight.bold),
               )
