@@ -34,15 +34,17 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
             ? true
             : false;
 
-    _isLike = UserProvider().isLiked(PostProvider().currentDocId);
+    _isLike = UserProvider().isLiked(PostProvider().currentDocIdStack.last);
 
-    _isBookmark = UserProvider().isBookmarked(PostProvider().currentDocId);
+    _isBookmark =
+        UserProvider().isBookmarked(PostProvider().currentDocIdStack.last);
 
     super.initState();
   }
 
   @override
   void dispose() {
+    PostProvider().removeLastDocId();
     super.dispose();
   }
 
@@ -199,14 +201,16 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                 });
                 Provider.of<UserProvider>(context, listen: false).like(
                     Provider.of<PostProvider>(context, listen: false)
-                        .currentDocId);
+                        .currentDocIdStack
+                        .last);
               } else {
                 setState(() {
                   _isLike = false;
                 });
                 Provider.of<UserProvider>(context, listen: false).unlike(
                     Provider.of<PostProvider>(context, listen: false)
-                        .currentDocId);
+                        .currentDocIdStack
+                        .last);
               }
             },
             child: Icon(
@@ -224,14 +228,16 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                 });
                 Provider.of<UserProvider>(context, listen: false).bookmark(
                     Provider.of<PostProvider>(context, listen: false)
-                        .currentDocId);
+                        .currentDocIdStack
+                        .last);
               } else {
                 setState(() {
                   _isBookmark = false;
                 });
                 Provider.of<UserProvider>(context, listen: false).unbookmark(
                     Provider.of<PostProvider>(context, listen: false)
-                        .currentDocId);
+                        .currentDocIdStack
+                        .last);
               }
             },
             child: Icon(
@@ -280,14 +286,20 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                   await Provider.of<PostProvider>(context, listen: false)
                       .getBookmarkPosts();
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => ProfileScreen(
-                            postList: Provider.of<PostProvider>(context)
-                                .otherUserPosts,
-                            userMap: Provider.of<UserProvider>(context)
-                                .otherUserDataMap,
-                            bookmarkPostList: Provider.of<PostProvider>(context)
-                                .bookmarkPosts,
-                          )));
+                      builder: (_) => _isMine
+                          ? ProfileScreen(
+                              postList: Provider.of<PostProvider>(context)
+                                  .otherUserPosts,
+                              bookmarkPostList:
+                                  Provider.of<PostProvider>(context)
+                                      .bookmarkPosts,
+                            )
+                          : ProfileScreen(
+                              postList: Provider.of<PostProvider>(context)
+                                  .otherUserPosts,
+                              userMap: Provider.of<UserProvider>(context)
+                                  .otherUserDataMap,
+                            )));
                 },
                 child: RoundedAvatar(
                     size: 40,

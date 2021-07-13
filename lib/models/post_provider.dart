@@ -5,9 +5,9 @@ import 'package:ttt_project_003/models/gallery_state.dart';
 import 'package:ttt_project_003/models/user_provider.dart';
 
 class PostProvider with ChangeNotifier {
-  static String _currentDocId;
-  String _rootPostDocID;
   bool _displayAllPost = true;
+  static List<String> _currentDocIdStack = [];
+  static List<String> _rootDocIdStack = [];
   static Map<String, dynamic> _currentPostMap;
   static List<Map<String, dynamic>> _homePosts = [];
   static List<Map<String, dynamic>> _childPosts = [];
@@ -15,9 +15,11 @@ class PostProvider with ChangeNotifier {
   static List<Map<String, dynamic>> _otherUserPosts = [];
   static List<Map<String, dynamic>> _bookmarkPosts = [];
 
-  String get currentDocId => _currentDocId;
-
   bool get displayAllPost => _displayAllPost;
+
+  List<String> get currentDocIdStack => _currentDocIdStack;
+
+  List<String> get rootDocIdStack => _rootDocIdStack;
 
   Map<String, dynamic> get currentPostMap => _currentPostMap;
 
@@ -44,16 +46,16 @@ class PostProvider with ChangeNotifier {
     }
   }
 
-  void setCurrentDocId(String dId) {
-    _currentDocId = dId;
-    print("set document id to $_currentDocId");
-  }
+  void removeLastDocId() {
+    _currentDocIdStack.removeLast();
+    _rootDocIdStack.removeLast();
 
-  void removeDocId() {
-    _currentDocId = null;
-    _rootPostDocID = null;
-    print("set currentDocument id to $_currentDocId");
-    print("set rootDocument id to $_rootPostDocID");
+    if (_rootDocIdStack.isNotEmpty && _currentDocIdStack.isNotEmpty) {
+      print(
+          'remove last doc Id, current doc Id: ${_currentDocIdStack.last}, root Id: ${_rootDocIdStack.last}');
+    } else {
+      print('all stackDocIdList is null');
+    }
   }
 
   Future<void> createPost(String title, String content, var postTime) async {
@@ -64,7 +66,9 @@ class PostProvider with ChangeNotifier {
     DocumentReference ref = posts.doc(documentId);
 
     String rootPostDID = ref.id;
-    String parentPostDID = _currentDocId;
+    String parentPostDID = _currentDocIdStack.isEmpty
+        ? null
+        : _currentDocIdStack[_currentDocIdStack.length - 1];
 
     ref
         .set({
@@ -87,16 +91,23 @@ class PostProvider with ChangeNotifier {
     getMyPosts();
   }
 
-  Future getPostData(String dId) async {
-    setCurrentDocId(dId);
-
-    await posts.doc(dId).get().then((DocumentSnapshot documentSnapshot) {
+  Future getPostData(String did) async {
+    await posts.doc(did).get().then((DocumentSnapshot documentSnapshot) {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
 
       if (documentSnapshot.exists) {
         _currentPostMap = data;
-        print('get data!');
+
+        _currentDocIdStack.add(did);
+
+        _rootDocIdStack.add(data[KEY_ROOTPOSTDID]);
+
+        print('get current post data!');
+        print(
+            'currentDocIdList: $_currentDocIdStack, rootDocIdList: $_rootDocIdStack');
+        print(
+            'set last doc Id, current doc Id: ${_currentDocIdStack.last}, root Id: ${_rootDocIdStack.last}');
       } else {
         print('Document does not exist on the database');
       }
@@ -104,14 +115,17 @@ class PostProvider with ChangeNotifier {
   }
 
   Future<void> updatePost(String title, String content) async {
-    String imgUrl = await GalleryState().updatePostImg(_currentDocId);
+    String imgUrl =
+        await GalleryState().updatePostImg(_currentDocIdStack.last);
 
     posts
-        .doc(_currentDocId)
+        .doc(_currentDocIdStack.last)
         .update({KEY_CONTENT: content, KEY_TITLE: title, KEY_POSTIMG: imgUrl})
         .then((value) => print("Post Updated"))
         .catchError((error) => print("Failed to update post: $error"));
 
+    _currentDocIdStack = [];
+    _rootDocIdStack = [];
     getHomePosts();
     getMyPosts();
   }
@@ -120,13 +134,15 @@ class PostProvider with ChangeNotifier {
     UserProvider _userProvider = UserProvider();
 
     posts
-        .doc(_currentDocId)
+        .doc(_currentDocIdStack.last)
         .delete()
         .then((value) => print("Post Deleted"))
         .catchError((error) => print("Failed to delete post: $error"));
-    GalleryState().deletePostImg(_currentDocId);
-    _userProvider.removeUserPost(_currentDocId);
+    GalleryState().deletePostImg(_currentDocIdStack.last);
+    _userProvider.removeUserPost(_currentDocIdStack.last);
 
+    _currentDocIdStack = [];
+    _rootDocIdStack = [];
     getHomePosts();
     getMyPosts();
   }
@@ -233,8 +249,9 @@ class PostProvider with ChangeNotifier {
   }
 
   Future getChildPosts() async {
-    var snapshot =
-        await posts.where(KEY_PARENTPOSTDID, isEqualTo: _currentDocId).get();
+    var snapshot = await posts
+        .where(KEY_PARENTPOSTDID, isEqualTo: _rootDocIdStack.last)
+        .get();
     _childPosts = _getPostList(snapshot);
 
     print('succeed to get child posts');
@@ -265,7 +282,7 @@ class PostProvider with ChangeNotifier {
 
   Future<void> liked() async {
     await posts
-        .doc(_currentDocId)
+        .doc(_currentDocIdStack.last)
         .update({KEY_NUMOFLIKES: _currentPostMap[KEY_NUMOFLIKES] + 1})
         .then((value) => print("post is liked"))
         .catchError((error) => print("Failed to like: $error"));
@@ -277,7 +294,7 @@ class PostProvider with ChangeNotifier {
 
   Future<void> unliked() async {
     await posts
-        .doc(_currentDocId)
+        .doc(_currentDocIdStack.last)
         .update({KEY_NUMOFLIKES: _currentPostMap[KEY_NUMOFLIKES] - 1})
         .then((value) => print("post is unliked"))
         .catchError((error) => print("Failed to unlike: $error"));

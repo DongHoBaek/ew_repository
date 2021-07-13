@@ -44,7 +44,6 @@ class _FeedScreenState extends State<FeedScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Provider.of<PostProvider>(context, listen: false).removeDocId();
           Provider.of<GalleryState>(context, listen: false).clearImage();
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => WritePostScreen()));
