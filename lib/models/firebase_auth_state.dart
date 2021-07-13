@@ -61,7 +61,8 @@ class FirebaseAuthState extends ChangeNotifier {
       } else if (user != _user) {
         _user = user;
         await UserProvider().getUserData();
-        await PostProvider().getMyPostList();
+        await PostProvider().getMyPosts();
+        await PostProvider().getBookmarkPosts();
         changeFirebaseAuthStatus(FirebaseAuthStatus.signin);
       }
     });

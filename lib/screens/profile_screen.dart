@@ -9,9 +9,10 @@ import 'package:ttt_project_003/widgets/rounded_avatar.dart';
 
 class ProfileScreen extends StatefulWidget {
   List<Map<String, dynamic>> postList;
+  List<Map<String, dynamic>> bookmarkPostList;
   Map<String, dynamic> userMap;
 
-  ProfileScreen({Key key, this.postList, this.userMap}) : super(key: key);
+  ProfileScreen({Key key, this.postList, this.userMap, this.bookmarkPostList}) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -193,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             duration: Duration(milliseconds: 500),
             transform: Matrix4.translationValues(_rightImagesPageMargin, 0, 0),
             curve: Curves.fastOutSlowIn,
-            child: PostBody(postList: widget.postList),
+            child: PostBody(postList: widget.bookmarkPostList),
           ),
         ],
       ),

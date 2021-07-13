@@ -36,6 +36,8 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
 
     _isLike = UserProvider().isLiked(PostProvider().currentDocId);
 
+    _isBookmark = UserProvider().isBookmarked(PostProvider().currentDocId);
+
     super.initState();
   }
 
@@ -195,22 +197,47 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                 setState(() {
                   _isLike = true;
                 });
-                Provider.of<UserProvider>(context, listen: false).like(Provider.of<PostProvider>(context, listen: false).currentDocId);
+                Provider.of<UserProvider>(context, listen: false).like(
+                    Provider.of<PostProvider>(context, listen: false)
+                        .currentDocId);
               } else {
                 setState(() {
                   _isLike = false;
                 });
-                Provider.of<UserProvider>(context, listen: false).unlike(Provider.of<PostProvider>(context, listen: false).currentDocId);
+                Provider.of<UserProvider>(context, listen: false).unlike(
+                    Provider.of<PostProvider>(context, listen: false)
+                        .currentDocId);
               }
             },
             child: Icon(
               _isLike ? Icons.favorite : Icons.favorite_outline,
-              color: Colors.red,
+              color: Colors.red[300],
             )),
         SizedBox(
           width: common_xs_gap,
         ),
-        InkWell(onTap: () {}, child: Icon(Icons.bookmark_outline))
+        InkWell(
+            onTap: () {
+              if (_isBookmark == false) {
+                setState(() {
+                  _isBookmark = true;
+                });
+                Provider.of<UserProvider>(context, listen: false).bookmark(
+                    Provider.of<PostProvider>(context, listen: false)
+                        .currentDocId);
+              } else {
+                setState(() {
+                  _isBookmark = false;
+                });
+                Provider.of<UserProvider>(context, listen: false).unbookmark(
+                    Provider.of<PostProvider>(context, listen: false)
+                        .currentDocId);
+              }
+            },
+            child: Icon(
+              _isBookmark ? Icons.bookmark : Icons.bookmark_outline,
+              color: Colors.blue[300],
+            ))
       ],
     );
   }
@@ -250,12 +277,16 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                 onTap: () async {
                   await Provider.of<PostProvider>(context, listen: false)
                       .getOtherUserPosts();
+                  await Provider.of<PostProvider>(context, listen: false)
+                      .getBookmarkPosts();
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => ProfileScreen(
                             postList: Provider.of<PostProvider>(context)
                                 .otherUserPosts,
                             userMap: Provider.of<UserProvider>(context)
                                 .otherUserDataMap,
+                            bookmarkPostList: Provider.of<PostProvider>(context)
+                                .bookmarkPosts,
                           )));
                 },
                 child: RoundedAvatar(

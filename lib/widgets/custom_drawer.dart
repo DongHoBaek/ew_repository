@@ -27,8 +27,12 @@ class CustomDrawer extends StatelessWidget {
             title: Text('My Page'),
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => ProfileScreen(postList: Provider.of<PostProvider>(context).myPosts)));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ProfileScreen(
+                        postList: Provider.of<PostProvider>(context).myPosts,
+                        bookmarkPostList:
+                            Provider.of<PostProvider>(context).bookmarkPosts,
+                      )));
             },
           ),
           ListTile(
@@ -49,7 +53,8 @@ class CustomDrawer extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.only(top: common_xs_gap),
         child: ListTile(
-          leading: RoundedAvatar(imageUrl: userProvider.userDataMap[KEY_PROFILEIMG]),
+          leading:
+              RoundedAvatar(imageUrl: userProvider.userDataMap[KEY_PROFILEIMG]),
           title: Text(
             userProvider.userDataMap[KEY_NICKNAME] != null
                 ? userProvider.userDataMap[KEY_NICKNAME]

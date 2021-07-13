@@ -13,6 +13,7 @@ class PostProvider with ChangeNotifier {
   static List<Map<String, dynamic>> _childPosts = [];
   static List<Map<String, dynamic>> _myPosts = [];
   static List<Map<String, dynamic>> _otherUserPosts = [];
+  static List<Map<String, dynamic>> _bookmarkPosts = [];
 
   String get currentDocId => _currentDocId;
 
@@ -27,6 +28,8 @@ class PostProvider with ChangeNotifier {
   List<Map<String, dynamic>> get myPosts => _myPosts;
 
   List<Map<String, dynamic>> get otherUserPosts => _otherUserPosts;
+
+  List<Map<String, dynamic>> get bookmarkPosts => _bookmarkPosts;
 
   CollectionReference posts =
       FirebaseFirestore.instance.collection(COLLECTION_POSTS);
@@ -81,7 +84,7 @@ class PostProvider with ChangeNotifier {
         .catchError((error) => print("Failed to add post: $error"));
     _userProvider.addUserPost(documentId);
     getHomePosts();
-    getMyPostList();
+    getMyPosts();
   }
 
   Future getPostData(String dId) async {
@@ -110,7 +113,7 @@ class PostProvider with ChangeNotifier {
         .catchError((error) => print("Failed to update post: $error"));
 
     getHomePosts();
-    getMyPostList();
+    getMyPosts();
   }
 
   void deletePost() {
@@ -125,7 +128,7 @@ class PostProvider with ChangeNotifier {
     _userProvider.removeUserPost(_currentDocId);
 
     getHomePosts();
-    getMyPostList();
+    getMyPosts();
   }
 
   // void anonymizationPost() {
@@ -146,6 +149,9 @@ class PostProvider with ChangeNotifier {
         await posts.doc(i).get().then((DocumentSnapshot documentSnapshot) {
           Map<String, dynamic> data =
               documentSnapshot.data() as Map<String, dynamic>;
+
+          data[KEY_POSTDID] = i;
+
           tmpList.add(data);
         });
       }
@@ -160,7 +166,34 @@ class PostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future getMyPostList() async {
+  Future getBookmarkPosts() async {
+    List bookmarkDids = UserProvider().userDataMap[KEY_BOOKMARKEDPOSTS];
+
+    List<Map<String, dynamic>> tmpList = [];
+
+    if (bookmarkDids.isNotEmpty) {
+      for (var i in bookmarkDids) {
+        await posts.doc(i).get().then((DocumentSnapshot documentSnapshot) {
+          Map<String, dynamic> data =
+              documentSnapshot.data() as Map<String, dynamic>;
+
+          data[KEY_POSTDID] = i;
+
+          tmpList.add(data);
+        });
+      }
+
+      print('succeed to get your bookmarked posts');
+    } else {
+      print('user don\'t have any post');
+    }
+
+    _bookmarkPosts = tmpList;
+
+    notifyListeners();
+  }
+
+  Future getMyPosts() async {
     List myDids = UserProvider().userDataMap[KEY_MYPOSTS];
 
     List<Map<String, dynamic>> tmpList = [];
@@ -170,6 +203,9 @@ class PostProvider with ChangeNotifier {
         await posts.doc(i).get().then((DocumentSnapshot documentSnapshot) {
           Map<String, dynamic> data =
               documentSnapshot.data() as Map<String, dynamic>;
+
+          data[KEY_POSTDID] = i;
+
           tmpList.add(data);
         });
       }
@@ -227,7 +263,7 @@ class PostProvider with ChangeNotifier {
     return null;
   }
 
-  Future<void> liked() async{
+  Future<void> liked() async {
     await posts
         .doc(_currentDocId)
         .update({KEY_NUMOFLIKES: _currentPostMap[KEY_NUMOFLIKES] + 1})
@@ -239,7 +275,7 @@ class PostProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> unliked() async{
+  Future<void> unliked() async {
     await posts
         .doc(_currentDocId)
         .update({KEY_NUMOFLIKES: _currentPostMap[KEY_NUMOFLIKES] - 1})

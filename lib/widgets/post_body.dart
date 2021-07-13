@@ -5,7 +5,7 @@ import 'package:ttt_project_003/widgets/my_progress_indicator.dart';
 import 'package:ttt_project_003/widgets/post.dart';
 
 class PostBody extends StatelessWidget {
-  List postList;
+  List postList = [];
 
   PostBody({Key key, @required this.postList}) : super(key: key);
 

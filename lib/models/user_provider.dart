@@ -23,7 +23,6 @@ class UserProvider extends ChangeNotifier {
       Map<String, dynamic> data =
           documentSnapshot.data() as Map<String, dynamic>;
       if (documentSnapshot.exists) {
-
         data[KEY_USERUID] = user.uid;
 
         _userDataMap = data;
@@ -69,10 +68,8 @@ class UserProvider extends ChangeNotifier {
         _otherUserDataMap = data;
 
         print('get other user data!');
-
       } else {
         print('Document does not exist on the database');
-
       }
     });
 
@@ -94,7 +91,7 @@ class UserProvider extends ChangeNotifier {
     DocumentReference ref = users.doc(_userDataMap[KEY_USERUID]);
 
     await ref.update({KEY_MYPOSTS: _userDataMap[KEY_MYPOSTS]}).then(
-            (value) => print('MyPostList updated'));
+        (value) => print('MyPostList updated'));
   }
 
   Future<void> updateProfile(String nickname, String profileMessage) async {
@@ -123,6 +120,7 @@ class UserProvider extends ChangeNotifier {
       print("bookmarked");
     }).catchError((error) => print("Failed to bookmark: $error"));
 
+    PostProvider().getBookmarkPosts();
     notifyListeners();
   }
 
@@ -134,6 +132,8 @@ class UserProvider extends ChangeNotifier {
         {KEY_BOOKMARKEDPOSTS: _userDataMap[KEY_BOOKMARKEDPOSTS]}).then((value) {
       print("unbookmarked");
     }).catchError((error) => print("Failed to unbookmark: $error"));
+
+    PostProvider().getBookmarkPosts();
     notifyListeners();
   }
 
