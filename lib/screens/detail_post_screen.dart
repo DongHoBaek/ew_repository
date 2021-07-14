@@ -14,7 +14,7 @@ import 'package:ttt_project_003/widgets/recommend_post_body.dart';
 import 'package:ttt_project_003/widgets/rounded_avatar.dart';
 
 class DetailPostScreen extends StatefulWidget {
-  final Map<String, dynamic> postMap;
+  Map<String, dynamic> postMap;
 
   DetailPostScreen({Key key, @required this.postMap}) : super(key: key);
 
@@ -171,7 +171,35 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   Padding _commentBody() {
     return Padding(
       padding: const EdgeInsets.only(bottom: common_gap),
-      child: RecommendPostBody(),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            _addCommentBtn(),
+            RecommendPostBody(
+              postList: Provider.of<PostProvider>(context).childPosts,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _addCommentBtn() {
+    return Padding(
+      padding: const EdgeInsets.only(left: common_gap),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => WritePostScreen()));
+        },
+        child: Container(
+          height: size.height * 0.16,
+          width: size.height * 0.16,
+          decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+          child: Center(child: Icon(Icons.add)),
+        ),
+      ),
     );
   }
 
@@ -327,11 +355,42 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
           Icon(
             Icons.arrow_back_ios_outlined,
             size: 10,
+            color: Provider.of<PostProvider>(context)
+                        .currentPostMap[KEY_PARENTPOSTDID] !=
+                    null
+                ? Colors.black
+                : Colors.grey,
           ),
-          Text('이전 가지 게시물로 가기')
+          Text(
+            '이전 가지 게시물로 가기',
+            style: TextStyle(
+              color: Provider.of<PostProvider>(context)
+                          .currentPostMap[KEY_PARENTPOSTDID] !=
+                      null
+                  ? Colors.black
+                  : Colors.grey,
+            ),
+          )
         ],
       ),
-      onTap: () {},
+      onTap: () async {
+        if (Provider.of<PostProvider>(context, listen: false)
+                .currentPostMap[KEY_PARENTPOSTDID] !=
+            null) {
+          await Provider.of<PostProvider>(context, listen: false).getPostData(
+              Provider.of<PostProvider>(context, listen: false)
+                  .currentPostMap[KEY_PARENTPOSTDID]);
+          await Provider.of<UserProvider>(context, listen: false)
+              .getOtherUserData(
+                  Provider.of<PostProvider>(context, listen: false)
+                      .currentPostMap[KEY_AUTHORUID]);
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => DetailPostScreen(
+                    postMap: Provider.of<PostProvider>(context, listen: false)
+                        .currentPostMap,
+                  )));
+        }
+      },
     );
   }
 
@@ -342,11 +401,45 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
           Icon(
             Icons.arrow_back_ios_outlined,
             size: 10,
+            color: Provider.of<PostProvider>(context, listen: false)
+                        .currentPostMap[KEY_ROOTPOSTDID] !=
+                    Provider.of<PostProvider>(context, listen: false)
+                        .currentPostMap[KEY_POSTDID]
+                ? Colors.black
+                : Colors.grey,
           ),
-          Text('뿌리 게시물로 가기')
+          Text(
+            '뿌리 게시물로 가기',
+            style: TextStyle(
+              color: Provider.of<PostProvider>(context, listen: false)
+                          .currentPostMap[KEY_ROOTPOSTDID] !=
+                      Provider.of<PostProvider>(context, listen: false)
+                          .currentPostMap[KEY_POSTDID]
+                  ? Colors.black
+                  : Colors.grey,
+            ),
+          )
         ],
       ),
-      onTap: () {},
+      onTap: () async {
+        if (Provider.of<PostProvider>(context, listen: false)
+                .currentPostMap[KEY_ROOTPOSTDID] !=
+            Provider.of<PostProvider>(context, listen: false)
+                .currentPostMap[KEY_POSTDID]) {
+          await Provider.of<PostProvider>(context, listen: false).getPostData(
+              Provider.of<PostProvider>(context, listen: false)
+                  .currentPostMap[KEY_ROOTPOSTDID]);
+          await Provider.of<UserProvider>(context, listen: false)
+              .getOtherUserData(
+                  Provider.of<PostProvider>(context, listen: false)
+                      .currentPostMap[KEY_AUTHORUID]);
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => DetailPostScreen(
+                    postMap: Provider.of<PostProvider>(context, listen: false)
+                        .currentPostMap,
+                  )));
+        }
+      },
     );
   }
 }

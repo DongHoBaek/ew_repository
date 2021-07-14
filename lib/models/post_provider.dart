@@ -25,7 +25,7 @@ class PostProvider with ChangeNotifier {
 
   List<Map<String, dynamic>> get homePosts => _homePosts;
 
-  List<Map<String, dynamic>> get childPostList => _childPosts;
+  List<Map<String, dynamic>> get childPosts => _childPosts;
 
   List<Map<String, dynamic>> get myPosts => _myPosts;
 
@@ -47,14 +47,17 @@ class PostProvider with ChangeNotifier {
   }
 
   void removeLastDocId() {
-    _currentDocIdStack.removeLast();
-    _rootDocIdStack.removeLast();
+    if (_rootDocIdStack.isNotEmpty && _currentDocIdStack.isNotEmpty) {
+      _currentDocIdStack.removeLast();
+      _rootDocIdStack.removeLast();
+      getPostData(_currentDocIdStack.last);
+    }
 
     if (_rootDocIdStack.isNotEmpty && _currentDocIdStack.isNotEmpty) {
       print(
           'remove last doc Id, current doc Id: ${_currentDocIdStack.last}, root Id: ${_rootDocIdStack.last}');
     } else {
-      print('all stackDocIdList is null');
+      print('all DocIdStack are null');
     }
   }
 
@@ -65,10 +68,14 @@ class PostProvider with ChangeNotifier {
 
     DocumentReference ref = posts.doc(documentId);
 
-    String rootPostDID = ref.id;
-    String parentPostDID = _currentDocIdStack.isEmpty
-        ? null
-        : _currentDocIdStack[_currentDocIdStack.length - 1];
+    String rootPostDID =
+        _rootDocIdStack.isEmpty ? ref.id : _rootDocIdStack.last;
+    String parentPostDID =
+        _currentDocIdStack.isEmpty ? null : _currentDocIdStack.last;
+
+    if (_currentDocIdStack.isNotEmpty) {
+      addChildPost(documentId);
+    }
 
     ref
         .set({
@@ -97,6 +104,8 @@ class PostProvider with ChangeNotifier {
           documentSnapshot.data() as Map<String, dynamic>;
 
       if (documentSnapshot.exists) {
+        data[KEY_POSTDID] = did;
+
         _currentPostMap = data;
 
         _currentDocIdStack.add(did);
@@ -105,18 +114,19 @@ class PostProvider with ChangeNotifier {
 
         print('get current post data!');
         print(
-            'currentDocIdList: $_currentDocIdStack, rootDocIdList: $_rootDocIdStack');
+            'currentDocIdStack: $_currentDocIdStack, rootDocIdStack: $_rootDocIdStack');
         print(
             'set last doc Id, current doc Id: ${_currentDocIdStack.last}, root Id: ${_rootDocIdStack.last}');
       } else {
         print('Document does not exist on the database');
       }
     });
+
+    await getChildPosts();
   }
 
   Future<void> updatePost(String title, String content) async {
-    String imgUrl =
-        await GalleryState().updatePostImg(_currentDocIdStack.last);
+    String imgUrl = await GalleryState().updatePostImg(_currentDocIdStack.last);
 
     posts
         .doc(_currentDocIdStack.last)
@@ -249,14 +259,39 @@ class PostProvider with ChangeNotifier {
   }
 
   Future getChildPosts() async {
-    var snapshot = await posts
-        .where(KEY_PARENTPOSTDID, isEqualTo: _rootDocIdStack.last)
-        .get();
-    _childPosts = _getPostList(snapshot);
+    List childDids = _currentPostMap[KEY_COMMENTS];
+    List<Map<String, dynamic>> tmpList = [];
 
-    print('succeed to get child posts');
+    if (childDids != null) {
+      for (var i in childDids) {
+        await posts.doc(i).get().then((DocumentSnapshot documentSnapshot) {
+          Map<String, dynamic> data =
+              documentSnapshot.data() as Map<String, dynamic>;
 
-    notifyListeners();
+          data[KEY_POSTDID] = i;
+
+          tmpList.add(data);
+        });
+      }
+
+      print('succeed to get comment posts');
+    } else {
+      print('you don\'t have any post');
+    }
+
+    _childPosts = tmpList;
+  }
+
+  Future<void> addChildPost(did) async {
+    _currentPostMap[KEY_COMMENTS].add(did);
+
+    posts
+        .doc(_currentDocIdStack.last)
+        .update({KEY_COMMENTS: _currentPostMap[KEY_COMMENTS]})
+        .then((value) => print("Post Updated"))
+        .catchError((error) => print("Failed to update post: $error"));
+
+    getChildPosts();
   }
 
   //2차원 데이터 _postList (id, title, content) 반환

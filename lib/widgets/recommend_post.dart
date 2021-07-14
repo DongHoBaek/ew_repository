@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'package:ttt_project_003/constant/common_size.dart';
-
+import 'package:ttt_project_003/constant/firestore_keys.dart';
+import 'package:ttt_project_003/models/post_provider.dart';
+import 'package:ttt_project_003/models/user_provider.dart';
+import 'package:ttt_project_003/screens/detail_post_screen.dart';
 
 class RecommendPost extends StatelessWidget {
-  List postList;
+  Map<String, dynamic> postMap;
+  String authorNickname;
 
-  RecommendPost({Key key, this.postList}) : super(key: key);
+  RecommendPost(
+      {Key key, @required this.postMap, @required this.authorNickname})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,17 +21,26 @@ class RecommendPost extends StatelessWidget {
       padding: const EdgeInsets.only(left: common_gap),
       child: Container(
         width: 240,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            fit: BoxFit.fill,
-            image: NetworkImage(postList[5]),
-          ),
-        ),
+        decoration: postMap[KEY_POSTIMG] == null
+            ? BoxDecoration(color: Colors.grey)
+            : BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: NetworkImage(postMap[KEY_POSTIMG]),
+                ),
+              ),
         child: InkWell(
           child: _postInfo(),
-          onTap: () {
-            // Navigator.of(context).push(MaterialPageRoute(
-            //     builder: (_) => DetailPostScreen(postList: this.postList)));
+          onTap: () async {
+            await Provider.of<PostProvider>(context, listen: false)
+                .getPostData(postMap[KEY_POSTDID]);
+            await Provider.of<UserProvider>(context, listen: false)
+                .getOtherUserData(postMap[KEY_AUTHORUID]);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => DetailPostScreen(
+                      postMap:
+                          Provider.of<PostProvider>(context).currentPostMap,
+                    )));
           },
         ),
       ),
@@ -44,12 +60,14 @@ class RecommendPost extends StatelessWidget {
                 children: [
                   Spacer(),
                   Text(
-                    postList[0],
+                    postMap[KEY_TITLE],
                     style: TextStyle(fontSize: font_size, color: Colors.white),
                   ),
                   Spacer(),
                   Text(
-                    postList[2],
+                    authorNickname != null
+                        ? authorNickname
+                        : postMap[KEY_AUTHORUNM],
                     style:
                         TextStyle(fontSize: font_xs_size, color: Colors.white),
                   ),
