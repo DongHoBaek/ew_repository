@@ -109,7 +109,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
             style: TextStyle(color: Colors.white),
           ),
           style: TextButton.styleFrom(
-              backgroundColor: Colors.blue, minimumSize: Size(size.width, 50)),
+              backgroundColor: Color(0xFF333333), minimumSize: Size(size.width, 50)),
           onPressed: () {
             if (_formKey.currentState.validate()) {
               print('Validation success!!');

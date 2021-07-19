@@ -22,7 +22,7 @@ class _FeedScreenState extends State<FeedScreen> {
       drawer: CustomDrawer(),
       appBar: AppBar(
         title: Text('Feed Screen'),
-        actions: [Switch(value: true, onChanged: (value) {})],
+        actions: [Switch(value: true, onChanged: (value) {}, activeColor: Color(0xFF333333),)],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -43,6 +43,7 @@ class _FeedScreenState extends State<FeedScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFF333333),
         onPressed: () {
           Provider.of<GalleryState>(context, listen: false).clearImage();
           Navigator.of(context)

@@ -63,9 +63,10 @@ class _MyAppState extends State<MyApp> {
 
   ThemeData _themeData() {
     return ThemeData(
-        primaryColor: white,
-        scaffoldBackgroundColor: white,
-        appBarTheme: AppBarTheme(elevation: 0.0),
-        inputDecorationTheme: inputDecorTheme());
+      primaryColor: white,
+      scaffoldBackgroundColor: white,
+      appBarTheme: AppBarTheme(elevation: 0.0),
+      inputDecorationTheme: inputDecorTheme(),
+    );
   }
 }

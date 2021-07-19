@@ -33,58 +33,69 @@ class Post extends StatelessWidget {
                   )));
         },
         child: Container(
-          height: size.height * 0.16,
+          height: size.height * 0.18,
+          padding: EdgeInsets.all(common_gap),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]),
+              borderRadius: BorderRadius.circular(10)),
           child: Row(
-            children: [
-              Container(
-                width: size.height * 0.16,
-                child: postMap[KEY_POSTIMG] == null
-                    ? Container(
-                        color: Colors.black26,
-                        child: Center(child: Text('No Image')),
-                      )
-                    : CachedNetworkImage(
-                        imageUrl: postMap[KEY_POSTIMG],
-                        fit: BoxFit.cover,
-                      ),
+            children: [_imageBox(), _postInfo()],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container _imageBox() {
+    return Container(
+      width: size.height * 0.14,
+      child: postMap[KEY_POSTIMG] == null
+          ? Container(
+              color: Colors.black26,
+              child: Center(child: Text('No Image')),
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: CachedNetworkImage(
+                imageUrl: postMap[KEY_POSTIMG],
+                fit: BoxFit.cover,
               ),
-              Expanded(
-                child: Container(
-                  color: Colors.grey[200],
-                  child: Padding(
-                    padding: const EdgeInsets.all(common_s_gap),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          postMap[KEY_TITLE],
-                          style: TextStyle(fontSize: font_size),
-                        ),
-                        Spacer(),
-                        Text(
-                          authorNickname != null
-                              ? authorNickname
-                              : postMap[KEY_AUTHORUNM],
-                          style: TextStyle(fontSize: font_xs_size),
-                        ),
-                        Text(
-                          timeFormatter(postMap[KEY_POSTTIME]),
-                          style: TextStyle(fontSize: font_xs_size),
-                        ),
-                        Row(
-                          children: [
-                            Icon(Icons.favorite_outline, color: Colors.red),
-                            Text(
-                              postMap[KEY_NUMOFLIKES].toString(),
-                              style: TextStyle(fontSize: font_xs_size),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+            ),
+    );
+  }
+
+  Expanded _postInfo() {
+    return Expanded(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.only(left: common_s_gap),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                postMap[KEY_TITLE],
+                style: TextStyle(fontSize: font_size),
+              ),
+              Spacer(),
+              Text(
+                authorNickname != null
+                    ? authorNickname
+                    : postMap[KEY_AUTHORUNM],
+                style: TextStyle(fontSize: font_xs_size),
+              ),
+              Text(
+                timeFormatter(postMap[KEY_POSTTIME]),
+                style: TextStyle(fontSize: font_xs_size),
+              ),
+              Row(
+                children: [
+                  Icon(Icons.favorite_outline, color: Colors.red),
+                  Text(
+                    postMap[KEY_NUMOFLIKES].toString(),
+                    style: TextStyle(fontSize: font_xs_size),
                   ),
-                ),
-              )
+                ],
+              ),
             ],
           ),
         ),

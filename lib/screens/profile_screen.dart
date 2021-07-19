@@ -12,7 +12,8 @@ class ProfileScreen extends StatefulWidget {
   List<Map<String, dynamic>> bookmarkPostList;
   Map<String, dynamic> userMap;
 
-  ProfileScreen({Key key, this.postList, this.userMap, this.bookmarkPostList}) : super(key: key);
+  ProfileScreen({Key key, this.postList, this.userMap, this.bookmarkPostList})
+      : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -40,13 +41,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? _tabButtons()
                     : Container()
                 : _tabButtons(),
-            widget.userMap != null
-                ? widget.userMap[KEY_USERUID] ==
-                        Provider.of<UserProvider>(context)
-                            .userDataMap[KEY_USERUID]
-                    ? _selectedIndicator()
-                    : Container()
-                : _selectedIndicator(),
           ]),
         ),
         _postPager()
@@ -103,39 +97,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: <Widget>[
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.0),
-            child: Container(
-              color: Colors.grey[200],
-              child: IconButton(
-                icon: Icon(
-                  Icons.post_add,
+            padding: const EdgeInsets.only(left: common_gap, right: common_gap / 2),
+            child: InkWell(
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]),
+                  borderRadius: BorderRadius.circular(10),
                   color: _selectedTab == SelectedTab.left
-                      ? Colors.black
-                      : Colors.black26,
+                      ? Color(0xFF333333)
+                      : Colors.white,
                 ),
-                onPressed: () {
-                  _tabSelected(SelectedTab.left);
-                },
-              ),
+
+                  child: Center(
+                      child: Text(
+                    'Upload Posts',
+                    style: TextStyle(
+                        color: _selectedTab == SelectedTab.left
+                            ? Colors.white
+                            : Colors.black),
+                  ))),
+              onTap: () {
+                _tabSelected(SelectedTab.left);
+              },
             ),
           ),
         ),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.0),
-            child: Container(
-              color: Colors.grey[200],
-              child: IconButton(
-                icon: Icon(
-                  Icons.bookmark_outline,
-                  color: _selectedTab == SelectedTab.left
-                      ? Colors.black26
-                      : Colors.black,
-                ),
-                onPressed: () {
-                  _tabSelected(SelectedTab.right);
-                },
-              ),
+            padding: const EdgeInsets.only(left: common_gap / 2, right: common_gap),
+            child: InkWell(
+              child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey[300]
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    color: _selectedTab == SelectedTab.right
+                        ? Color(0xFF333333)
+                        : Colors.white,
+                  ),
+                  child: Center(
+                      child: Text(
+                        'Bookmark',
+                        style: TextStyle(
+                            color: _selectedTab == SelectedTab.right
+                                ? Colors.white
+                                : Colors.black),
+                      ))),
+              onTap: () {
+                _tabSelected(SelectedTab.right);
+              },
             ),
           ),
         ),
@@ -158,24 +171,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           break;
       }
     });
-  }
-
-  Widget _selectedIndicator() {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
-      alignment: _selectedTab == SelectedTab.left
-          ? Alignment.centerLeft
-          : Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-        child: Container(
-          height: 3,
-          width: size.width / 2 - 4.0,
-          color: Colors.black38,
-        ),
-      ),
-      curve: Curves.fastOutSlowIn,
-    );
   }
 
   SliverToBoxAdapter _postPager() {
